@@ -50,7 +50,7 @@ class Generator:
 
             placed_ok = False
 
-            for placed in self.board.placements:
+            for placed in reversed(self.board.placements):
 
                 if self.try_place_word(placed, word):
                     placed_ok = True
@@ -152,18 +152,21 @@ class Generator:
                 placed_index,
                 new_index
             )
-
+            if placed["direction"] == Direction.HORIZONTAL:
+                new_direction = Direction.VERTICAL
+            else:
+                new_direction = Direction.HORIZONTAL
             if self.board.can_place_word(
                 row,
                 col,
                 word,
-                Direction.VERTICAL
+                new_direction
             ):
                 self.board.place_word(
                     row,
                     col,
                     word,
-                    Direction.VERTICAL
+                    new_direction
                 )
 
                 return True
