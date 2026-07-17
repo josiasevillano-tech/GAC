@@ -124,9 +124,58 @@ class Board:
         self.cells.clear()
         self.placements.clear()
 
+    def clone(self):
+        """
+        Devuelve una copia independiente del tablero.
+        """
+
+        board = Board(
+            self.rows,
+            self.cols
+        )
+
+        board.cells = self.cells.copy()
+        board.placements = self.placements.copy()
+
+        return board
+
     def word_count(self):
         """
         Devuelve la cantidad de palabras colocadas.
         """
 
         return len(self.placements)
+    
+    def bounding_box(self):
+        """
+        Devuelve el rectángulo mínimo que contiene todas las letras.
+        """
+
+        if not self.cells:
+            return None
+
+        rows = [row for row, _ in self.cells]
+        cols = [col for _, col in self.cells]
+
+        return {
+            "min_row": min(rows),
+            "max_row": max(rows),
+            "min_col": min(cols),
+            "max_col": max(cols)
+        }
+    
+    def bounding_area(self):
+        """
+        Devuelve el área del rectángulo mínimo que contiene
+        todas las letras.
+        """
+
+        box = self.bounding_box()
+
+        if box is None:
+            return 0
+
+        height = box["max_row"] - box["min_row"] + 1
+        width = box["max_col"] - box["min_col"] + 1
+
+        return height * width

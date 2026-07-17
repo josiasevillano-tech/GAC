@@ -334,3 +334,94 @@ print("Cantidad:", generator.board.word_count())
 
 for placement in generator.board.placements:
     print(placement)
+
+    print()
+print("=== INSPECCIÓN DE find_candidate_positions ===")
+
+generator = Generator()
+
+generator.set_words([
+    "CASA"
+])
+
+generator.generate()
+
+placed = generator.board.placements[0]
+
+candidates = generator.find_candidate_positions(
+    placed,
+    "LUNA"
+)
+
+print(candidates)
+
+print()
+print("=== INSPECCIÓN DE bounding_box ===")
+
+board = Board()
+
+board.place_word(
+    7,
+    5,
+    "CASA",
+    Direction.HORIZONTAL
+)
+
+board.place_word(
+    4,
+    6,
+    "LUNA",
+    Direction.VERTICAL
+)
+
+print(board.bounding_box())
+
+print()
+print("=== INSPECCIÓN DE bounding_area ===")
+
+board = Board()
+
+board.place_word(
+    7,
+    5,
+    "CASA",
+    Direction.HORIZONTAL
+)
+
+board.place_word(
+    4,
+    6,
+    "LUNA",
+    Direction.VERTICAL
+)
+
+print(board.bounding_area())
+
+print()
+print("=== INSPECCIÓN DE clone ===")
+
+board = Board()
+
+board.place_word(
+    7,
+    5,
+    "CASA",
+    Direction.HORIZONTAL
+)
+
+copy_board = board.clone()
+
+copy_board.place_word(
+    4,
+    6,
+    "LUNA",
+    Direction.VERTICAL
+)
+
+print("Original:")
+print(board.cells)
+
+print()
+
+print("Copia:")
+print(copy_board.cells)

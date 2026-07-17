@@ -135,13 +135,47 @@ class Generator:
             col = cross_col - new_index
 
         return row, col
-    
-    def try_place_word(self, placed, word):
+        
+    def evaluate_candidate(self, candidate):
         """
-        Intenta encontrar una posición válida para una palabra.
+        Asigna una puntuación a un candidato.
         """
 
-        crosses = self.find_crosses(placed["word"], word)
+        return 0
+    
+    def choose_best_candidate(self, candidates):
+        """
+        Selecciona el mejor candidato disponible.
+        """
+
+        if not candidates:
+            return None
+
+        best = candidates[0]
+        best_score = self.evaluate_candidate(best)
+
+        for candidate in candidates[1:]:
+
+            score = self.evaluate_candidate(candidate)
+
+            if score > best_score:
+                best = candidate
+                best_score = score
+
+        return best
+    
+    def find_candidate_positions(self, placed, word):
+        """
+        Encuentra todas las posiciones válidas donde una palabra
+        podría colocarse cruzándose con otra.
+        """
+
+        candidates = []
+
+        crosses = self.find_crosses(
+            placed["word"],
+            word
+        )
 
         for _, placed_index, new_index in crosses:
 
@@ -152,23 +186,48 @@ class Generator:
                 placed_index,
                 new_index
             )
+
             if placed["direction"] == Direction.HORIZONTAL:
-                new_direction = Direction.VERTICAL
+                direction = Direction.VERTICAL
             else:
-                new_direction = Direction.HORIZONTAL
+                direction = Direction.HORIZONTAL
+
             if self.board.can_place_word(
                 row,
                 col,
                 word,
-                new_direction
+                direction
             ):
-                self.board.place_word(
-                    row,
-                    col,
-                    word,
-                    new_direction
-                )
+                candidates.append({
+                    "row": row,
+                    "col": col,
+                    "direction": direction
+                })
 
-                return True
+        return candidates
+    
+    def try_place_word(self, placed, word):
+        """
+        Intenta colocar una palabra utilizando los candidatos disponibles.
+        """
 
-        return False
+        candidates = self.find_candidate_positions(
+            placed,
+            word
+        )
+
+        if not candidates:
+            return False
+
+        candidate = self.choose_best_candidate(
+            candidates
+        )
+
+        self.board.place_word(
+            candidate["row"],
+            candidate["col"],
+            word,
+            candidate["direction"]
+        )
+
+        return True
