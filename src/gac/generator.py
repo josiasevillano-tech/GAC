@@ -247,6 +247,16 @@ class Generator:
 
         return candidates
     
+    def choose_best_position(self, candidates, word):
+        """
+        Devuelve la mejor posición entre varias candidatas.
+        """
+
+        if not candidates:
+           return None
+
+        return candidates[0]
+    
     def try_place_word(self, placed, word):
         """
         Intenta colocar una palabra utilizando los candidatos disponibles.
