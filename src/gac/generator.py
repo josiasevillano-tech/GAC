@@ -26,6 +26,18 @@ class Generator:
             reverse=True
         )
 
+    def is_word_placed(self, word):
+        """
+        Indica si una palabra ya fue colocada.
+        """
+
+        for placement in self.board.placements:
+
+            if placement["word"] == word:
+                return True
+
+        return False
+
     def generate(self):
         """
         Genera un crucigrama.
@@ -47,6 +59,9 @@ class Generator:
         )
 
         for word in self.words[1:]:
+
+            if self.is_word_placed(word):
+                continue
 
             placed_ok = False
 
@@ -136,14 +151,32 @@ class Generator:
 
         return row, col
         
-    def evaluate_candidate(self, candidate):
+    def evaluate_candidate(
+        self,
+        board,
+        word,
+        candidate
+    ):
         """
         Asigna una puntuación a un candidato.
         """
 
-        return 0
+        test_board = board.clone()
+
+        test_board.place_word(
+            candidate["row"],
+            candidate["col"],
+            word,
+            candidate["direction"]
+        )
+
+        return -test_board.bounding_area()
     
-    def choose_best_candidate(self, candidates):
+    def choose_best_candidate(
+        self,
+        candidates,
+        word
+    ):
         """
         Selecciona el mejor candidato disponible.
         """
@@ -152,11 +185,19 @@ class Generator:
             return None
 
         best = candidates[0]
-        best_score = self.evaluate_candidate(best)
+        best_score = self.evaluate_candidate(
+            self.board,
+            word,
+            best
+    )
 
         for candidate in candidates[1:]:
 
-            score = self.evaluate_candidate(candidate)
+            score = self.evaluate_candidate(
+                self.board,
+                word,
+                candidate
+    )
 
             if score > best_score:
                 best = candidate
@@ -220,7 +261,8 @@ class Generator:
             return False
 
         candidate = self.choose_best_candidate(
-            candidates
+            candidates,
+            word
         )
 
         self.board.place_word(

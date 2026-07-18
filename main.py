@@ -325,7 +325,8 @@ generator.set_words([
     "LUNA",
     "SOL",
     "SAL",
-    "ALA"
+    "ALA",
+    "SALA"
 ])
 
 generator.generate()
@@ -425,3 +426,19 @@ print()
 
 print("Copia:")
 print(copy_board.cells)
+
+print()
+print("=== INSPECCIÓN DE is_word_placed ===")
+
+generator = Generator()
+
+generator.set_words([
+    "CASA",
+    "LUNA"
+])
+
+generator.generate()
+
+print(generator.is_word_placed("CASA"))
+print(generator.is_word_placed("LUNA"))
+print(generator.is_word_placed("SOL"))
