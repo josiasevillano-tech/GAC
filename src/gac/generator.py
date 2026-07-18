@@ -176,6 +176,10 @@ class Generator:
             test_board
         )
 
+        score += self.score_intersections(
+            test_board
+        )
+
         return score
 
     def score_compactness(
@@ -187,6 +191,43 @@ class Generator:
         """
 
         return -board.bounding_area()
+    
+    def score_intersections(
+        self,
+        board
+    ):
+        """
+        Premia las palabras que generan cruces.
+        """
+
+        score = 0
+
+        for placement in board.placements:
+
+            row = placement["row"]
+            col = placement["col"]
+
+            if placement["direction"] == Direction.HORIZONTAL:
+
+                for i in range(len(placement["word"])):
+
+                    if (
+                        (row - 1, col + i) in board.cells and
+                        (row + 1, col + i) in board.cells
+                    ):
+                        score += 1
+
+            else:
+
+                for i in range(len(placement["word"])):
+
+                    if (
+                        (row + i, col - 1) in board.cells and
+                        (row + i, col + 1) in board.cells
+                    ):
+                        score += 1
+
+        return score
     
     def score_intersections(
         self,
