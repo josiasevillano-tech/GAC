@@ -170,7 +170,56 @@ class Generator:
             candidate["direction"]
         )
 
-        return -test_board.bounding_area()
+        score = 0
+
+        score += self.score_compactness(
+            test_board
+        )
+
+        return score
+
+    def score_compactness(
+        self,
+        board
+    ):
+        """
+        Calcula la puntuación por compacidad.
+        """
+
+        return -board.bounding_area()
+    
+    def score_intersections(
+        self,
+        board
+    ):
+        """
+        Premia los crucigramas con más cruces.
+        """
+
+        intersections = 0
+
+        for position in board.cells:
+
+            neighbours = 0
+
+            row, col = position
+
+            if (row - 1, col) in board.cells:
+                neighbours += 1
+
+            if (row + 1, col) in board.cells:
+                neighbours += 1
+
+            if (row, col - 1) in board.cells:
+                neighbours += 1
+
+            if (row, col + 1) in board.cells:
+                neighbours += 1
+
+            if neighbours >= 2:
+               intersections += 1
+
+        return intersections
     
     def choose_best_candidate(
         self,
@@ -189,7 +238,7 @@ class Generator:
             self.board,
             word,
             best
-    )
+        )
 
         for candidate in candidates[1:]:
 
@@ -197,7 +246,7 @@ class Generator:
                 self.board,
                 word,
                 candidate
-    )
+        )
 
             if score > best_score:
                 best = candidate
