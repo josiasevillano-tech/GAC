@@ -169,16 +169,18 @@ class Generator:
             word,
             candidate["direction"]
         )
-
         score = 0
 
-        score += self.score_compactness(
+        compactness = self.score_compactness(
             test_board
         )
 
-        score += self.score_intersections(
+        intersections = self.score_intersections(
             test_board
         )
+
+        score += compactness
+        score += intersections
 
         return score
 
