@@ -260,40 +260,7 @@ class Generator:
                         score += 1
 
         return score
-    
-    def score_intersections(
-        self,
-        board
-    ):
-        """
-        Premia los crucigramas con más cruces.
-        """
-
-        intersections = 0
-
-        for position in board.cells:
-
-            neighbours = 0
-
-            row, col = position
-
-            if (row - 1, col) in board.cells:
-                neighbours += 1
-
-            if (row + 1, col) in board.cells:
-                neighbours += 1
-
-            if (row, col - 1) in board.cells:
-                neighbours += 1
-
-            if (row, col + 1) in board.cells:
-                neighbours += 1
-
-            if neighbours >= 2:
-               intersections += 1
-
-        return intersections
-    
+      
     def choose_best_candidate(
         self,
         candidates,
