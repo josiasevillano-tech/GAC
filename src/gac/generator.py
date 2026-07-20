@@ -7,9 +7,24 @@ class Generator:
     Generador automático de crucigramas.
     """
 
+    COMPACTNESS_WEIGHT = 1
+    INTERSECTIONS_WEIGHT = 1
+
+    # =====================================================
+    # CONSTRUCTOR
+    # =====================================================
+
     def __init__(self, rows=15, cols=15):
         self.board = Board(rows, cols)
         self.words = []
+
+    def __init__(self, rows=15, cols=15):
+        self.board = Board(rows, cols)
+        self.words = []
+
+    # =====================================================
+    # CONFIGURACIÓN
+    # =====================================================
 
     def set_words(self, words):
         """
@@ -37,6 +52,10 @@ class Generator:
                 return True
 
         return False
+    
+    # =====================================================
+    # GENERACIÓN DEL CRUCIGRAMA
+    # =====================================================
 
     def generate(self):
         """
@@ -179,8 +198,15 @@ class Generator:
             test_board
         )
 
-        score += compactness
-        score += intersections
+        score += (
+            compactness *
+            self.COMPACTNESS_WEIGHT
+        )
+
+        score += (
+            intersections *
+            self.INTERSECTIONS_WEIGHT
+        )
 
         return score
 
@@ -338,17 +364,7 @@ class Generator:
                 })
 
         return candidates
-    
-    def choose_best_position(self, candidates, word):
-        """
-        Devuelve la mejor posición entre varias candidatas.
-        """
-
-        if not candidates:
-           return None
-
-        return candidates[0]
-    
+        
     def try_place_word(self, placed, word):
         """
         Intenta colocar una palabra utilizando los candidatos disponibles.
