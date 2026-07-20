@@ -18,10 +18,6 @@ class Generator:
         self.board = Board(rows, cols)
         self.words = []
 
-    def __init__(self, rows=15, cols=15):
-        self.board = Board(rows, cols)
-        self.words = []
-
     # =====================================================
     # CONFIGURACIÓN
     # =====================================================
@@ -91,6 +87,10 @@ class Generator:
                     break
 
         return True
+    
+    # =====================================================
+    # BÚSQUEDA DE CANDIDATOS
+    # =====================================================
     
     def find_common_letters(self, word1, word2):
         """
@@ -169,6 +169,10 @@ class Generator:
             col = cross_col - new_index
 
         return row, col
+    
+    # =====================================================
+    # EVALUACIÓN DE CANDIDATOS
+    # =====================================================
         
     def evaluate_candidate(
         self,
