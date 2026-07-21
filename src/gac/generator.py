@@ -87,6 +87,33 @@ class Generator:
                     break
 
         return True
+          
+    def try_place_word(self, placed, word):
+        """
+        Intenta colocar una palabra utilizando los candidatos disponibles.
+        """
+
+        candidates = self.find_candidate_positions(
+            placed,
+            word
+        )
+
+        if not candidates:
+            return False
+
+        candidate = self.choose_best_candidate(
+            candidates,
+            word
+        )
+
+        self.board.place_word(
+            candidate["row"],
+            candidate["col"],
+            word,
+            candidate["direction"]
+        )
+
+        return True
     
     # =====================================================
     # BÚSQUEDA DE CANDIDATOS
@@ -170,6 +197,85 @@ class Generator:
 
         return row, col
     
+    def find_candidate_positions(self, placed, word):
+        """
+        Encuentra todas las posiciones válidas donde una palabra
+        podría colocarse cruzándose con otra.
+        """
+
+        candidates = []
+
+        crosses = self.find_crosses(
+            placed["word"],
+            word
+        )
+
+        for _, placed_index, new_index in crosses:
+
+            row, col = self.compute_start_position(
+                placed["row"],
+                placed["col"],
+                placed["direction"],
+                placed_index,
+                new_index
+            )
+
+            if placed["direction"] == Direction.HORIZONTAL:
+                direction = Direction.VERTICAL
+            else:
+                direction = Direction.HORIZONTAL
+
+            if self.board.can_place_word(
+                row,
+                col,
+                word,
+                direction
+            ):
+                candidates.append({
+                    "row": row,
+                    "col": col,
+                    "direction": direction
+                })
+
+        return candidates
+  
+    # =====================================================
+    # SELECCIÓN DEL MEJOR CANDIDATO
+    # =====================================================
+      
+    def choose_best_candidate(
+        self,
+        candidates,
+        word
+    ):
+        """
+        Selecciona el mejor candidato disponible.
+        """
+
+        if not candidates:
+            return None
+
+        best = candidates[0]
+        best_score = self.evaluate_candidate(
+            self.board,
+            word,
+            best
+        )
+
+        for candidate in candidates[1:]:
+
+            score = self.evaluate_candidate(
+                self.board,
+                word,
+                candidate
+        )
+
+            if score > best_score:
+                best = candidate
+                best_score = score
+
+        return best
+    
     # =====================================================
     # EVALUACIÓN DE CANDIDATOS
     # =====================================================
@@ -213,6 +319,10 @@ class Generator:
         )
 
         return score
+    
+    # =====================================================
+    # HEURÍSTICAS
+    # =====================================================
 
     def score_compactness(
         self,
@@ -261,104 +371,3 @@ class Generator:
 
         return score
       
-    def choose_best_candidate(
-        self,
-        candidates,
-        word
-    ):
-        """
-        Selecciona el mejor candidato disponible.
-        """
-
-        if not candidates:
-            return None
-
-        best = candidates[0]
-        best_score = self.evaluate_candidate(
-            self.board,
-            word,
-            best
-        )
-
-        for candidate in candidates[1:]:
-
-            score = self.evaluate_candidate(
-                self.board,
-                word,
-                candidate
-        )
-
-            if score > best_score:
-                best = candidate
-                best_score = score
-
-        return best
-    
-    def find_candidate_positions(self, placed, word):
-        """
-        Encuentra todas las posiciones válidas donde una palabra
-        podría colocarse cruzándose con otra.
-        """
-
-        candidates = []
-
-        crosses = self.find_crosses(
-            placed["word"],
-            word
-        )
-
-        for _, placed_index, new_index in crosses:
-
-            row, col = self.compute_start_position(
-                placed["row"],
-                placed["col"],
-                placed["direction"],
-                placed_index,
-                new_index
-            )
-
-            if placed["direction"] == Direction.HORIZONTAL:
-                direction = Direction.VERTICAL
-            else:
-                direction = Direction.HORIZONTAL
-
-            if self.board.can_place_word(
-                row,
-                col,
-                word,
-                direction
-            ):
-                candidates.append({
-                    "row": row,
-                    "col": col,
-                    "direction": direction
-                })
-
-        return candidates
-        
-    def try_place_word(self, placed, word):
-        """
-        Intenta colocar una palabra utilizando los candidatos disponibles.
-        """
-
-        candidates = self.find_candidate_positions(
-            placed,
-            word
-        )
-
-        if not candidates:
-            return False
-
-        candidate = self.choose_best_candidate(
-            candidates,
-            word
-        )
-
-        self.board.place_word(
-            candidate["row"],
-            candidate["col"],
-            word,
-            candidate["direction"]
-        )
-
-        return True
