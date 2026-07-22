@@ -18,6 +18,10 @@ class Generator:
         self.board = Board(rows, cols)
         self.words = []
 
+        # Pesos de las heurísticas
+        self.weight_compactness = 1
+        self.weight_intersections = 1
+
     # =====================================================
     # CONFIGURACIÓN
     # =====================================================
@@ -240,7 +244,7 @@ class Generator:
         return candidates
   
     # =====================================================
-    # SELECCIÓN DEL MEJOR CANDIDATO
+    # SELECCIÓN DE CANDIDATOS
     # =====================================================
       
     def choose_best_candidate(
@@ -279,7 +283,7 @@ class Generator:
     # =====================================================
     # EVALUACIÓN DE CANDIDATOS
     # =====================================================
-        
+
     def evaluate_candidate(
         self,
         board,
@@ -298,7 +302,6 @@ class Generator:
             word,
             candidate["direction"]
         )
-        score = 0
 
         compactness = self.score_compactness(
             test_board
@@ -308,18 +311,14 @@ class Generator:
             test_board
         )
 
-        score += (
-            compactness *
-            self.COMPACTNESS_WEIGHT
-        )
-
-        score += (
-            intersections *
-            self.INTERSECTIONS_WEIGHT
+        score = (
+            compactness * self.weight_compactness +
+            intersections * self.weight_intersections
         )
 
         return score
-    
+
+
     # =====================================================
     # HEURÍSTICAS
     # =====================================================
@@ -333,7 +332,8 @@ class Generator:
         """
 
         return -board.bounding_area()
-    
+
+
     def score_intersections(
         self,
         board
@@ -370,4 +370,3 @@ class Generator:
                         score += 1
 
         return score
-      

@@ -428,7 +428,8 @@ print("Copia:")
 print(copy_board.cells)
 
 print()
-print("=== INSPECCIÓN DE is_word_placed ===")
+
+print("=== GENERADOR ===")
 
 generator = Generator()
 
@@ -438,7 +439,3 @@ generator.set_words([
 ])
 
 generator.generate()
-
-print(generator.is_word_placed("CASA"))
-print(generator.is_word_placed("LUNA"))
-print(generator.is_word_placed("SOL"))
