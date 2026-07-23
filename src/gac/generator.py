@@ -53,10 +53,6 @@ class Generator:
 
         return False
     
-    # =====================================================
-    # GENERACIÓN DEL CRUCIGRAMA
-    # =====================================================
-
     def generate(self):
         """
         Genera un crucigrama.
@@ -64,6 +60,11 @@ class Generator:
 
         if not self.words:
             return False
+
+        self.board = Board(
+            self.board.rows,
+            self.board.cols
+        )
 
         first_word = self.words[0]
 
@@ -82,16 +83,16 @@ class Generator:
             if self.is_word_placed(word):
                 continue
 
-            placed_ok = False
-
             for placed in reversed(self.board.placements):
 
-                if self.try_place_word(placed, word):
-                    placed_ok = True
+                if self.try_place_word(
+                    placed,
+                    word
+                ):
                     break
 
         return True
-          
+    
     def try_place_word(self, placed, word):
         """
         Intenta colocar una palabra utilizando los candidatos disponibles.
