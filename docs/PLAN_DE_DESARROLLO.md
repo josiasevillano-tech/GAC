@@ -92,15 +92,13 @@ Objetivos:
 
 ## ETAPA 4
 Optimización de la evaluación
-Estado: PENDIENTE
+Estado: COMPLETADA
 
 Objetivos:
 
-□ Ajuste de pesos.
-
-□ Comparación entre configuraciones.
-
-□ Experimentos controlados.
+✅ Ajuste de pesos implementado (weight_compactness, weight_intersections).
+✅ Comparación entre configuraciones realizada.
+✅ Experimentos controlados ejecutados (10 intentos por configuración).
 
 ---
 
@@ -175,3 +173,13 @@ No desarrollar ninguna otra funcionalidad hasta completar esta etapa.
 ✅ Reporte automático al finalizar generación.
 ✅ Imports corregidos y configuración de VS Code actualizada.
 ✅ Commit y push a GitHub.
+
+2026-07-24
+
+✅ ETAPA 4 completada.
+✅ Sistema de experimentos creado (experiments.py).
+✅ Pesos configurables funcionan correctamente.
+✅ Hallazgo: el algoritmo actual es determinístico, por lo que los pesos
+   no producen variación con el mismo conjunto de palabras.
+✅ Conclusión: la sensibilidad a pesos requerirá aleatoriedad en el algoritmo,
+   lo cual se abordará en la ETAPA 5 (múltiples intentos y backtracking).
