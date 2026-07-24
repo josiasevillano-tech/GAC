@@ -29,17 +29,29 @@ class Generator:
     def set_words(self, words):
         """
         Establece la lista de palabras a generar.
+        Las palabras se ordenan por longitud descendente,
+        pero dentro de cada grupo del mismo tamaño se barajan aleatoriamente.
         """
+
+        import random
+        from itertools import groupby
 
         self.words = []
 
         for word in words:
             self.words.append(word.strip().upper())
-            
-        self.words.sort(
-            key=len,
-            reverse=True
-        )
+
+        # Ordenar por longitud descendente
+        self.words.sort(key=len, reverse=True)
+
+        # Agrupar por longitud y barajar cada grupo
+        grouped = []
+        for length, group in groupby(self.words, key=len):
+            group_list = list(group)
+            random.shuffle(group_list)
+            grouped.extend(group_list)
+
+        self.words = grouped
 
     def is_word_placed(self, word):
         """
