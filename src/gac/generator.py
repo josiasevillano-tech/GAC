@@ -1,6 +1,6 @@
-from src.gac.board import Board
-from src.gac.direction import Direction
-
+from gac.board import Board
+from gac.direction import Direction
+from gac.metrics import Metrics
 
 class Generator:
     """
@@ -90,6 +90,9 @@ class Generator:
                     word
                 ):
                     break
+
+        metrics = Metrics(self.board)
+        metrics.report()
 
         return True
     

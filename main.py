@@ -1,8 +1,13 @@
-from src.gac.board import Board
+import sys
+import os
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+
+from gac.board import Board
 
 board = Board()
 
-from src.gac.direction import Direction
+from gac.direction import Direction
 
 print("=== INSPECCIÓN DEL TABLERO ===")
 
@@ -205,7 +210,7 @@ board.place_word(
 
 print(board.word_count())
 
-from src.gac.generator import Generator
+from gac.generator import Generator
 
 print()
 print("=== INSPECCIÓN DE Generator ===")
@@ -216,7 +221,7 @@ print(generator.board.rows)
 print(generator.board.cols)
 print(generator.board.word_count())
 
-from src.gac.generator import Generator
+from gac.generator import Generator
 
 print()
 print("=== INSPECCIÓN DE Generator ===")
