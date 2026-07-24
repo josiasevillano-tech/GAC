@@ -1,6 +1,6 @@
-from gac.board import Board
-from gac.direction import Direction
-from gac.metrics import Metrics
+from board import Board
+from direction import Direction
+from metrics import Metrics
 
 class Generator:
     """
