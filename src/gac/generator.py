@@ -52,6 +52,17 @@ class Generator:
                 return True
 
         return False
+
+    # =====================================================
+    # MÉTRICAS
+    # =====================================================
+
+    def word_count(self):
+        """
+        Devuelve la cantidad de palabras colocadas.
+        """
+
+        return len(self.board.placements)
     
     def generate(self):
         """
