@@ -107,6 +107,108 @@ class Generator:
         metrics.report()
 
         return True
+
+    def generate_with_backtracking(self, max_attempts=100):
+        """
+        Genera un crucigrama usando backtracking.
+        
+        Prueba múltiples configuraciones y usa la mejor.
+        """
+        if not self.words:
+            return False
+
+        best_board = None
+        best_score = -1
+
+        for attempt in range(max_attempts):
+            # Crear un tablero nuevo para este intento
+            self.board = Board(
+                self.board.rows,
+                self.board.cols
+            )
+
+            # Barajar palabras para variabilidad
+            import random
+            shuffled = self.words.copy()
+            random.shuffle(shuffled)
+
+            # Colocar primera palabra en el centro
+            first_word = shuffled[0]
+            row = self.board.rows // 2
+            col = (self.board.cols - len(first_word)) // 2
+            self.board.place_word(row, col, first_word, Direction.HORIZONTAL)
+
+            placed_words = [first_word]
+            failed_words = []
+
+            # Intentar colocar el resto
+            for word in shuffled[1:]:
+                if self.try_place_anywhere(word, placed_words):
+                    placed_words.append(word)
+                else:
+                    failed_words.append(word)
+
+            # Evaluar este tablero
+            from .metrics import Metrics
+            metrics = Metrics(self.board)
+
+            score = (
+                metrics.word_count() * 100 +
+                metrics.cross_count() * 10 -
+                metrics.bounding_area()
+            )
+
+            if score > best_score:
+                best_score = score
+                best_board = self.board.clone()
+
+        # Restaurar el mejor tablero
+        self.board = best_board
+
+        # Mostrar métricas
+        from .metrics import Metrics
+        metrics = Metrics(self.board)
+        metrics.report()
+
+        return True
+
+    def try_place_anywhere(self, word, placed_words):
+        """
+        Intenta colocar una palabra en cualquier posición válida.
+        """
+        # Buscar todas las posiciones posibles
+        candidates = []
+
+        for placed in self.board.placements:
+            crosses = self.find_crosses(placed["word"], word)
+            for _, placed_index, new_index in crosses:
+                row, col = self.compute_start_position(
+                    placed["row"],
+                    placed["col"],
+                    placed["direction"],
+                    placed_index,
+                    new_index
+                )
+
+                if placed["direction"] == Direction.HORIZONTAL:
+                    direction = Direction.VERTICAL
+                else:
+                    direction = Direction.HORIZONTAL
+
+                if self.board.can_place_word(row, col, word, direction):
+                    candidates.append({
+                        "row": row,
+                        "col": col,
+                        "direction": direction
+                    })
+
+        if not candidates:
+            return False
+
+        # Elegir el mejor candidato según los pesos
+        best = self.choose_best_candidate(candidates, word)
+        self.board.place_word(best["row"], best["col"], word, best["direction"])
+        return True
     
     def try_place_word(self, placed, word):
         """
