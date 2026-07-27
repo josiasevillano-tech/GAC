@@ -1,0 +1,289 @@
+# Arquitectura del Sistema de Evaluación del GAC
+
+Versión 1.0
+
+## Introducción
+
+El Generador Automático de Crucigramas (GAC) no ha sido concebido únicamente para construir crucigramas válidos, sino para producir crucigramas de la mayor calidad posible.
+
+Durante el proceso de generación es frecuente que una palabra pueda colocarse en varias posiciones distintas sin violar ninguna de las reglas del crucigrama. Todas esas alternativas son correctas desde el punto de vista estructural, pero no todas conducen a un tablero igualmente eficiente.
+
+Por esta razón, el diseño del sistema incorpora una arquitectura de evaluación independiente del algoritmo de generación.
+
+Antes de decidir dónde colocar una palabra, el sistema debe ser capaz de comparar las distintas alternativas disponibles y estimar cuál de ellas ofrece mejores perspectivas para la construcción del crucigrama completo.
+
+Esta filosofía responde a un principio fundamental del proyecto.
+
+El algoritmo construye posibilidades; el sistema de evaluación determina cuál de ellas resulta más conveniente.
+
+En consecuencia, el conocimiento relacionado con la calidad de un crucigrama permanece separado del conocimiento necesario para construirlo.
+
+---
+
+## Principios de diseño
+
+El sistema de evaluación se fundamenta en los siguientes principios.
+
+### 1. Generar y evaluar son responsabilidades distintas
+
+El generador produce alternativas.
+
+El sistema de evaluación analiza esas alternativas.
+
+Esta separación permite mejorar continuamente la inteligencia del programa sin modificar el algoritmo encargado de construir el crucigrama.
+
+---
+
+### 2. Cada criterio mide un único aspecto
+
+Toda evaluación se descompone en criterios independientes.
+
+Cada criterio responde únicamente una pregunta acerca del candidato evaluado.
+
+Por ejemplo:
+
+• ¿Cuántos cruces produce?
+
+• ¿Qué tan compacto queda el tablero?
+
+• ¿Cuánto aumenta el área ocupada?
+
+• ¿Qué posibilidades deja para futuras colocaciones?
+
+La independencia entre criterios facilita la incorporación de nuevas heurísticas sin afectar el resto del sistema.
+
+---
+
+### 3. Evaluar nunca modifica el tablero
+
+El sistema de evaluación únicamente observa.
+
+No coloca palabras.
+
+No elimina palabras.
+
+No altera el estado del tablero.
+
+Toda modificación del crucigrama continúa siendo responsabilidad exclusiva del generador.
+
+---
+
+### 4. Toda evaluación debe ser determinista
+
+Ante un mismo tablero y un mismo candidato, el sistema de evaluación debe producir siempre el mismo resultado.
+
+La calidad de una decisión no puede depender del azar, sino únicamente de la información disponible.
+
+---
+
+## Arquitectura conceptual
+
+El flujo conceptual del sistema puede representarse de la siguiente manera.
+
+```
+CrosswordGenerator
+        │
+        │ genera
+        ▼
+ Lista de candidatos
+        │
+        │ evalúa
+        ▼
+ CrosswordScorer
+        │
+        │ clasifica
+        ▼
+ Mejor candidato
+        │
+        │ coloca
+        ▼
+      Board
+```
+
+El generador conserva el control del proceso completo.
+
+El sistema de evaluación únicamente proporciona información para facilitar la toma de decisiones.
+
+---
+
+## Responsabilidad de cada componente
+
+### CrosswordGenerator
+
+Constituye el núcleo del algoritmo de construcción.
+
+Su responsabilidad consiste en:
+
+• buscar posiciones válidas;
+
+• generar candidatos;
+
+• solicitar la evaluación de dichos candidatos;
+
+• seleccionar la mejor alternativa;
+
+• actualizar el tablero.
+
+El generador no conoce la forma en que se calcula una puntuación.
+
+Únicamente utiliza el resultado producido por el sistema de evaluación.
+
+---
+
+### CrosswordScorer
+
+Constituye el núcleo del sistema de evaluación.
+
+Será responsable de:
+
+• aplicar los distintos criterios de evaluación;
+
+• calcular la puntuación de cada candidato;
+
+• comparar candidatos;
+
+• producir una clasificación de calidad.
+
+El evaluador nunca modifica el tablero.
+
+Trabaja utilizando la información proporcionada por el tablero y por los candidatos generados.
+
+Esta separación permitirá desarrollar distintos modelos de evaluación sin modificar el algoritmo de generación.
+
+---
+
+## Criterios de evaluación
+
+Un criterio representa un aspecto concreto de la calidad de un candidato.
+
+Los criterios pertenecen al diseño conceptual del sistema.
+
+Ejemplos de criterios son:
+
+• cantidad de cruces;
+
+• compacidad;
+
+• área ocupada;
+
+• potencial para futuras colocaciones;
+
+• equilibrio espacial;
+
+• densidad del tablero.
+
+Los criterios podrán ampliarse conforme evolucione el proyecto.
+
+---
+
+## Heurísticas
+
+Las heurísticas constituyen la implementación concreta de los criterios de evaluación.
+
+Cada heurística calcula una medición específica utilizando la información disponible en el tablero y en el candidato analizado.
+
+Toda heurística debe cumplir las siguientes condiciones.
+
+• Medir un único criterio.
+
+• No modificar el estado del tablero.
+
+• Producir resultados deterministas.
+
+• Devolver un valor numérico comparable.
+
+---
+
+## Evaluación global
+
+La calidad de un candidato no depende de un único criterio.
+
+La puntuación final resulta de combinar las mediciones producidas por todas las heurísticas disponibles.
+
+Esta arquitectura permitirá:
+
+• incorporar nuevos criterios;
+
+• modificar la importancia relativa de cada criterio;
+
+• experimentar con distintos modelos de evaluación;
+
+• mejorar continuamente la calidad de los crucigramas sin alterar el algoritmo de generación.
+
+---
+
+## Relaciones entre los componentes
+
+El modelo conceptual del sistema puede representarse de la siguiente manera.
+
+```
+                CrosswordGenerator
+                        │
+        ┌───────────────┼────────────────┐
+        │               │                │
+        │               │                │
+ genera candidatos   consulta       solicita evaluación
+        │               │                │
+        ▼               ▼                ▼
+   Candidate         Board        CrosswordScorer
+                                         │
+                                         │ produce
+                                         ▼
+                                   Evaluación
+```
+
+Cada componente posee una responsabilidad específica y claramente delimitada.
+
+El generador construye alternativas.
+
+El tablero conserva el estado del crucigrama.
+
+El evaluador analiza la calidad de cada alternativa antes de que el generador tome una decisión.
+
+---
+
+## Filosofía de crecimiento
+
+El sistema de evaluación ha sido diseñado para evolucionar.
+
+En versiones futuras podrán incorporarse nuevos criterios como:
+
+• equilibrio del tablero;
+
+• distribución de palabras largas;
+
+• reducción de espacios muertos;
+
+• potencial de crecimiento;
+
+• calidad estética;
+
+• simetría.
+
+La incorporación de nuevos criterios no requerirá modificar el algoritmo principal de generación.
+
+Esta independencia constituye uno de los principales objetivos de la arquitectura.
+
+---
+
+## Regla de Oro del Sistema de Evaluación
+
+Toda nueva heurística deberá responder afirmativamente a la siguiente pregunta.
+
+¿Este criterio mejora realmente la calidad de los crucigramas generados?
+
+Si la respuesta es afirmativa, probablemente merece incorporarse al sistema de evaluación.
+
+Si la respuesta es negativa, deberá evaluarse cuidadosamente si únicamente añade complejidad sin producir un beneficio observable.
+
+---
+
+## Visión de largo plazo
+
+El sistema de evaluación constituye el mecanismo mediante el cual el GAC desarrollará progresivamente una mayor capacidad para producir crucigramas de alta calidad.
+
+Mientras el algoritmo de generación continuará siendo responsable de construir soluciones, el sistema de evaluación concentrará el conocimiento relacionado con la calidad de dichas soluciones.
+
+Esta separación permitirá que ambos componentes evolucionen de manera independiente, conservando una arquitectura limpia, extensible y coherente con los principios generales del proyecto.
+
+De esta forma, el GAC podrá incorporar nuevos modelos de optimización sin comprometer la estabilidad del algoritmo de generación ni la representación del dominio.
