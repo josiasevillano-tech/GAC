@@ -68,6 +68,13 @@ class Generator:
         Devuelve la cantidad de cruces del crucigrama.
         """
         return self.score_intersections(self.board)
+
+    def occupied_area(self):
+        """
+        Devuelve el área ocupada por el crucigrama.
+        """
+
+        return self.board.bounding_area()
     
     def generate(self):
         """

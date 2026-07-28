@@ -387,3 +387,13 @@ generator.set_words([
     "LUNA"
 ])
 generator.generate()
+
+print(
+    "Cruces:",
+    generator.intersection_count()
+)
+
+print(
+    "Área:",
+    generator.occupied_area()
+)

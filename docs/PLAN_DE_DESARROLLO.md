@@ -79,17 +79,17 @@ Estado: COMPLETADA
 
 ## ETAPA 3
 Sistema de métricas
-Estado: PENDIENTE
+Estado: COMPLETADA
 
 Objetivos:
 
-□ Número de palabras colocadas.
+✔ Número de palabras colocadas.
 
-□ Número de cruces.
+✔ Número de cruces.
 
-□ Área ocupada.
+✔ Área ocupada.
 
-□ Mostrar resultados automáticamente al finalizar la generación.
+✔ Mostrar resultados automáticamente al finalizar la generación.
 
 ---
 
