@@ -301,6 +301,7 @@ class Generator:
 
         return {
             "grid": self.board.to_grid(),
+            "solved_grid": self.board.to_solved_grid(),
             "horizontal": horizontal,
             "vertical": vertical,
             "metrics": {

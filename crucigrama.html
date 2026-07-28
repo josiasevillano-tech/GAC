@@ -5,90 +5,294 @@
     <title>Guía de Estudio: Personajes Bíblicos</title>
     
         <style>
+            @page { size: A4 portrait; margin: 15mm 18mm; }
+
+            * { box-sizing: border-box; }
+
             body {
-                font-family: "Segoe UI", Arial, sans-serif;
-                margin: 40px;
-                color: #222;
+                font-family: Arial, "Segoe UI", sans-serif;
+                margin: 0;
+                padding: 0;
+                color: #000;
+                background: #fff;
+                font-size: 11pt;
             }
-            h1 {
+
+            .page {
+                width: 100%;
+                min-height: 257mm;
+                padding: 0;
+                position: relative;
+            }
+
+            .page-break {
+                page-break-after: always;
+                break-after: page;
+            }
+
+            /* ===== PÁGINA 1 ===== */
+            .page1-header {
                 text-align: center;
-                font-size: 24px;
-                margin-bottom: 30px;
+                margin-bottom: 20px;
+                border-bottom: 2px solid #000;
+                padding-bottom: 12px;
+            }
+            .page1-header h1 {
+                font-family: Arial, sans-serif;
+                font-size: 20pt;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                margin: 0 0 6px 0;
+                font-weight: bold;
+            }
+            .page1-header h2 {
+                font-family: Arial, sans-serif;
+                font-size: 12pt;
+                font-weight: normal;
+                color: #333;
+                margin: 0;
                 text-transform: uppercase;
                 letter-spacing: 1px;
             }
-            .crossword-container {
-                text-align: center;
-                margin: 30px 0;
+
+            .intro-section {
+                margin-bottom: 25px;
             }
+            .intro-section h3 {
+                font-family: Arial, sans-serif;
+                font-size: 12pt;
+                text-transform: uppercase;
+                border-bottom: 1px solid #000;
+                padding-bottom: 4px;
+                margin: 0 0 10px 0;
+            }
+            .intro-text {
+                font-family: Arial, sans-serif;
+                font-size: 11pt;
+                line-height: 1.5;
+                text-align: justify;
+            }
+            .intro-text p {
+                margin: 0 0 8px 0;
+            }
+
+            .miniature-section {
+                text-align: center;
+                margin-top: 30px;
+            }
+            .miniature-section h3 {
+                font-family: Arial, sans-serif;
+                font-size: 11pt;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin: 0 0 12px 0;
+                color: #333;
+            }
+
+            /* ===== PÁGINA 2 ===== */
+            .page2-header {
+                text-align: center;
+                margin-bottom: 15px;
+                border-bottom: 2px solid #000;
+                padding-bottom: 10px;
+            }
+            .page2-header h1 {
+                font-family: Arial, sans-serif;
+                font-size: 18pt;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                margin: 0;
+                font-weight: bold;
+            }
+
+            .board-section {
+                text-align: center;
+                margin-bottom: 18px;
+            }
+
+            /* Tablero principal */
             table.crossword {
                 border-collapse: collapse;
                 margin: 0 auto;
-                border: 3px solid #000;
+                border: 2px solid #000;
             }
             table.crossword td {
-                width: 35px;
-                height: 35px;
                 border: 1px solid #000;
                 text-align: center;
                 vertical-align: middle;
                 position: relative;
-                font-size: 18px;
+                font-family: Arial, sans-serif;
                 font-weight: bold;
                 background: #fff;
+                padding: 0;
+                font-size: 14px;
             }
             table.crossword td.empty {
-                background-color: #222;
-                border: 1px solid #222;
+                background: transparent;
+                border: none;
             }
             table.crossword td .number {
                 position: absolute;
                 top: 1px;
-                left: 3px;
-                font-size: 9px;
-                font-weight: normal;
-                color: #000;
+                left: 2px;
+                font-family: Arial, sans-serif;
                 line-height: 1;
+                color: #000;
             }
-            .clues-container {
+
+            /* Miniatura */
+            table.miniature {
+                border-collapse: collapse;
+                margin: 0 auto;
+                border: 1.5px solid #000;
+            }
+            table.miniature td {
+                border: 0.5px solid #000;
+                text-align: center;
+                vertical-align: middle;
+                position: relative;
+                font-family: Arial, sans-serif;
+                font-size: 6px;
+                font-weight: bold;
+                background: #fff;
+                padding: 0;
+            }
+            table.miniature td.empty {
+                background: transparent;
+                border: none;
+            }
+            table.miniature td .number {
+                position: absolute;
+                top: 0;
+                left: 1px;
+                font-family: Arial, sans-serif;
+                font-size: 5px;
+                line-height: 1;
+                color: #000;
+            }
+
+            /* Pistas */
+            .clues-section {
+                width: 100%;
+            }
+            .clues-section h3 {
+                font-family: Arial, sans-serif;
+                font-size: 12pt;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                border-bottom: 2px solid #000;
+                padding-bottom: 5px;
+                margin: 0 0 10px 0;
+            }
+            .clues-row {
                 display: flex;
-                justify-content: center;
-                margin-top: 40px;
-                gap: 60px;
+                gap: 25px;
             }
             .clues-column {
                 flex: 1;
-                max-width: 45%;
+                width: 50%;
             }
-            .clues-column h2 {
-                border-bottom: 2px solid #000;
-                padding-bottom: 8px;
-                font-size: 16px;
+            .clues-column h4 {
+                font-family: Arial, sans-serif;
+                font-size: 11pt;
                 text-transform: uppercase;
-                margin-bottom: 15px;
+                margin: 0 0 8px 0;
+                color: #000;
+                border-bottom: 1px solid #999;
+                padding-bottom: 3px;
             }
             .clues-column ol {
-                padding-left: 25px;
+                padding-left: 22px;
                 margin: 0;
             }
             .clues-column li {
-                margin-bottom: 10px;
-                font-size: 13px;
-                line-height: 1.4;
+                margin-bottom: 6px;
+                font-family: Arial, sans-serif;
+                font-size: 11pt;
+                line-height: 1.35;
+                color: #000;
             }
+            .clues-column li .clue-text {
+                display: inline;
+            }
+            .answer-line {
+                display: inline-block;
+                border-bottom: 1px solid #000;
+                height: 14px;
+                vertical-align: bottom;
+                margin-right: 4px;
+            }
+
             .footer {
                 text-align: center;
-                margin-top: 50px;
-                font-size: 11px;
-                color: #666;
+                margin-top: 15px;
+                padding-top: 6px;
+                border-top: 1px solid #ccc;
+                font-family: Arial, sans-serif;
+                font-size: 8pt;
+                color: #555;
             }
         </style>
         
 </head>
 <body>
-    <h1>Guía de Estudio: Personajes Bíblicos</h1>
-    <div class="crossword-container"><table class="crossword"><tr><td class="empty"></td><td class="empty"></td><td><span class="number">1</span></td><td></td><td></td><td><span class="number">2</span></td><td class="empty"></td><td><span class="number">3</span></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td><span class="number">4</span></td><td></td><td></td><td></td><td></td><td></td><td><span class="number">5</span></td><td></td><td></td><td></td><td></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td><span class="number">6</span></td><td></td><td><span class="number">7</span></td><td></td><td class="empty"></td><td class="empty"></td><td><span class="number">8</span></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td><span class="number">9</span></td><td></td><td></td><td><span class="number">10</span></td><td></td><td></td><td></td><td></td><td></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td><span class="number">11</span></td><td></td><td></td><td></td><td></td><td></td><td><span class="number">12</span></td><td></td><td><span class="number">13</span></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td></td><td></td><td class="empty"></td><td></td><td class="empty"></td><td><span class="number">14</span></td><td></td><td></td><td></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td></td><td></td><td class="empty"></td><td><span class="number">15</span></td><td></td><td></td><td></td><td></td><td></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td></td><td></td><td><span class="number">16</span></td><td></td><td></td><td></td><td></td><td class="empty"></td><td></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td><span class="number">17</span></td><td></td><td></td><td></td><td><span class="number">18</span></td><td></td><td></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td><span class="number">19</span></td><td></td><td></td><td></td><td></td><td class="empty"></td></tr></table></div>
-    <div class="clues-container"><div class="clues-column"><h2>Pistas Horizontales</h2><ol><li value="1"><strong>JOSE</strong> (4 letras)</li><li value="3"><strong>SAMUEL</strong> (6 letras)</li><li value="4"><strong>ISAIAS</strong> (6 letras)</li><li value="5"><strong>PABLO</strong> (5 letras)</li><li value="10"><strong>DANIEL</strong> (6 letras)</li><li value="11"><strong>ABRAHAM</strong> (7 letras)</li><li value="15"><strong>NOE</strong> (3 letras)</li><li value="16"><strong>JONAS</strong> (5 letras)</li><li value="17"><strong>RUTH</strong> (4 letras)</li><li value="18"><strong>EVA</strong> (3 letras)</li><li value="19"><strong>JESUS</strong> (5 letras)</li></ol></div><div class="clues-column"><h2>Pistas Verticales</h2><ol><li value="2"><strong>ESTER</strong> (5 letras)</li><li value="3"><strong>SARA</strong> (4 letras)</li><li value="6"><strong>REBECA</strong> (6 letras)</li><li value="7"><strong>ADAN</strong> (4 letras)</li><li value="8"><strong>PEDRO</strong> (5 letras)</li><li value="9"><strong>DAVID</strong> (5 letras)</li><li value="12"><strong>MOISES</strong> (6 letras)</li><li value="13"><strong>MARIA</strong> (5 letras)</li><li value="14"><strong>LEAH</strong> (4 letras)</li></ol></div></div>
-    <div class="footer">Guía de estudio generada automáticamente — Escuela del Pensamiento</div>
+    
+        <div class="page">
+            <div class="page1-header">
+                <h1>Guía de Estudio: Personajes Bíblicos</h1>
+                <h2>Crucigrama</h2>
+            </div>
+
+            <div class="intro-section">
+                <h3>Instrucciones</h3>
+                <div class="intro-text">
+                    <p>Lee atentamente las pistas de cada dirección y completa el crucigrama 
+                    con los personajes bíblicos correspondientes. Este ejercicio te ayudará 
+                    a reforzar tu conocimiento sobre las figuras fundamentales de la historia 
+                    de la salvación.</p>
+                    <p><em>(Reemplaza este texto por tu contenido didáctico específico del tema.)</em></p>
+                </div>
+            </div>
+
+            <div class="miniature-section">
+                <h3>Hoja de Respuestas (Vista en Miniatura)</h3>
+                <table class="crossword" style="font-family: Arial, sans-serif;"><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">I</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">J</td><td style="width:14px;height:14px;">O</td><td style="width:14px;height:14px;">S</td><td style="width:14px;height:14px;">E</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">A</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td style="width:14px;height:14px;">R</td><td style="width:14px;height:14px;">E</td><td style="width:14px;height:14px;">B</td><td style="width:14px;height:14px;">E</td><td style="width:14px;height:14px;">C</td><td style="width:14px;height:14px;">A</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">I</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td style="width:14px;height:14px;">S</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">A</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">L</td><td class="empty"></td></tr><tr><td class="empty"></td><td style="width:14px;height:14px;">T</td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">J</td><td class="empty"></td><td style="width:14px;height:14px;">M</td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">P</td><td class="empty"></td><td style="width:14px;height:14px;">S</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">S</td><td style="width:14px;height:14px;">A</td><td style="width:14px;height:14px;">M</td><td style="width:14px;height:14px;">U</td><td style="width:14px;height:14px;">E</td><td style="width:14px;height:14px;">L</td></tr><tr><td style="width:14px;height:14px;">P</td><td style="width:14px;height:14px;">E</td><td style="width:14px;height:14px;">D</td><td style="width:14px;height:14px;">R</td><td style="width:14px;height:14px;">O</td><td class="empty"></td><td style="width:14px;height:14px;">A</td><td style="width:14px;height:14px;">B</td><td style="width:14px;height:14px;">R</td><td style="width:14px;height:14px;">A</td><td style="width:14px;height:14px;">H</td><td style="width:14px;height:14px;">A</td><td style="width:14px;height:14px;">M</td><td class="empty"></td><td style="width:14px;height:14px;">D</td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">O</td><td class="empty"></td><td style="width:14px;height:14px;">A</td><td class="empty"></td></tr><tr><td class="empty"></td><td style="width:14px;height:14px;">R</td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">N</td><td class="empty"></td><td style="width:14px;height:14px;">R</td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">B</td><td class="empty"></td><td style="width:14px;height:14px;">R</td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">A</td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">I</td><td class="empty"></td><td style="width:14px;height:14px;">H</td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">D</td><td style="width:14px;height:14px;">A</td><td style="width:14px;height:14px;">V</td><td style="width:14px;height:14px;">I</td><td style="width:14px;height:14px;">D</td><td class="empty"></td><td style="width:14px;height:14px;">L</td><td class="empty"></td><td style="width:14px;height:14px;">A</td><td style="width:14px;height:14px;">D</td><td style="width:14px;height:14px;">A</td><td style="width:14px;height:14px;">N</td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">S</td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">S</td><td class="empty"></td><td style="width:14px;height:14px;">A</td><td class="empty"></td><td style="width:14px;height:14px;">N</td><td style="width:14px;height:14px;">O</td><td style="width:14px;height:14px;">E</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">I</td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">E</td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">J</td><td style="width:14px;height:14px;">E</td><td style="width:14px;height:14px;">S</td><td style="width:14px;height:14px;">U</td><td style="width:14px;height:14px;">S</td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:14px;height:14px;">L</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr></table>
+            </div>
+        </div>
+        
+    <div class="page-break"></div>
+    
+        <div class="page">
+            <div class="page2-header">
+                <h1>Guía de Estudio: Personajes Bíblicos</h1>
+            </div>
+
+            <div class="board-section">
+                <table class="crossword" style="font-family: Arial, sans-serif;"><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">1</span></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">2</span></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">3</span></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">4</span></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">5</span></td><td class="empty"></td></tr><tr><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">6</span></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">7</span></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">8</span></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">9</span></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">10</span></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">11</span></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td></tr><tr><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">12</span></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">13</span></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">14</span></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td></tr><tr><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">15</span></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">16</span></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">17</span></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"><span class="number" style="font-size:7px;font-family:Arial,sans-serif;">18</span></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr><tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td style="width:22px;height:22px;"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr></table>
+            </div>
+
+            <div class="clues-section">
+                <h3>Pistas</h3>
+                <div class="clues-row">
+                    
+            <div class="clues-column">
+                <h4>Horizontales</h4>
+                <ol><li value="2"><span class="answer-line" style="width:68px;"></span> <span class="clue-text">______________________________________________</span></li><li value="3"><span class="answer-line" style="width:92px;"></span> <span class="clue-text">______________________________________________</span></li><li value="10"><span class="answer-line" style="width:92px;"></span> <span class="clue-text">______________________________________________</span></li><li value="12"><span class="answer-line" style="width:80px;"></span> <span class="clue-text">______________________________________________</span></li><li value="13"><span class="answer-line" style="width:104px;"></span> <span class="clue-text">______________________________________________</span></li><li value="15"><span class="answer-line" style="width:80px;"></span> <span class="clue-text">______________________________________________</span></li><li value="16"><span class="answer-line" style="width:68px;"></span> <span class="clue-text">______________________________________________</span></li><li value="17"><span class="answer-line" style="width:60px;"></span> <span class="clue-text">______________________________________________</span></li><li value="18"><span class="answer-line" style="width:80px;"></span> <span class="clue-text">______________________________________________</span></li></ol>
+            </div>
+            
+                    
+            <div class="clues-column">
+                <h4>Verticales</h4>
+                <ol><li value="1"><span class="answer-line" style="width:92px;"></span> <span class="clue-text">______________________________________________</span></li><li value="4"><span class="answer-line" style="width:80px;"></span> <span class="clue-text">______________________________________________</span></li><li value="5"><span class="answer-line" style="width:68px;"></span> <span class="clue-text">______________________________________________</span></li><li value="6"><span class="answer-line" style="width:80px;"></span> <span class="clue-text">______________________________________________</span></li><li value="7"><span class="answer-line" style="width:80px;"></span> <span class="clue-text">______________________________________________</span></li><li value="8"><span class="answer-line" style="width:80px;"></span> <span class="clue-text">______________________________________________</span></li><li value="9"><span class="answer-line" style="width:68px;"></span> <span class="clue-text">______________________________________________</span></li><li value="11"><span class="answer-line" style="width:92px;"></span> <span class="clue-text">______________________________________________</span></li><li value="14"><span class="answer-line" style="width:92px;"></span> <span class="clue-text">______________________________________________</span></li></ol>
+            </div>
+            
+                </div>
+            </div>
+
+            <div class="footer">
+                Guía de estudio generada automáticamente — Escuela del Pensamiento
+            </div>
+        </div>
+        
 </body>
 </html>

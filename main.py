@@ -1,7 +1,6 @@
 import sys
 import os
 
-# Añadir src/gac/ al path para importar los módulos directamente
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src', 'gac'))
 
 from generator import Generator
@@ -9,10 +8,7 @@ from exporter import Exporter
 
 
 def main():
-    """
-    Punto de entrada del GAC.
-    Genera un crucigrama y lo exporta a HTML.
-    """
+    """Punto de entrada del GAC."""
 
     # ── CONFIGURACIÓN ──────────────────────────────
     words = [
@@ -22,9 +18,10 @@ def main():
         "NOE", "ADAN", "EVA", "JONAS", "SAMUEL"
     ]
 
-    rows = 20
-    cols = 20
-    max_attempts = 50
+    # Tablero ajustado para A4: ancho suficiente pero no excesivo
+    rows = 12
+    cols = 22
+    max_attempts = 80
     output_file = "crucigrama.html"
     title = "Guía de Estudio: Personajes Bíblicos"
     # ───────────────────────────────────────────────
@@ -38,6 +35,7 @@ def main():
     generator.set_words(words)
 
     print(f"Generando crucigrama ({max_attempts} intentos)...")
+    print(f"Dimensiones: {rows} filas × {cols} columnas")
     print()
 
     success = generator.generate_with_backtracking(max_attempts=max_attempts)
@@ -59,16 +57,15 @@ def main():
     print("=" * 50)
     print("  INSTRUCCIONES")
     print("=" * 50)
-    print(f"1. Abre el archivo en tu navegador:")
+    print(f"1. Abre el archivo en Word:")
     print(f"   {filepath}")
     print()
-    print("2. Para editar en Word:")
-    print("   Abre Word → Archivo → Abrir → selecciona el HTML")
+    print("2. En Word, ajusta márgenes si es necesario.")
     print()
-    print("3. Reemplaza las palabras en las pistas por tus")
+    print("3. Reemplaza las líneas en las pistas por tus")
     print("   definiciones didácticas.")
     print()
-    print("4. Imprime a PDF cuando esté listo.")
+    print("4. Imprime a PDF (2 páginas).")
     print("=" * 50)
 
 

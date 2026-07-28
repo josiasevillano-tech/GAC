@@ -29,18 +29,53 @@ class Board:
     def can_place_word(self, row, col, word, direction):
         """
         Determina si una palabra puede colocarse en el tablero.
-        No modifica el tablero. Devuelve True o False.
+        Reglas:
+          1. Dentro de los límites.
+          2. Letras coincidentes en cruces.
+          3. NO formar palabras accidentales perpendiculares.
+          4. Extremos libres: antes y después de la palabra no debe haber letras.
         """
         dr, dc = direction.value
+
+        # ── Regla 4: Extremos libres ──
+        # Celda ANTES del inicio
+        before_r, before_c = row - dr, col - dc
+        if self.is_inside(before_r, before_c) and self.get_cell(before_r, before_c) is not None:
+            return False
+
+        # Celda DESPUÉS del final
+        after_r, after_c = row + len(word) * dr, col + len(word) * dc
+        if self.is_inside(after_r, after_c) and self.get_cell(after_r, after_c) is not None:
+            return False
+
         current_row, current_col = row, col
 
         for letter in word:
+            # Regla 1: Dentro del tablero
             if not self.is_inside(current_row, current_col):
                 return False
 
+            # Regla 2: Letra coincidente en cruces
             current_letter = self.get_cell(current_row, current_col)
             if current_letter is not None and current_letter != letter:
                 return False
+
+            # Regla 3: No formar palabras accidentales perpendiculares
+            if current_letter is None:
+                if dr == 0:  # Horizontal: verificar arriba/abajo
+                    if (self.is_inside(current_row - 1, current_col) and
+                            self.get_cell(current_row - 1, current_col) is not None):
+                        return False
+                    if (self.is_inside(current_row + 1, current_col) and
+                            self.get_cell(current_row + 1, current_col) is not None):
+                        return False
+                else:  # Vertical: verificar izquierda/derecha
+                    if (self.is_inside(current_row, current_col - 1) and
+                            self.get_cell(current_row, current_col - 1) is not None):
+                        return False
+                    if (self.is_inside(current_row, current_col + 1) and
+                            self.get_cell(current_row, current_col + 1) is not None):
+                        return False
 
             current_row += dr
             current_col += dc
@@ -113,7 +148,7 @@ class Board:
         return height * width
 
     # =====================================================
-    # NUEVO: Sistema de numeración de palabras
+    # Sistema de numeración de palabras
     # =====================================================
 
     def assign_numbers(self):
@@ -125,7 +160,6 @@ class Board:
         if not self.placements:
             return
 
-        # Ordenar por posición de inicio
         sorted_placements = sorted(
             self.placements,
             key=lambda p: (p["row"], p["col"])
@@ -142,9 +176,7 @@ class Board:
             p["number"] = position_to_number[pos]
 
     def get_numbered_placements(self):
-        """
-        Devuelve las palabras ordenadas por número y dirección.
-        """
+        """Devuelve las palabras ordenadas por número y dirección."""
         if not self.placements:
             return []
         if "number" not in self.placements[0]:
@@ -171,7 +203,7 @@ class Board:
     def to_grid(self):
         """
         Devuelve una matriz 2D con la información de cada celda
-        dentro del área delimitadora.
+        dentro del área delimitadora (vacío con números para estudiante).
         """
         if not self.cells:
             return []
@@ -194,4 +226,29 @@ class Board:
                 })
             grid.append(row)
 
+        return grid
+
+    def to_solved_grid(self):
+        """
+        Devuelve una matriz 2D con las LETRAS visibles
+        dentro del área delimitadora (para vista en miniatura del maestro).
+        """
+        if not self.cells:
+            return []
+
+        box = self.bounding_box()
+        if box is None:
+            return []
+
+        grid = []
+        for r in range(box["min_row"], box["max_row"] + 1):
+            row = []
+            for c in range(box["min_col"], box["max_col"] + 1):
+                letter = self.cells.get((r, c))
+                row.append({
+                    "letter": letter if letter else "",
+                    "number": None,
+                    "is_empty": letter is None
+                })
+            grid.append(row)
         return grid
