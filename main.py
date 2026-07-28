@@ -1,446 +1,76 @@
 import sys
 import os
 
+# Añadir src/gac/ al path para importar los módulos directamente
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src', 'gac'))
 
-from board import Board
-
-board = Board()
-
-from direction import Direction
-
-print("=== INSPECCIÓN DEL TABLERO ===")
-
-print("Filas:", board.rows)
-print("Columnas:", board.cols)
-print("Casillas:", board.cells)
-print("Palabras:", board.placements)
-
-print()
-print("=== INSPECCIÓN DE CASILLAS ===")
-
-print("(5,8):", board.is_empty(5, 8))
-print("(10,3):", board.is_empty(10, 3))
-
-print()
-print("=== INSPECCIÓN DE LÍMITES ===")
-
-print("(0,0):", board.is_inside(0, 0))
-print("(7,8):", board.is_inside(7, 8))
-print("(14,14):", board.is_inside(14, 14))
-print("(15,14):", board.is_inside(15, 14))
-print("(-1,8):", board.is_inside(-1, 8))
-print("(8,15):", board.is_inside(8, 15))
-
-print()
-print("=== INSPECCIÓN DE ESCRITURA ===")
-
-board.set_cell(7, 5, "A")
-
-print(board.cells)
-print("(7,5):", board.is_empty(7, 5))
-
-print()
-print("=== INSPECCIÓN DE LECTURA ===")
-
-print("(7,5):", board.get_cell(7, 5))
-print("(2,2):", board.get_cell(2, 2))
-
-print()
-print("=== INSPECCIÓN DE DIRECTION ===")
-
-print(Direction.HORIZONTAL)
-print(Direction.VERTICAL)
-
-print()
-print("=== INSPECCIÓN DE can_place_word ===")
-
-print(
-    board.can_place_word(
-        7,
-        5,
-        "CASA",
-        Direction.HORIZONTAL
-    )
-)
-
-print()
-print("=== INSPECCIÓN DE can_place_word ===")
-
-print(
-    board.can_place_word(
-        7,
-        5,
-        "CASA",
-        Direction.HORIZONTAL
-    )
-)
-
-print(
-    board.can_place_word(
-        14,
-        13,
-        "CASA",
-        Direction.HORIZONTAL
-    )
-)
-
-print()
-print("=== INSPECCIÓN DE CASILLA OCUPADA ===")
-
-board = Board()
-
-board.set_cell(7, 6, "X")
-
-print(board.can_place_word(
-    7,
-    5,
-    "CASA",
-    Direction.HORIZONTAL
-))
-
-print()
-print("=== INSPECCIÓN DE CRUCE CORRECTO ===")
-
-board = Board()
-
-board.set_cell(7, 6, "A")
-
-print(
-    board.can_place_word(
-        7,
-        5,
-        "CASA",
-        Direction.HORIZONTAL
-    )
-)
-
-print()
-print("=== INSPECCIÓN DE CRUCE INCORRECTO ===")
-
-board = Board()
-
-board.set_cell(7, 6, "X")
-
-print(
-    board.can_place_word(
-        7,
-        5,
-        "CASA",
-        Direction.HORIZONTAL
-    )
-)
-
-print()
-print("=== INSPECCIÓN DE place_word ===")
-
-board = Board()
-
-result = board.place_word(
-    7,
-    5,
-    "CASA",
-    Direction.HORIZONTAL
-)
-
-print(result)
-print(board.cells)
-print(board.placements)
-
-print()
-
-board = Board()
-
-result = board.place_word(
-    14,
-    13,
-    "CASA",
-    Direction.HORIZONTAL
-)
-
-print(result)
-print(board.cells)
-print(board.placements)
-
-print()
-print("=== INSPECCIÓN DE clear ===")
-
-board = Board()
-
-board.place_word(
-    7,
-    5,
-    "CASA",
-    Direction.HORIZONTAL
-)
-
-print("Antes:")
-print(board.cells)
-print(board.placements)
-
-board.clear()
-
-print()
-print("Después:")
-print(board.cells)
-print(board.placements)
-
-print()
-print("=== INSPECCIÓN DE word_count ===")
-
-board = Board()
-
-print(board.word_count())
-
-board.place_word(
-    7,
-    5,
-    "CASA",
-    Direction.HORIZONTAL
-)
-
-print(board.word_count())
-
-board.place_word(
-    5,
-    10,
-    "SOL",
-    Direction.VERTICAL
-)
-
-print(board.word_count())
-
 from generator import Generator
+from exporter import Exporter
 
-print()
-print("=== INSPECCIÓN DE Generator ===")
 
-generator = Generator()
+def main():
+    """
+    Punto de entrada del GAC.
+    Genera un crucigrama y lo exporta a HTML.
+    """
 
-print(generator.board.rows)
-print(generator.board.cols)
-print(generator.board.word_count())
+    # ── CONFIGURACIÓN ──────────────────────────────
+    words = [
+        "ABRAHAM", "MOISES", "DAVID", "JOSE", "MARIA",
+        "PEDRO", "PABLO", "JESUS", "ISAIAS", "DANIEL",
+        "ESTER", "RUTH", "SARA", "REBECA", "LEAH",
+        "NOE", "ADAN", "EVA", "JONAS", "SAMUEL"
+    ]
 
-from generator import Generator
+    rows = 20
+    cols = 20
+    max_attempts = 50
+    output_file = "crucigrama.html"
+    title = "Guía de Estudio: Personajes Bíblicos"
+    # ───────────────────────────────────────────────
 
-print()
-print("=== INSPECCIÓN DE Generator ===")
+    print("=" * 50)
+    print("  GENERADOR AUTOMÁTICO DE CRUCIGRAMAS (GAC)")
+    print("=" * 50)
+    print()
 
-generator = Generator()
+    generator = Generator(rows=rows, cols=cols)
+    generator.set_words(words)
 
-print("Filas:", generator.board.rows)
-print("Columnas:", generator.board.cols)
-print("Palabras:", generator.board.word_count())
+    print(f"Generando crucigrama ({max_attempts} intentos)...")
+    print()
 
-print()
-print("=== INSPECCIÓN DE words ===")
+    success = generator.generate_with_backtracking(max_attempts=max_attempts)
 
-generator = Generator()
+    if not success:
+        print("❌ No se pudo generar el crucigrama.")
+        return
 
-print(generator.words)
-print(len(generator.words))
+    data = generator.get_crossword_data()
 
-print()
-print("=== INSPECCIÓN DE set_words ===")
+    if data is None:
+        print("❌ No hay datos para exportar.")
+        return
 
-print()
-print("=== INSPECCIÓN DE ORDENAMIENTO ===")
-
-generator = Generator()
-
-generator.set_words([
-    "SOL",
-    "CONSTITUCIÓN",
-    "MAR",
-    "LUNA",
-    "CASA"
-])
-
-print(generator.words)
-
-print()
-print("=== INSPECCIÓN DE generate v0.2 ===")
-
-generator = Generator()
-
-generator.set_words([
-    "CASA",
-    "LUNA",
-    "SOL",
-    "SAL",
-    "ALA"
-])
-
-generator.generate()
-
-print()
-print("Cantidad:", generator.board.word_count())
-for placement in generator.board.placements:
-    print(placement)
-
-print()
-print("=== INSPECCIÓN DE find_common_letters ===")
-
-generator = Generator()
-
-print(generator.find_common_letters("CASA", "SOL"))
-print(generator.find_common_letters("CASA", "BARCA"))
-print(generator.find_common_letters("CASA", "LUNA"))
-
-print()
-print("=== INSPECCIÓN DE find_letter_positions ===")
-
-generator = Generator()
-
-print(generator.find_letter_positions("CASA", "A"))
-print(generator.find_letter_positions("CASA", "C"))
-print(generator.find_letter_positions("CASA", "S"))
-print(generator.find_letter_positions("CASA", "X"))
-
-print()
-print("=== INSPECCIÓN DE find_crosses ===")
-
-generator = Generator()
-
-for cross in generator.find_crosses("CASA", "LUNA"):
-    print(cross)
+    exporter = Exporter(data, title=title)
+    filepath = exporter.save(output_file)
 
     print()
-print("=== INSPECCIÓN DE compute_start_position ===")
-
-generator = Generator()
-
-print(
-    generator.compute_start_position(
-        7,
-        5,
-        Direction.HORIZONTAL,
-        3,
-        3
-    )
-)
-
-print()
-print("=== INSPECCIÓN DE generate v0.3 ===")
-
-generator = Generator()
-
-generator.set_words([
-    "CASA",
-    "LUNA",
-    "SOL",
-    "SAL",
-    "ALA",
-    "SALA"
-])
-
-generator.generate()
-
-print("Cantidad:", generator.board.word_count())
-
-for placement in generator.board.placements:
-    print(placement)
-
+    print("=" * 50)
+    print("  INSTRUCCIONES")
+    print("=" * 50)
+    print(f"1. Abre el archivo en tu navegador:")
+    print(f"   {filepath}")
     print()
-print("=== INSPECCIÓN DE find_candidate_positions ===")
+    print("2. Para editar en Word:")
+    print("   Abre Word → Archivo → Abrir → selecciona el HTML")
+    print()
+    print("3. Reemplaza las palabras en las pistas por tus")
+    print("   definiciones didácticas.")
+    print()
+    print("4. Imprime a PDF cuando esté listo.")
+    print("=" * 50)
 
-generator = Generator()
 
-generator.set_words([
-    "CASA"
-])
-
-generator.generate()
-
-placed = generator.board.placements[0]
-
-candidates = generator.find_candidate_positions(
-    placed,
-    "LUNA"
-)
-
-print(candidates)
-
-print()
-print("=== INSPECCIÓN DE bounding_box ===")
-
-board = Board()
-
-board.place_word(
-    7,
-    5,
-    "CASA",
-    Direction.HORIZONTAL
-)
-
-board.place_word(
-    4,
-    6,
-    "LUNA",
-    Direction.VERTICAL
-)
-
-print(board.bounding_box())
-
-print()
-print("=== INSPECCIÓN DE bounding_area ===")
-
-board = Board()
-
-board.place_word(
-    7,
-    5,
-    "CASA",
-    Direction.HORIZONTAL
-)
-
-board.place_word(
-    4,
-    6,
-    "LUNA",
-    Direction.VERTICAL
-)
-
-print(board.bounding_area())
-
-print()
-print("=== INSPECCIÓN DE clone ===")
-
-board = Board()
-
-board.place_word(
-    7,
-    5,
-    "CASA",
-    Direction.HORIZONTAL
-)
-
-copy_board = board.clone()
-
-copy_board.place_word(
-    4,
-    6,
-    "LUNA",
-    Direction.VERTICAL
-)
-
-print("Original:")
-print(board.cells)
-
-print()
-
-print("Copia:")
-print(copy_board.cells)
-
-print()
-
-print("=== GENERADOR ===")
-
-generator = Generator()
-
-generator.set_words([
-    "CASA",
-    "LUNA"
-])
-
-generator.generate()
+if __name__ == "__main__":
+    main()
