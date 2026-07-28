@@ -59,10 +59,15 @@ class Generator:
 
     def word_count(self):
         """
-        Devuelve la cantidad de palabras colocadas.
+        Devuelve la cantidad de palabras colocadas en el tablero.
         """
+        return self.board.word_count()
 
-        return len(self.board.placements)
+    def intersection_count(self):
+        """
+        Devuelve la cantidad de cruces del crucigrama.
+        """
+        return self.score_intersections(self.board)
     
     def generate(self):
         """
