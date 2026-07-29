@@ -4,18 +4,17 @@ import os
 class Exporter:
     """
     Exporta un crucigrama a HTML profesional listo para imprimir en A4.
-    Página 1: miniatura resuelta + intro
-    Página 2: tablero + pistas (todo contenido)
     """
 
-    def __init__(self, data, title="Guía de Estudio", subtitle="Crucigrama"):
+    def __init__(self, data, title="Guía de Estudio", subtitle="Crucigrama", clues=None):
         self.data = data
         self.title = title
         self.subtitle = subtitle
+        self.clues = clues or {}
 
-    def _render_grid(self, grid, cell_size, number_size, show_letters=False):
+    def _render_grid(self, grid, cell_size, number_size_pt, show_letters=False):
         """Renderiza una cuadrícula como HTML."""
-        html = f'<table class="crossword" style="font-family: Arial, sans-serif;">'
+        html = f'<table class="crossword">'
         for row in grid:
             html += "<tr>"
             for cell in row:
@@ -24,7 +23,7 @@ class Exporter:
                 else:
                     number_span = ""
                     if cell.get("number"):
-                        number_span = f'<span class="number" style="font-size:{number_size}px;font-family:Arial,sans-serif;">{cell["number"]}</span>'
+                        number_span = f'<span class="number">{cell["number"]}</span>'
                     content = cell["letter"] if show_letters and cell["letter"] else ""
                     html += f'<td style="width:{cell_size}px;height:{cell_size}px;">{number_span}{content}</td>'
             html += "</tr>"
@@ -32,11 +31,12 @@ class Exporter:
         return html
 
     def _line_for_word(self, word):
-        """Genera una línea de subrayado proporcional al tamaño de la palabra."""
+        """Genera una raya proporcional al tamaño de la palabra usando subrayado."""
         length = len(word)
-        # Cada letra ≈ 12px de ancho en Arial 11
-        width = max(60, length * 12 + 20)
-        return f'<span class="answer-line" style="width:{width}px;"></span>'
+        # El doble de largo que antes: length * 2 + 4 espacios mínimo
+        num_spaces = max(8, length * 2 + 4)
+        spaces = '&nbsp;' * num_spaces
+        return f'<span class="answer-line">{spaces}</span>'
 
     def to_html(self):
         """Genera el HTML completo de la guía de estudio (2 páginas A4)."""
@@ -47,14 +47,12 @@ class Exporter:
 
         css = """
         <style>
-            @page { size: A4 portrait; margin: 15mm 18mm; }
+            @page { size: A4 portrait; margin: 6mm 8mm; }
 
-            * { box-sizing: border-box; }
+            * { box-sizing: border-box; margin: 0; padding: 0; }
 
             body {
-                font-family: Arial, "Segoe UI", sans-serif;
-                margin: 0;
-                padding: 0;
+                font-family: Arial, sans-serif;
                 color: #000;
                 background: #fff;
                 font-size: 11pt;
@@ -62,8 +60,7 @@ class Exporter:
 
             .page {
                 width: 100%;
-                min-height: 257mm;
-                padding: 0;
+                min-height: 284mm;
                 position: relative;
             }
 
@@ -75,21 +72,21 @@ class Exporter:
             /* ===== PÁGINA 1 ===== */
             .page1-header {
                 text-align: center;
-                margin-bottom: 20px;
+                margin-bottom: 10px;
                 border-bottom: 2px solid #000;
-                padding-bottom: 12px;
+                padding-bottom: 6px;
             }
             .page1-header h1 {
                 font-family: Arial, sans-serif;
                 font-size: 20pt;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                margin: 0 0 6px 0;
+                margin: 0 0 3px 0;
                 font-weight: bold;
             }
             .page1-header h2 {
                 font-family: Arial, sans-serif;
-                font-size: 12pt;
+                font-size: 11pt;
                 font-weight: normal;
                 color: #333;
                 margin: 0;
@@ -98,45 +95,45 @@ class Exporter:
             }
 
             .intro-section {
-                margin-bottom: 25px;
+                margin-bottom: 12px;
             }
             .intro-section h3 {
                 font-family: Arial, sans-serif;
-                font-size: 12pt;
+                font-size: 11pt;
                 text-transform: uppercase;
                 border-bottom: 1px solid #000;
-                padding-bottom: 4px;
-                margin: 0 0 10px 0;
+                padding-bottom: 2px;
+                margin: 0 0 6px 0;
             }
             .intro-text {
                 font-family: Arial, sans-serif;
                 font-size: 11pt;
-                line-height: 1.5;
+                line-height: 1.35;
                 text-align: justify;
             }
             .intro-text p {
-                margin: 0 0 8px 0;
+                margin: 0 0 5px 0;
             }
 
             .miniature-section {
                 text-align: center;
-                margin-top: 30px;
+                margin-top: 14px;
             }
             .miniature-section h3 {
                 font-family: Arial, sans-serif;
-                font-size: 11pt;
+                font-size: 10pt;
                 text-transform: uppercase;
                 letter-spacing: 1px;
-                margin: 0 0 12px 0;
+                margin: 0 0 8px 0;
                 color: #333;
             }
 
             /* ===== PÁGINA 2 ===== */
             .page2-header {
                 text-align: center;
-                margin-bottom: 15px;
+                margin-bottom: 8px;
                 border-bottom: 2px solid #000;
-                padding-bottom: 10px;
+                padding-bottom: 6px;
             }
             .page2-header h1 {
                 font-family: Arial, sans-serif;
@@ -149,7 +146,7 @@ class Exporter:
 
             .board-section {
                 text-align: center;
-                margin-bottom: 18px;
+                margin-bottom: 10px;
             }
 
             /* Tablero principal */
@@ -167,7 +164,7 @@ class Exporter:
                 font-weight: bold;
                 background: #fff;
                 padding: 0;
-                font-size: 14px;
+                font-size: 15px;
             }
             table.crossword td.empty {
                 background: transparent;
@@ -178,6 +175,7 @@ class Exporter:
                 top: 1px;
                 left: 2px;
                 font-family: Arial, sans-serif;
+                font-size: 7pt;
                 line-height: 1;
                 color: #000;
             }
@@ -194,7 +192,7 @@ class Exporter:
                 vertical-align: middle;
                 position: relative;
                 font-family: Arial, sans-serif;
-                font-size: 6px;
+                font-size: 8px;
                 font-weight: bold;
                 background: #fff;
                 padding: 0;
@@ -208,7 +206,7 @@ class Exporter:
                 top: 0;
                 left: 1px;
                 font-family: Arial, sans-serif;
-                font-size: 5px;
+                font-size: 5pt;
                 line-height: 1;
                 color: #000;
             }
@@ -219,16 +217,16 @@ class Exporter:
             }
             .clues-section h3 {
                 font-family: Arial, sans-serif;
-                font-size: 12pt;
+                font-size: 11pt;
                 text-transform: uppercase;
                 letter-spacing: 1px;
                 border-bottom: 2px solid #000;
-                padding-bottom: 5px;
-                margin: 0 0 10px 0;
+                padding-bottom: 3px;
+                margin: 0 0 6px 0;
             }
             .clues-row {
                 display: flex;
-                gap: 25px;
+                gap: 14px;
             }
             .clues-column {
                 flex: 1;
@@ -236,39 +234,44 @@ class Exporter:
             }
             .clues-column h4 {
                 font-family: Arial, sans-serif;
-                font-size: 11pt;
+                font-size: 10pt;
                 text-transform: uppercase;
-                margin: 0 0 8px 0;
+                margin: 0 0 5px 0;
                 color: #000;
                 border-bottom: 1px solid #999;
-                padding-bottom: 3px;
+                padding-bottom: 2px;
             }
             .clues-column ol {
-                padding-left: 22px;
+                padding-left: 16px;
                 margin: 0;
             }
             .clues-column li {
-                margin-bottom: 6px;
+                margin-top: 0;
+                margin-bottom: 1px;
+                padding-top: 0;
+                padding-bottom: 0;
                 font-family: Arial, sans-serif;
                 font-size: 11pt;
-                line-height: 1.35;
+                line-height: 1.15;
                 color: #000;
+                list-style-position: outside;
             }
             .clues-column li .clue-text {
                 display: inline;
             }
+
+            /* Raya para escribir la palabra: subrayado de espacios */
             .answer-line {
-                display: inline-block;
-                border-bottom: 1px solid #000;
-                height: 14px;
-                vertical-align: bottom;
-                margin-right: 4px;
+                text-decoration: underline;
+                text-decoration-thickness: 1.5px;
+                text-underline-offset: 2px;
+                white-space: pre;
             }
 
             .footer {
                 text-align: center;
-                margin-top: 15px;
-                padding-top: 6px;
+                margin-top: 8px;
+                padding-top: 3px;
                 border-top: 1px solid #ccc;
                 font-family: Arial, sans-serif;
                 font-size: 8pt;
@@ -278,7 +281,7 @@ class Exporter:
         """
 
         # ========== PÁGINA 1 ==========
-        solved_html = self._render_grid(solved, cell_size=14, number_size=5, show_letters=True)
+        solved_html = self._render_grid(solved, cell_size=16, number_size_pt=5, show_letters=True)
 
         page1 = f"""
         <div class="page">
@@ -299,24 +302,29 @@ class Exporter:
             </div>
 
             <div class="miniature-section">
-                <h3>Hoja de Respuestas (Vista en Miniatura)</h3>
+                <h3>Hoja de Respuestas</h3>
                 {solved_html}
             </div>
         </div>
         """
 
         # ========== PÁGINA 2 ==========
-        # Tablero principal con números (más grande)
-        student_html = self._render_grid(grid, cell_size=22, number_size=7, show_letters=False)
+        student_html = self._render_grid(grid, cell_size=24, number_size_pt=7, show_letters=False)
 
-        def format_clues(clues, direction_name):
+        def format_clues(clues_list, direction_name):
             items = ""
-            for clue in clues:
-                line = self._line_for_word(clue["word"])
+            for clue in clues_list:
+                word = clue["word"]
+                line = self._line_for_word(word)
+                definition = self.clues.get(word, "")
+                if definition:
+                    clue_text = f'<span class="clue-text">{definition}</span>'
+                else:
+                    clue_text = '<span class="clue-text">______________________________________________</span>'
+
                 items += (
                     f'<li value="{clue["number"]}">'
-                    f'{line} '
-                    f'<span class="clue-text">______________________________________________</span>'
+                    f'{line} {clue_text}'
                     f'</li>'
                 )
             return f"""
