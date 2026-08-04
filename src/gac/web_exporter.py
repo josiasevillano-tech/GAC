@@ -228,10 +228,10 @@ class WebExporter:
         .resena {
             background: white; padding: 16px; border-radius: var(--radio);
             box-shadow: var(--sombra); margin-bottom: 20px;
-            font-size: 0.95rem; line-height: 1.6;
+            font-size: 1.25rem; line-height: 1.75;
             border-left: 4px solid var(--color-secundario);
         }
-        .resena h3 { font-size: 1.2rem; color: var(--color-primario); margin-bottom: 10px; }
+        .resena h3 { font-size: 1.35rem; color: var(--color-primario); margin-bottom: 12px; }
         .barra-progreso {
             background: white; padding: 12px 16px; border-radius: var(--radio);
             box-shadow: var(--sombra); margin-bottom: 16px;
