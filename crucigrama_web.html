@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Guia de Estudio: Libros del Nuevo Testamento</title>
+    <style>
+        :root {
+            --color-fondo: #f5f7fa;
+            --color-primario: #2c5282;
+            --color-secundario: #3182ce;
+            --color-acierto: #38a169;
+            --color-error: #e53e3e;
+            --color-negra: #1a202c;
+            --color-texto: #2d3748;
+            --color-borde: #cbd5e0;
+            --color-celda-activa: #bee3f8;
+            --color-celda-seleccionada: #90cdf4;
+            --sombra: 0 2px 8px rgba(0,0,0,0.08);
+            --radio: 8px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.5;
+            padding: 16px;
+            min-height: 100vh;
+        }
+        .contenedor { max-width: 800px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 20px; }
+        header h1 { font-size: 1.5rem; color: var(--color-primario); margin-bottom: 4px; }
+        header .tema { font-size: 0.9rem; color: #718096; font-weight: 500; }
+        .resena {
+            background: white; padding: 16px; border-radius: var(--radio);
+            box-shadow: var(--sombra); margin-bottom: 20px;
+            font-size: 0.95rem; line-height: 1.6;
+            border-left: 4px solid var(--color-secundario);
+        }
+        .resena h3 { font-size: 1rem; color: var(--color-primario); margin-bottom: 8px; }
+        .barra-progreso {
+            background: white; padding: 12px 16px; border-radius: var(--radio);
+            box-shadow: var(--sombra); margin-bottom: 16px;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 8px;
+        }
+        .barra-progreso .info { font-size: 0.9rem; font-weight: 500; }
+        .barra-progreso .progreso-visual {
+            flex: 1; min-width: 120px; height: 10px;
+            background: #e2e8f0; border-radius: 5px; overflow: hidden;
+        }
+        .barra-progreso .progreso-visual .relleno {
+            height: 100%; width: 0%; background: var(--color-acierto);
+            border-radius: 5px; transition: width 0.4s ease;
+        }
+        .botones {
+            display: flex; gap: 10px; flex-wrap: wrap;
+            justify-content: center; margin-bottom: 16px;
+        }
+        .btn {
+            padding: 10px 20px; border: none; border-radius: var(--radio);
+            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; touch-action: manipulation;
+        }
+        .btn-primario { background: var(--color-primario); color: white; }
+        .btn-primario:hover { background: var(--color-secundario); }
+        .btn-secundario { background: #edf2f7; color: var(--color-texto); }
+        .btn-secundario:hover { background: #e2e8f0; }
+        .btn-pista { background: #faf089; color: #744210; }
+        .btn-pista:hover { background: #f6e05e; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .layout { display: flex; flex-direction: column; gap: 20px; }
+        @media (min-width: 768px) { .layout { flex-direction: row; align-items: flex-start; } }
+        .tablero-wrapper { flex: 1; min-width: 0; display: flex; justify-content: center; }
+        .tablero {
+            display: grid; gap: 1px; background: var(--color-borde);
+            border: 2px solid var(--color-borde); border-radius: var(--radio);
+            overflow: hidden; box-shadow: var(--sombra);
+            width: 100%; max-width: 500px;
+        }
+        .celda {
+            position: relative; background: white;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: clamp(10px, 4vw, 18px);
+            color: var(--color-texto); cursor: pointer;
+            user-select: none; transition: background 0.15s;
+            aspect-ratio: 1;
+        }
+        .celda.negra { background: var(--color-negra); cursor: default; }
+        .celda.activa { background: var(--color-celda-activa); }
+        .celda.seleccionada { background: var(--color-celda-seleccionada); }
+        .celda.correcta { background: #c6f6d5; color: #22543d; }
+        .celda.incorrecta { background: #fed7d7; color: #742a2a; }
+        .celda .numero {
+            position: absolute; top: 1px; left: 2px;
+            font-size: clamp(6px, 2vw, 10px); font-weight: 600;
+            color: #4a5568; line-height: 1;
+        }
+        .celda input {
+            width: 100%; height: 100%; border: none; background: transparent;
+            text-align: center; font-weight: 700; font-size: inherit;
+            color: inherit; text-transform: uppercase; outline: none; padding: 0;
+            caret-color: var(--color-primario);
+        }
+        .pistas { flex: 1; min-width: 280px; }
+        .pistas h3 {
+            font-size: 1rem; color: var(--color-primario); margin-bottom: 10px;
+            padding-bottom: 6px; border-bottom: 2px solid var(--color-borde);
+        }
+        .pista-item {
+            background: white; padding: 10px 12px; margin-bottom: 8px;
+            border-radius: 6px; box-shadow: var(--sombra); font-size: 0.9rem;
+            cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent;
+        }
+        .pista-item:hover { background: #f7fafc; }
+        .pista-item.activa { border-left-color: var(--color-secundario); background: #ebf8ff; }
+        .pista-item.completada {
+            opacity: 0.6; text-decoration: line-through;
+            background: #f0fff4; border-left-color: var(--color-acierto);
+        }
+        .pista-item .num { font-weight: 700; color: var(--color-primario); margin-right: 6px; }
+        .mensaje {
+            position: fixed; top: 16px; left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--color-primario); color: white;
+            padding: 12px 24px; border-radius: var(--radio); font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000;
+            transition: transform 0.3s ease; text-align: center; max-width: 90vw;
+        }
+        .mensaje.visible { transform: translateX(-50%) translateY(0); }
+        .mensaje.exito { background: var(--color-acierto); }
+        .mensaje.error { background: var(--color-error); }
+        .mensaje.pista-msg { background: #d69e2e; }
+        footer {
+            text-align: center; margin-top: 24px; padding-top: 16px;
+            border-top: 1px solid var(--color-borde); font-size: 0.8rem; color: #a0aec0;
+        }
+        .teclado {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0;
+            background: #edf2f7; padding: 8px; gap: 4px;
+            justify-content: center; flex-wrap: wrap; z-index: 500;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 767px) {
+            .teclado { display: flex; }
+            body { padding-bottom: 80px; }
+        }
+        .tecla {
+            min-width: 32px; height: 42px; background: white;
+            border: 1px solid var(--color-borde); border-radius: 5px;
+            font-weight: 700; font-size: 1rem; color: var(--color-texto);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            flex: 1; max-width: 40px;
+        }
+        .tecla:active { background: var(--color-celda-seleccionada); }
+        .tecla-borrar { background: #fed7d7; color: #742a2a; }
+        </style>
+</head>
+<body>
+    <div class="contenedor">
+        <header>
+            <h1>Guia de Estudio: Libros del Nuevo Testamento</h1>
+            <div class="tema">Historia Biblica</div>
+        </header>
+
+        <div class="resena">
+            <h3>Resena del tema</h3>
+            <p>El Nuevo Testamento es la segunda parte de la Biblia cristiana, compuesta por 27 libros escritos entre los siglos I y II d.C. Comienza con los cuatro evangelios (Mateo, Marcos, Lucas y Juan), continua con los Hechos de los Apostoles, las cartas de Pablo y otros apostoles, y culmina con el Apocalipsis. Estos textos fundamentaron la doctrina cristiana y han sido estudiados durante dos milenios como fuente de fe, moralidad y esperanza.</p>
+        </div>
+
+        <div class="barra-progreso">
+            <div class="info">
+                <span id="contador">0 / 20 palabras</span>
+            </div>
+            <div class="progreso-visual">
+                <div class="relleno" id="barra-relleno"></div>
+            </div>
+            <div class="info" id="porcentaje">0%</div>
+        </div>
+
+        <div class="botones">
+            <button class="btn btn-primario" onclick="verificarTodo()">Verificar</button>
+            <button class="btn btn-pista" onclick="darPista()">Mostrar pista</button>
+            <button class="btn btn-secundario" onclick="limpiarErrores()">Limpiar errores</button>
+            <button class="btn btn-secundario" onclick="reiniciar()">Reiniciar</button>
+        </div>
+
+        <div class="layout">
+            <div class="tablero-wrapper">
+                <div class="tablero" id="tablero"></div>
+            </div>
+
+            <div class="pistas">
+                <h3>Horizontales</h3>
+                <div id="pistas-h"></div>
+                <h3 style="margin-top: 16px;">Verticales</h3>
+                <div id="pistas-v"></div>
+            </div>
+        </div>
+
+        <footer>
+            Escuela del Pensamiento - Crucigrama interactivo
+        </footer>
+    </div>
+
+    <div class="mensaje" id="mensaje"></div>
+    
+        <div class="teclado" id="teclado">
+            <button class="tecla" onclick="tecladoVirtual('A')">A</button>
+            <button class="tecla" onclick="tecladoVirtual('B')">B</button>
+            <button class="tecla" onclick="tecladoVirtual('C')">C</button>
+            <button class="tecla" onclick="tecladoVirtual('D')">D</button>
+            <button class="tecla" onclick="tecladoVirtual('E')">E</button>
+            <button class="tecla" onclick="tecladoVirtual('F')">F</button>
+            <button class="tecla" onclick="tecladoVirtual('G')">G</button>
+            <button class="tecla" onclick="tecladoVirtual('H')">H</button>
+            <button class="tecla" onclick="tecladoVirtual('I')">I</button>
+            <button class="tecla" onclick="tecladoVirtual('J')">J</button>
+            <button class="tecla" onclick="tecladoVirtual('K')">K</button>
+            <button class="tecla" onclick="tecladoVirtual('L')">L</button>
+            <button class="tecla" onclick="tecladoVirtual('M')">M</button>
+            <button class="tecla" onclick="tecladoVirtual('N')">N</button>
+            <button class="tecla" onclick="tecladoVirtual('Ñ')">Ñ</button>
+            <button class="tecla" onclick="tecladoVirtual('O')">O</button>
+            <button class="tecla" onclick="tecladoVirtual('P')">P</button>
+            <button class="tecla" onclick="tecladoVirtual('Q')">Q</button>
+            <button class="tecla" onclick="tecladoVirtual('R')">R</button>
+            <button class="tecla" onclick="tecladoVirtual('S')">S</button>
+            <button class="tecla" onclick="tecladoVirtual('T')">T</button>
+            <button class="tecla" onclick="tecladoVirtual('U')">U</button>
+            <button class="tecla" onclick="tecladoVirtual('V')">V</button>
+            <button class="tecla" onclick="tecladoVirtual('W')">W</button>
+            <button class="tecla" onclick="tecladoVirtual('X')">X</button>
+            <button class="tecla" onclick="tecladoVirtual('Y')">Y</button>
+            <button class="tecla" onclick="tecladoVirtual('Z')">Z</button>
+            <button class="tecla tecla-borrar" onclick="tecladoVirtual('BACKSPACE')">⌫</button>
+        </div>
+        
+
+    <script>
+        const PALABRAS = [{"palabra": "EFESIOS", "pista": "Carta sobre la unidad de la Iglesia como cuerpo de Cristo.", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 13, "numero": 1}, {"palabra": "GALATAS", "pista": "Carta donde Pablo defiende la libertad cristiana frente a la ley.", "direccion": "horizontal", "fila_inicio": 2, "columna_inicio": 12, "numero": 6}, {"palabra": "COLOSENSES", "pista": "Carta que exalta la supremacia de Cristo sobre todo.", "direccion": "horizontal", "fila_inicio": 4, "columna_inicio": 16, "numero": 13}, {"palabra": "TESALONICENSES", "pista": "Dos cartas sobre la segunda venida de Cristo y la esperanza.", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 2, "numero": 14}, {"palabra": "MARCOS", "pista": "Evangelio mas corto, atribuido al discipulo de Pedro.", "direccion": "horizontal", "fila_inicio": 7, "columna_inicio": 9, "numero": 15}, {"palabra": "TIMOTEO", "pista": "Dos cartas pastorales de Pablo a su joven discipulo.", "direccion": "horizontal", "fila_inicio": 8, "columna_inicio": 0, "numero": 16}, {"palabra": "TITO", "pista": "Carta pastoral sobre el orden de la iglesia en Creta.", "direccion": "horizontal", "fila_inicio": 8, "columna_inicio": 16, "numero": 17}, {"palabra": "SANTIAGO", "pista": "Carta del hermano del Senor sobre la fe y las obras.", "direccion": "horizontal", "fila_inicio": 11, "columna_inicio": 0, "numero": 18}, {"palabra": "ROMANOS", "pista": "Carta magna de Pablo sobre la justificacion por la fe.", "direccion": "horizontal", "fila_inicio": 12, "columna_inicio": 11, "numero": 19}, {"palabra": "FILIPENSES", "pista": "Carta de alegria escrita desde la prision a una iglesia querida.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 14, "numero": 2}, {"palabra": "JUDAS", "pista": "Carta breve que advierte contra los falsos maestros.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 23, "numero": 3}, {"palabra": "LUCAS", "pista": "Evangelio escrito por el medico que tambien redacto Hechos.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 25, "numero": 4}, {"palabra": "JUAN", "pista": "Evangelio del discipulo amado, que tambien escribio tres cartas.", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 8, "numero": 5}, {"palabra": "APOCALIPSIS", "pista": "Ultimo libro de la Biblia, vision del fin de los tiempos.", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 17, "numero": 7}, {"palabra": "CORINTIOS", "pista": "Dos cartas de Pablo a una iglesia dividida en una ciudad griega.", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 0, "numero": 8}, {"palabra": "FILEMON", "pista": "Carta personal de Pablo pidiendo clemencia para un esclavo fugitivo.", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 6, "numero": 9}, {"palabra": "HEBREOS", "pista": "Carta que demuestra la superioridad de Cristo sobre el Antiguo Pacto.", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 21, "numero": 10}, {"palabra": "HECHOS", "pista": "Libro que narra la historia de la Iglesia primitiva tras la ascension.", "direccion": "vertical", "fila_inicio": 4, "columna_inicio": 3, "numero": 11}, {"palabra": "PEDRO", "pista": "Dos cartas del apostol que nego a Jesus y luego murio martirizado.", "direccion": "vertical", "fila_inicio": 4, "columna_inicio": 11, "numero": 12}, {"palabra": "MATEO", "pista": "Evangelio escrito por el ex recaudador de impuestos que acompano a Jesus.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 9, "numero": 15}];
+        const FILAS = 13;
+        const COLUMNAS = 26;
+        const TOTAL_PALABRAS = 20;
+
+        let celdaActiva = null;
+        let direccionActiva = 'horizontal';
+        let palabrasCompletadas = new Set();
+
+        function init() {
+            renderTablero();
+            renderPistas();
+            document.addEventListener('keydown', manejarTecla);
+        }
+
+        function renderTablero() {
+            const tablero = document.getElementById('tablero');
+            tablero.innerHTML = '';
+            tablero.style.gridTemplateColumns = 'repeat(' + COLUMNAS + ', 1fr)';
+            tablero.style.aspectRatio = COLUMNAS + ' / ' + FILAS;
+
+            for (let f = 0; f < FILAS; f++) {
+                for (let c = 0; c < COLUMNAS; c++) {
+                    const celda = document.createElement('div');
+                    celda.className = 'celda';
+                    celda.dataset.fila = f;
+                    celda.dataset.columna = c;
+
+                    const esNegra = !PALABRAS.some(p => {
+                        const df = p.direccion === 'horizontal' ? 0 : 1;
+                        const dc = p.direccion === 'horizontal' ? 1 : 0;
+                        for (let i = 0; i < p.palabra.length; i++) {
+                            if (p.fila_inicio + i * df === f && p.columna_inicio + i * dc === c) return true;
+                        }
+                        return false;
+                    });
+
+                    if (esNegra) {
+                        celda.classList.add('negra');
+                        tablero.appendChild(celda);
+                        continue;
+                    }
+
+                    const palabraInicio = PALABRAS.find(p => p.fila_inicio === f && p.columna_inicio === c);
+                    if (palabraInicio) {
+                        const num = document.createElement('span');
+                        num.className = 'numero';
+                        num.textContent = palabraInicio.numero || getNumero(palabraInicio);
+                        celda.appendChild(num);
+                    }
+
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.maxLength = 1;
+                    input.dataset.fila = f;
+                    input.dataset.columna = c;
+                    input.addEventListener('focus', () => seleccionarCelda(f, c));
+                    input.addEventListener('input', (e) => manejarInput(e, f, c));
+                    input.addEventListener('keydown', (e) => manejarTeclaCelda(e, f, c));
+                    input.addEventListener('click', (e) => { e.stopPropagation(); seleccionarCelda(f, c); });
+                    celda.appendChild(input);
+                    tablero.appendChild(celda);
+                }
+            }
+        }
+
+        function getNumero(palabra) {
+            const ordenadas = [...PALABRAS].sort((a, b) => {
+                if (a.fila_inicio !== b.fila_inicio) return a.fila_inicio - b.fila_inicio;
+                return a.columna_inicio - b.columna_inicio;
+            });
+            for (let i = 0; i < ordenadas.length; i++) {
+                if (ordenadas[i] === palabra) return i + 1;
+            }
+            return 1;
+        }
+
+        function renderPistas() {
+            const ph = document.getElementById('pistas-h');
+            const pv = document.getElementById('pistas-v');
+            ph.innerHTML = '';
+            pv.innerHTML = '';
+
+            PALABRAS.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'pista-item';
+                div.dataset.palabra = p.palabra;
+                div.innerHTML = '<span class="num">' + (p.numero || getNumero(p)) + '.</span>' + p.pista;
+                div.onclick = () => irAPalabra(p);
+                if (p.direccion === 'horizontal') ph.appendChild(div);
+                else pv.appendChild(div);
+            });
+        }
+
+        function seleccionarCelda(f, c) {
+            celdaActiva = { fila: f, columna: c };
+            document.querySelectorAll('.celda').forEach(el => el.classList.remove('activa', 'seleccionada'));
+            const celdaEl = getCeldaElement(f, c);
+            if (celdaEl) celdaEl.classList.add('seleccionada');
+            const palabra = encontrarPalabraEn(f, c, direccionActiva);
+            if (palabra) resaltarPalabra(palabra);
+            document.querySelectorAll('.pista-item').forEach(el => el.classList.remove('activa'));
+            if (palabra) {
+                const pistaEl = document.querySelector('.pista-item[data-palabra="' + palabra.palabra + '"]');
+                if (pistaEl) pistaEl.classList.add('activa');
+            }
+        }
+
+        function encontrarPalabraEn(f, c, direccion) {
+            return PALABRAS.find(p => {
+                if (p.direccion !== direccion) return false;
+                const df = direccion === 'horizontal' ? 0 : 1;
+                const dc = direccion === 'horizontal' ? 1 : 0;
+                for (let i = 0; i < p.palabra.length; i++) {
+                    if (p.fila_inicio + i * df === f && p.columna_inicio + i * dc === c) return true;
+                }
+                return false;
+            });
+        }
+
+        function resaltarPalabra(palabra) {
+            const df = palabra.direccion === 'horizontal' ? 0 : 1;
+            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
+            for (let i = 0; i < palabra.palabra.length; i++) {
+                const el = getCeldaElement(palabra.fila_inicio + i * df, palabra.columna_inicio + i * dc);
+                if (el) el.classList.add('activa');
+            }
+        }
+
+        function getCeldaElement(f, c) {
+            return document.querySelector('.celda[data-fila="' + f + '"][data-columna="' + c + '"]');
+        }
+
+        function getInput(f, c) {
+            const celda = getCeldaElement(f, c);
+            return celda ? celda.querySelector('input') : null;
+        }
+
+        function irAPalabra(palabra) {
+            direccionActiva = palabra.direccion;
+            seleccionarCelda(palabra.fila_inicio, palabra.columna_inicio);
+            const input = getInput(palabra.fila_inicio, palabra.columna_inicio);
+            if (input) input.focus();
+        }
+
+        function manejarInput(e, f, c) {
+            const val = e.target.value.toUpperCase();
+            e.target.value = val;
+            if (val.length === 1) {
+                moverSiguiente(f, c);
+            }
+        }
+
+        function manejarTeclaCelda(e, f, c) {
+            if (e.key === 'Enter') { e.preventDefault(); verificarTodo(); return; }
+            if (e.key === 'Backspace' && !e.target.value) { e.preventDefault(); moverAnterior(f, c); return; }
+            if (e.key === 'ArrowRight') { direccionActiva = 'horizontal'; mover(f, c, 0, 1); }
+            if (e.key === 'ArrowLeft') { direccionActiva = 'horizontal'; mover(f, c, 0, -1); }
+            if (e.key === 'ArrowDown') { direccionActiva = 'vertical'; mover(f, c, 1, 0); }
+            if (e.key === 'ArrowUp') { direccionActiva = 'vertical'; mover(f, c, -1, 0); }
+            if (e.key === ' ') { e.preventDefault(); direccionActiva = direccionActiva === 'horizontal' ? 'vertical' : 'horizontal'; seleccionarCelda(f, c); }
+        }
+
+        function manejarTecla(e) {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                if (e.shiftKey) moverAnterior(celdaActiva.fila, celdaActiva.columna);
+                else moverSiguiente(celdaActiva.fila, celdaActiva.columna);
+            }
+        }
+
+        function mover(f, c, df, dc) {
+            const nf = f + df, nc = c + dc;
+            const input = getInput(nf, nc);
+            if (input) { input.focus(); seleccionarCelda(nf, nc); }
+        }
+
+        function moverSiguiente(f, c) {
+            const palabra = encontrarPalabraEn(f, c, direccionActiva);
+            if (!palabra) return;
+            const df = palabra.direccion === 'horizontal' ? 0 : 1;
+            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
+            const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
+            if (idx + 1 < palabra.palabra.length) { mover(f, c, df, dc); }
+        }
+
+        function moverAnterior(f, c) {
+            const palabra = encontrarPalabraEn(f, c, direccionActiva);
+            if (!palabra) return;
+            const df = palabra.direccion === 'horizontal' ? 0 : 1;
+            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
+            const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
+            if (idx > 0) { mover(f, c, -df, -dc); }
+        }
+
+        function tecladoVirtual(tecla) {
+            if (!celdaActiva) return;
+            const input = getInput(celdaActiva.fila, celdaActiva.columna);
+            if (!input) return;
+            if (tecla === 'BACKSPACE') {
+                if (input.value) { input.value = ''; }
+                else { moverAnterior(celdaActiva.fila, celdaActiva.columna); }
+            } else {
+                input.value = tecla;
+                input.dispatchEvent(new Event('input'));
+            }
+        }
+
+        function verificarTodo() {
+            let correctas = 0;
+            let totalLetras = 0;
+            let letrasCorrectas = 0;
+
+            PALABRAS.forEach(p => {
+                const df = p.direccion === 'horizontal' ? 0 : 1;
+                const dc = p.direccion === 'horizontal' ? 1 : 0;
+                let palabraCorrecta = true;
+
+                for (let i = 0; i < p.palabra.length; i++) {
+                    const f = p.fila_inicio + i * df;
+                    const c = p.columna_inicio + i * dc;
+                    const input = getInput(f, c);
+                    const letraCorrecta = p.palabra[i].toUpperCase();
+                    totalLetras++;
+
+                    if (input) {
+                        const val = input.value.toUpperCase();
+                        const celda = getCeldaElement(f, c);
+                        if (val === letraCorrecta) {
+                            letrasCorrectas++;
+                            celda.classList.remove('incorrecta');
+                            celda.classList.add('correcta');
+                        } else if (val) {
+                            palabraCorrecta = false;
+                            celda.classList.remove('correcta');
+                            celda.classList.add('incorrecta');
+                        } else {
+                            palabraCorrecta = false;
+                            celda.classList.remove('correcta', 'incorrecta');
+                        }
+                    }
+                }
+
+                if (palabraCorrecta && p.palabra.length > 0) {
+                    correctas++;
+                    palabrasCompletadas.add(p.palabra);
+                    const pistaEl = document.querySelector('.pista-item[data-palabra="' + p.palabra + '"]');
+                    if (pistaEl) pistaEl.classList.add('completada');
+                }
+            });
+
+            actualizarProgreso();
+
+            if (correctas === PALABRAS.length) {
+                mostrarMensaje('FELICITACIONES: Completaste todo el crucigrama.', 'exito');
+            } else if (letrasCorrectas === totalLetras) {
+                mostrarMensaje('Vas muy bien. Llevas ' + correctas + ' de ' + PALABRAS.length + ' palabras.', 'exito');
+            } else {
+                mostrarMensaje('Sigue intentando. Llevas ' + correctas + ' de ' + PALABRAS.length + ' palabras correctas.', 'pista-msg');
+            }
+        }
+
+        function actualizarProgreso() {
+            const completadas = palabrasCompletadas.size;
+            const total = PALABRAS.length;
+            const porcentaje = total > 0 ? Math.round((completadas / total) * 100) : 0;
+            document.getElementById('contador').textContent = completadas + ' / ' + total + ' palabras';
+            document.getElementById('porcentaje').textContent = porcentaje + '%';
+            document.getElementById('barra-relleno').style.width = porcentaje + '%';
+        }
+
+        function darPista() {
+            if (!celdaActiva) { mostrarMensaje('Selecciona una celda primero.', 'error'); return; }
+            const palabra = encontrarPalabraEn(celdaActiva.fila, celdaActiva.columna, direccionActiva);
+            if (!palabra) { mostrarMensaje('No hay palabra en esta direccion.', 'error'); return; }
+            const df = palabra.direccion === 'horizontal' ? 0 : 1;
+            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
+            for (let i = 0; i < palabra.palabra.length; i++) {
+                const f = palabra.fila_inicio + i * df;
+                const c = palabra.columna_inicio + i * dc;
+                const input = getInput(f, c);
+                if (input && !input.value) {
+                    input.value = palabra.palabra[i].toUpperCase();
+                    input.dispatchEvent(new Event('input'));
+                    mostrarMensaje('Se revelo una letra de "' + palabra.palabra + '"', 'pista-msg');
+                    return;
+                }
+            }
+            mostrarMensaje('Esa palabra ya esta completa.', 'exito');
+        }
+
+        function limpiarErrores() {
+            document.querySelectorAll('.celda.incorrecta').forEach(el => {
+                el.classList.remove('incorrecta');
+                const input = el.querySelector('input');
+                if (input) input.value = '';
+            });
+            mostrarMensaje('Errores limpiados.', 'pista-msg');
+        }
+
+        function reiniciar() {
+            if (!confirm('Seguro que quieres borrar todo y empezar de nuevo?')) return;
+            document.querySelectorAll('input').forEach(input => input.value = '');
+            document.querySelectorAll('.celda').forEach(el => el.classList.remove('correcta', 'incorrecta'));
+            document.querySelectorAll('.pista-item').forEach(el => el.classList.remove('completada'));
+            palabrasCompletadas.clear();
+            actualizarProgreso();
+            mostrarMensaje('Crucigrama reiniciado.', 'pista-msg');
+        }
+
+        function mostrarMensaje(texto, tipo) {
+            const msg = document.getElementById('mensaje');
+            msg.textContent = texto;
+            msg.className = 'mensaje visible ' + tipo;
+            setTimeout(() => { msg.classList.remove('visible'); }, 3000);
+        }
+
+        init();
+        </script>
+</body>
+</html>

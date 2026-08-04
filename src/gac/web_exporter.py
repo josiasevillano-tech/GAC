@@ -36,8 +36,8 @@ class WebExporter:
 
         html = self._generar_html(matriz, palabras, filas, columnas)
         filepath = os.path.abspath(filename)
-        with open(filepath, "w", encoding="utf-8") as f:
-            f.write(html)
+        with open(filepath, "w", encoding="utf-8") as f2:
+            f2.write(html)
         print("Web interactiva guardada en: " + filepath)
         return filepath
 
@@ -57,20 +57,15 @@ class WebExporter:
                         letra = cell.get("letter", "")
                         fila.append(letra.upper() if letra else " ")
                 else:
-                    # Si cell es un string directo
                     fila.append(str(cell).upper() if str(cell).strip() else "#")
             matriz.append(fila)
         return matriz
 
     def _get_clue_lists(self):
-        """Obtiene las listas de pistas probando varias claves posibles."""
-        # Probar varias combinaciones de claves
         h_keys = ["horizontal", "across", "h", "horizontales"]
         v_keys = ["vertical", "down", "v", "verticales"]
-
         h_list = []
         v_list = []
-
         for k in h_keys:
             if k in self.data:
                 h_list = self.data[k]
@@ -79,25 +74,21 @@ class WebExporter:
             if k in self.data:
                 v_list = self.data[k]
                 break
-
         return h_list, v_list
 
     def _get_word_from_item(self, item):
-        """Extrae la palabra de un item de pista probando varias claves."""
         for key in ["word", "text", "answer", "palabra", "w"]:
             if key in item:
                 return item[key]
         return ""
 
     def _get_number_from_item(self, item):
-        """Extrae el numero de un item de pista probando varias claves."""
         for key in ["number", "num", "id", "n", "numero"]:
             if key in item:
                 return item[key]
         return None
 
     def _buscar_posicion(self, grid, numero) -> tuple:
-        """Busca en la cuadricula la celda que tiene este numero."""
         if numero is None:
             return None, None
         num_str = str(numero)
@@ -110,13 +101,11 @@ class WebExporter:
         return None, None
 
     def _buscar_palabra_en_matriz(self, matriz, palabra, direccion) -> tuple:
-        """Busca una palabra en la matriz letra por letra."""
         if not palabra or not matriz:
             return None, None
         palabra = palabra.upper()
         filas = len(matriz)
         columnas = len(matriz[0]) if filas > 0 else 0
-
         for f in range(filas):
             for c in range(columnas):
                 if matriz[f][c] == palabra[0] or matriz[f][c] == " ":
@@ -129,7 +118,7 @@ class WebExporter:
                                     break
                             if match:
                                 return f, c
-                    else:  # vertical
+                    else:
                         if f + len(palabra) <= filas:
                             match = True
                             for i in range(len(palabra)):
@@ -141,22 +130,15 @@ class WebExporter:
         return None, None
 
     def _extraer_palabras(self, matriz) -> List[Dict[str, Any]]:
-        """Extrae todas las palabras con sus posiciones."""
         h_list, v_list = self._get_clue_lists()
         palabras = []
-
-        # Procesar horizontales
         for item in h_list:
             word = self._get_word_from_item(item)
             num = self._get_number_from_item(item)
             pista = self.clues.get(word, "")
-
             fila, col = self._buscar_posicion(self.data.get("solved_grid") or self.data.get("grid", []), num)
-
-            # Fallback: buscar en la matriz directamente
             if fila is None and matriz:
                 fila, col = self._buscar_palabra_en_matriz(matriz, word, "horizontal")
-
             if fila is not None:
                 palabras.append({
                     "palabra": word,
@@ -166,19 +148,13 @@ class WebExporter:
                     "columna_inicio": col,
                     "numero": num if num is not None else len(palabras) + 1
                 })
-
-        # Procesar verticales
         for item in v_list:
             word = self._get_word_from_item(item)
             num = self._get_number_from_item(item)
             pista = self.clues.get(word, "")
-
             fila, col = self._buscar_posicion(self.data.get("solved_grid") or self.data.get("grid", []), num)
-
-            # Fallback: buscar en la matriz directamente
             if fila is None and matriz:
                 fila, col = self._buscar_palabra_en_matriz(matriz, word, "vertical")
-
             if fila is not None:
                 palabras.append({
                     "palabra": word,
@@ -188,11 +164,9 @@ class WebExporter:
                     "columna_inicio": col,
                     "numero": num if num is not None else len(palabras) + 1
                 })
-
         return palabras
 
     def _generar_html(self, matriz, palabras, filas, columnas) -> str:
-        """Genera el HTML completo con CSS y JavaScript embebidos."""
         palabras_js = json.dumps(palabras, ensure_ascii=False)
         total_palabras = len(palabras)
         resena_html = self.resena.replace("\n", "<br>")
@@ -214,7 +188,7 @@ class WebExporter:
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
             background: var(--color-fondo);
             color: var(--color-texto);
             line-height: 1.5;
@@ -226,7 +200,7 @@ class WebExporter:
         header h1 { font-size: 1.5rem; color: var(--color-primario); margin-bottom: 4px; }
         header .tema { font-size: 0.9rem; color: #718096; font-weight: 500; }
         .resena {
-            background: white; padding: 16px; border-radius: var(--radio);
+            background: white; padding: 20px; border-radius: var(--radio);
             box-shadow: var(--sombra); margin-bottom: 20px;
             font-size: 1.25rem; line-height: 1.75;
             border-left: 4px solid var(--color-secundario);
@@ -348,6 +322,61 @@ class WebExporter:
         }
         .tecla:active { background: var(--color-celda-seleccionada); }
         .tecla-borrar { background: #fed7d7; color: #742a2a; }
+        /* === MODAL DE PUNTUACION === */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); z-index: 2000;
+            justify-content: center; align-items: center;
+            padding: 16px;
+        }
+        .modal-overlay.visible { display: flex; }
+        .modal {
+            background: white; border-radius: 16px; padding: 28px;
+            max-width: 420px; width: 100%; text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalIn 0.4s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.85) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal h2 {
+            font-size: 1.6rem; color: var(--color-primario); margin-bottom: 8px;
+        }
+        .modal .subtitulo {
+            font-size: 1rem; color: #718096; margin-bottom: 20px;
+        }
+        .estrellas { font-size: 2.4rem; margin-bottom: 16px; letter-spacing: 4px; }
+        .puntaje-grande {
+            font-size: 3rem; font-weight: 800; color: var(--color-primario);
+            margin-bottom: 4px;
+        }
+        .puntaje-label {
+            font-size: 0.9rem; color: #718096; margin-bottom: 20px;
+        }
+        .stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #f7fafc; padding: 12px; border-radius: 10px;
+        }
+        .stat-box .stat-valor {
+            font-size: 1.3rem; font-weight: 700; color: var(--color-primario);
+        }
+        .stat-box .stat-label {
+            font-size: 0.75rem; color: #a0aec0; text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .mensaje-final {
+            font-size: 1.1rem; font-weight: 600;
+            padding: 12px; border-radius: 10px; margin-bottom: 20px;
+        }
+        .mensaje-final.oro { background: #fefcbf; color: #744210; }
+        .mensaje-final.plata { background: #e2e8f0; color: #2d3748; }
+        .mensaje-final.bronce { background: #feebc8; color: #7c2d12; }
+        .mensaje-final.normal { background: #ebf8ff; color: #2c5282; }
+        .modal .btn { width: 100%; margin-top: 8px; }
         """
 
         js = f"""
@@ -357,60 +386,71 @@ class WebExporter:
         const TOTAL_PALABRAS = {total_palabras};
 
         let celdaActiva = null;
-        let direccionActiva = 'horizontal';
+        let direccionActiva = "horizontal";
         let palabrasCompletadas = new Set();
+        let tiempoInicio = Date.now();
+        let pistasUsadas = 0;
+        let verificaciones = 0;
+        let juegoTerminado = false;
 
         function init() {{
             renderTablero();
             renderPistas();
-            document.addEventListener('keydown', manejarTecla);
+            document.addEventListener("keydown", manejarTecla);
+            iniciarCronometro();
+        }}
+
+        function iniciarCronometro() {{
+            setInterval(() => {{
+                if (juegoTerminado) return;
+                const segundos = Math.floor((Date.now() - tiempoInicio) / 1000);
+                const min = Math.floor(segundos / 60).toString().padStart(2, "0");
+                const sec = (segundos % 60).toString().padStart(2, "0");
+                const el = document.getElementById("cronometro");
+                if (el) el.textContent = min + ":" + sec;
+            }}, 1000);
         }}
 
         function renderTablero() {{
-            const tablero = document.getElementById('tablero');
-            tablero.innerHTML = '';
-            tablero.style.gridTemplateColumns = 'repeat(' + COLUMNAS + ', 1fr)';
-            tablero.style.aspectRatio = COLUMNAS + ' / ' + FILAS;
-
+            const tablero = document.getElementById("tablero");
+            tablero.innerHTML = "";
+            tablero.style.gridTemplateColumns = "repeat(" + COLUMNAS + ", 1fr)";
+            tablero.style.aspectRatio = COLUMNAS + " / " + FILAS;
             for (let f = 0; f < FILAS; f++) {{
                 for (let c = 0; c < COLUMNAS; c++) {{
-                    const celda = document.createElement('div');
-                    celda.className = 'celda';
+                    const celda = document.createElement("div");
+                    celda.className = "celda";
                     celda.dataset.fila = f;
                     celda.dataset.columna = c;
-
                     const esNegra = !PALABRAS.some(p => {{
-                        const df = p.direccion === 'horizontal' ? 0 : 1;
-                        const dc = p.direccion === 'horizontal' ? 1 : 0;
+                        const df = p.direccion === "horizontal" ? 0 : 1;
+                        const dc = p.direccion === "horizontal" ? 1 : 0;
                         for (let i = 0; i < p.palabra.length; i++) {{
                             if (p.fila_inicio + i * df === f && p.columna_inicio + i * dc === c) return true;
                         }}
                         return false;
                     }});
-
                     if (esNegra) {{
-                        celda.classList.add('negra');
+                        celda.classList.add("negra");
                         tablero.appendChild(celda);
                         continue;
                     }}
-
                     const palabraInicio = PALABRAS.find(p => p.fila_inicio === f && p.columna_inicio === c);
                     if (palabraInicio) {{
-                        const num = document.createElement('span');
-                        num.className = 'numero';
+                        const num = document.createElement("span");
+                        num.className = "numero";
                         num.textContent = palabraInicio.numero || getNumero(palabraInicio);
                         celda.appendChild(num);
                     }}
-
-                    const input = document.createElement('input');
-                    input.type = 'text';
+                    const input = document.createElement("input");
+                    input.type = "text";
                     input.maxLength = 1;
                     input.dataset.fila = f;
                     input.dataset.columna = c;
-                    input.addEventListener('focus', () => seleccionarCelda(f, c));
-                    input.addEventListener('input', (e) => manejarInput(e, f, c));
-                    input.addEventListener('keydown', (e) => manejarTeclaCelda(e, f, c));
-                    input.addEventListener('click', (e) => {{ e.stopPropagation(); seleccionarCelda(f, c); }});
+                    input.addEventListener("focus", () => seleccionarCelda(f, c));
+                    input.addEventListener("input", (e) => manejarInput(e, f, c));
+                    input.addEventListener("keydown", (e) => manejarTeclaCelda(e, f, c));
+                    input.addEventListener("click", (e) => {{ e.stopPropagation(); seleccionarCelda(f, c); }});
                     celda.appendChild(input);
                     tablero.appendChild(celda);
                 }}
@@ -429,41 +469,40 @@ class WebExporter:
         }}
 
         function renderPistas() {{
-            const ph = document.getElementById('pistas-h');
-            const pv = document.getElementById('pistas-v');
-            ph.innerHTML = '';
-            pv.innerHTML = '';
-
+            const ph = document.getElementById("pistas-h");
+            const pv = document.getElementById("pistas-v");
+            ph.innerHTML = "";
+            pv.innerHTML = "";
             PALABRAS.forEach(p => {{
-                const div = document.createElement('div');
-                div.className = 'pista-item';
+                const div = document.createElement("div");
+                div.className = "pista-item";
                 div.dataset.palabra = p.palabra;
-                div.innerHTML = '<span class="num">' + (p.numero || getNumero(p)) + '.</span>' + p.pista;
+                div.innerHTML = '<span class="num">' + (p.numero || getNumero(p)) + '. </span>' + p.pista;
                 div.onclick = () => irAPalabra(p);
-                if (p.direccion === 'horizontal') ph.appendChild(div);
+                if (p.direccion === "horizontal") ph.appendChild(div);
                 else pv.appendChild(div);
             }});
         }}
 
         function seleccionarCelda(f, c) {{
             celdaActiva = {{ fila: f, columna: c }};
-            document.querySelectorAll('.celda').forEach(el => el.classList.remove('activa', 'seleccionada'));
+            document.querySelectorAll(".celda").forEach(el => el.classList.remove("activa", "seleccionada"));
             const celdaEl = getCeldaElement(f, c);
-            if (celdaEl) celdaEl.classList.add('seleccionada');
+            if (celdaEl) celdaEl.classList.add("seleccionada");
             const palabra = encontrarPalabraEn(f, c, direccionActiva);
             if (palabra) resaltarPalabra(palabra);
-            document.querySelectorAll('.pista-item').forEach(el => el.classList.remove('activa'));
+            document.querySelectorAll(".pista-item").forEach(el => el.classList.remove("activa"));
             if (palabra) {{
                 const pistaEl = document.querySelector('.pista-item[data-palabra="' + palabra.palabra + '"]');
-                if (pistaEl) pistaEl.classList.add('activa');
+                if (pistaEl) pistaEl.classList.add("activa");
             }}
         }}
 
         function encontrarPalabraEn(f, c, direccion) {{
             return PALABRAS.find(p => {{
                 if (p.direccion !== direccion) return false;
-                const df = direccion === 'horizontal' ? 0 : 1;
-                const dc = direccion === 'horizontal' ? 1 : 0;
+                const df = direccion === "horizontal" ? 0 : 1;
+                const dc = direccion === "horizontal" ? 1 : 0;
                 for (let i = 0; i < p.palabra.length; i++) {{
                     if (p.fila_inicio + i * df === f && p.columna_inicio + i * dc === c) return true;
                 }}
@@ -472,11 +511,11 @@ class WebExporter:
         }}
 
         function resaltarPalabra(palabra) {{
-            const df = palabra.direccion === 'horizontal' ? 0 : 1;
-            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
+            const df = palabra.direccion === "horizontal" ? 0 : 1;
+            const dc = palabra.direccion === "horizontal" ? 1 : 0;
             for (let i = 0; i < palabra.palabra.length; i++) {{
                 const el = getCeldaElement(palabra.fila_inicio + i * df, palabra.columna_inicio + i * dc);
-                if (el) el.classList.add('activa');
+                if (el) el.classList.add("activa");
             }}
         }}
 
@@ -486,7 +525,7 @@ class WebExporter:
 
         function getInput(f, c) {{
             const celda = getCeldaElement(f, c);
-            return celda ? celda.querySelector('input') : null;
+            return celda ? celda.querySelector("input") : null;
         }}
 
         function irAPalabra(palabra) {{
@@ -505,17 +544,17 @@ class WebExporter:
         }}
 
         function manejarTeclaCelda(e, f, c) {{
-            if (e.key === 'Enter') {{ e.preventDefault(); verificarTodo(); return; }}
-            if (e.key === 'Backspace' && !e.target.value) {{ e.preventDefault(); moverAnterior(f, c); return; }}
-            if (e.key === 'ArrowRight') {{ direccionActiva = 'horizontal'; mover(f, c, 0, 1); }}
-            if (e.key === 'ArrowLeft') {{ direccionActiva = 'horizontal'; mover(f, c, 0, -1); }}
-            if (e.key === 'ArrowDown') {{ direccionActiva = 'vertical'; mover(f, c, 1, 0); }}
-            if (e.key === 'ArrowUp') {{ direccionActiva = 'vertical'; mover(f, c, -1, 0); }}
-            if (e.key === ' ') {{ e.preventDefault(); direccionActiva = direccionActiva === 'horizontal' ? 'vertical' : 'horizontal'; seleccionarCelda(f, c); }}
+            if (e.key === "Enter") {{ e.preventDefault(); verificarTodo(); return; }}
+            if (e.key === "Backspace" && !e.target.value) {{ e.preventDefault(); moverAnterior(f, c); return; }}
+            if (e.key === "ArrowRight") {{ direccionActiva = "horizontal"; mover(f, c, 0, 1); }}
+            if (e.key === "ArrowLeft") {{ direccionActiva = "horizontal"; mover(f, c, 0, -1); }}
+            if (e.key === "ArrowDown") {{ direccionActiva = "vertical"; mover(f, c, 1, 0); }}
+            if (e.key === "ArrowUp") {{ direccionActiva = "vertical"; mover(f, c, -1, 0); }}
+            if (e.key === " ") {{ e.preventDefault(); direccionActiva = direccionActiva === "horizontal" ? "vertical" : "horizontal"; seleccionarCelda(f, c); }}
         }}
 
         function manejarTecla(e) {{
-            if (e.key === 'Tab') {{
+            if (e.key === "Tab") {{
                 e.preventDefault();
                 if (e.shiftKey) moverAnterior(celdaActiva.fila, celdaActiva.columna);
                 else moverSiguiente(celdaActiva.fila, celdaActiva.columna);
@@ -531,8 +570,8 @@ class WebExporter:
         function moverSiguiente(f, c) {{
             const palabra = encontrarPalabraEn(f, c, direccionActiva);
             if (!palabra) return;
-            const df = palabra.direccion === 'horizontal' ? 0 : 1;
-            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
+            const df = palabra.direccion === "horizontal" ? 0 : 1;
+            const dc = palabra.direccion === "horizontal" ? 1 : 0;
             const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
             if (idx + 1 < palabra.palabra.length) {{ mover(f, c, df, dc); }}
         }}
@@ -540,8 +579,8 @@ class WebExporter:
         function moverAnterior(f, c) {{
             const palabra = encontrarPalabraEn(f, c, direccionActiva);
             if (!palabra) return;
-            const df = palabra.direccion === 'horizontal' ? 0 : 1;
-            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
+            const df = palabra.direccion === "horizontal" ? 0 : 1;
+            const dc = palabra.direccion === "horizontal" ? 1 : 0;
             const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
             if (idx > 0) {{ mover(f, c, -df, -dc); }}
         }}
@@ -550,122 +589,194 @@ class WebExporter:
             if (!celdaActiva) return;
             const input = getInput(celdaActiva.fila, celdaActiva.columna);
             if (!input) return;
-            if (tecla === 'BACKSPACE') {{
-                if (input.value) {{ input.value = ''; }}
+            if (tecla === "BACKSPACE") {{
+                if (input.value) {{ input.value = ""; }}
                 else {{ moverAnterior(celdaActiva.fila, celdaActiva.columna); }}
             }} else {{
                 input.value = tecla;
-                input.dispatchEvent(new Event('input'));
+                input.dispatchEvent(new Event("input"));
             }}
         }}
 
         function verificarTodo() {{
+            if (juegoTerminado) return;
+            verificaciones++;
             let correctas = 0;
             let totalLetras = 0;
             let letrasCorrectas = 0;
+            let letrasIncorrectas = 0;
 
             PALABRAS.forEach(p => {{
-                const df = p.direccion === 'horizontal' ? 0 : 1;
-                const dc = p.direccion === 'horizontal' ? 1 : 0;
+                const df = p.direccion === "horizontal" ? 0 : 1;
+                const dc = p.direccion === "horizontal" ? 1 : 0;
                 let palabraCorrecta = true;
-
                 for (let i = 0; i < p.palabra.length; i++) {{
                     const f = p.fila_inicio + i * df;
                     const c = p.columna_inicio + i * dc;
                     const input = getInput(f, c);
                     const letraCorrecta = p.palabra[i].toUpperCase();
                     totalLetras++;
-
                     if (input) {{
                         const val = input.value.toUpperCase();
                         const celda = getCeldaElement(f, c);
                         if (val === letraCorrecta) {{
                             letrasCorrectas++;
-                            celda.classList.remove('incorrecta');
-                            celda.classList.add('correcta');
+                            celda.classList.remove("incorrecta");
+                            celda.classList.add("correcta");
                         }} else if (val) {{
                             palabraCorrecta = false;
-                            celda.classList.remove('correcta');
-                            celda.classList.add('incorrecta');
+                            letrasIncorrectas++;
+                            celda.classList.remove("correcta");
+                            celda.classList.add("incorrecta");
                         }} else {{
                             palabraCorrecta = false;
-                            celda.classList.remove('correcta', 'incorrecta');
+                            celda.classList.remove("correcta", "incorrecta");
                         }}
                     }}
                 }}
-
                 if (palabraCorrecta && p.palabra.length > 0) {{
                     correctas++;
                     palabrasCompletadas.add(p.palabra);
                     const pistaEl = document.querySelector('.pista-item[data-palabra="' + p.palabra + '"]');
-                    if (pistaEl) pistaEl.classList.add('completada');
+                    if (pistaEl) pistaEl.classList.add("completada");
                 }}
             }});
 
             actualizarProgreso();
 
             if (correctas === PALABRAS.length) {{
-                mostrarMensaje('FELICITACIONES: Completaste todo el crucigrama.', 'exito');
+                juegoTerminado = true;
+                const tiempoSegundos = Math.floor((Date.now() - tiempoInicio) / 1000);
+                mostrarPuntuacion(correctas, letrasCorrectas, letrasIncorrectas, tiempoSegundos);
             }} else if (letrasCorrectas === totalLetras) {{
-                mostrarMensaje('Vas muy bien. Llevas ' + correctas + ' de ' + PALABRAS.length + ' palabras.', 'exito');
+                mostrarMensaje("Vas muy bien. Llevas " + correctas + " de " + PALABRAS.length + " palabras.", "exito");
             }} else {{
-                mostrarMensaje('Sigue intentando. Llevas ' + correctas + ' de ' + PALABRAS.length + ' palabras correctas.', 'pista-msg');
+                mostrarMensaje("Sigue intentando. Llevas " + correctas + " de " + PALABRAS.length + " palabras correctas.", "pista-msg");
             }}
+        }}
+
+        function calcularPuntuacion(correctas, letrasCorrectas, letrasIncorrectas, tiempoSeg) {{
+            let puntos = 1000;
+            puntos += correctas * 100;
+            puntos += letrasCorrectas * 10;
+            puntos -= letrasIncorrectas * 5;
+            puntos -= pistasUsadas * 50;
+            puntos -= verificaciones * 10;
+            const minutos = Math.floor(tiempoSeg / 60);
+            if (minutos <= 3) puntos += 200;
+            else if (minutos <= 5) puntos += 100;
+            else if (minutos <= 10) puntos += 50;
+            else puntos -= (minutos - 10) * 10;
+            return Math.max(0, Math.round(puntos));
+        }}
+
+        function calcularEstrellas(puntuacion) {{
+            if (puntuacion >= 1500) return 5;
+            if (puntuacion >= 1200) return 4;
+            if (puntuacion >= 900) return 3;
+            if (puntuacion >= 600) return 2;
+            return 1;
+        }}
+
+        function mensajeFinal(puntuacion) {{
+            var r = {{}};
+            if (puntuacion >= 1500) {{
+                r.texto = "EXCEPCIONAL: Dominas el tema a la perfeccion.";
+                r.clase = "oro";
+            }} else if (puntuacion >= 1200) {{
+                r.texto = "MUY BIEN: Gran conocimiento del tema.";
+                r.clase = "plata";
+            }} else if (puntuacion >= 900) {{
+                r.texto = "BIEN: Buen desempeno, sigue practicando.";
+                r.clase = "bronce";
+            }} else {{
+                r.texto = "SIGUE ESTUDIANDO: Cada intento te acerca a la meta.";
+                r.clase = "normal";
+            }}
+            return r;
+        }}
+
+        function mostrarPuntuacion(correctas, letrasCorrectas, letrasIncorrectas, tiempoSeg) {{
+            const puntuacion = calcularPuntuacion(correctas, letrasCorrectas, letrasIncorrectas, tiempoSeg);
+            const estrellas = calcularEstrellas(puntuacion);
+            const msg = mensajeFinal(puntuacion);
+            const min = Math.floor(tiempoSeg / 60).toString().padStart(2, "0");
+            const sec = (tiempoSeg % 60).toString().padStart(2, "0");
+
+            document.getElementById("modal-puntaje").textContent = puntuacion;
+            document.getElementById("modal-estrellas").textContent = "★".repeat(estrellas) + "☆".repeat(5 - estrellas);
+            document.getElementById("modal-mensaje").textContent = msg.texto;
+            document.getElementById("modal-mensaje").className = "mensaje-final " + msg.clase;
+            document.getElementById("stat-tiempo").textContent = min + ":" + sec;
+            document.getElementById("stat-pistas").textContent = pistasUsadas;
+            document.getElementById("stat-verif").textContent = verificaciones;
+            document.getElementById("stat-letras").textContent = letrasCorrectas + "/" + (letrasCorrectas + letrasIncorrectas);
+
+            document.getElementById("modal-overlay").classList.add("visible");
+        }}
+
+        function cerrarModal() {{
+            document.getElementById("modal-overlay").classList.remove("visible");
         }}
 
         function actualizarProgreso() {{
             const completadas = palabrasCompletadas.size;
             const total = PALABRAS.length;
             const porcentaje = total > 0 ? Math.round((completadas / total) * 100) : 0;
-            document.getElementById('contador').textContent = completadas + ' / ' + total + ' palabras';
-            document.getElementById('porcentaje').textContent = porcentaje + '%';
-            document.getElementById('barra-relleno').style.width = porcentaje + '%';
+            document.getElementById("contador").textContent = completadas + " / " + total + " palabras";
+            document.getElementById("porcentaje").textContent = porcentaje + "%";
+            document.getElementById("barra-relleno").style.width = porcentaje + "%";
         }}
 
         function darPista() {{
-            if (!celdaActiva) {{ mostrarMensaje('Selecciona una celda primero.', 'error'); return; }}
+            if (!celdaActiva) {{ mostrarMensaje("Selecciona una celda primero.", "error"); return; }}
             const palabra = encontrarPalabraEn(celdaActiva.fila, celdaActiva.columna, direccionActiva);
-            if (!palabra) {{ mostrarMensaje('No hay palabra en esta direccion.', 'error'); return; }}
-            const df = palabra.direccion === 'horizontal' ? 0 : 1;
-            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
+            if (!palabra) {{ mostrarMensaje("No hay palabra en esta direccion.", "error"); return; }}
+            const df = palabra.direccion === "horizontal" ? 0 : 1;
+            const dc = palabra.direccion === "horizontal" ? 1 : 0;
             for (let i = 0; i < palabra.palabra.length; i++) {{
                 const f = palabra.fila_inicio + i * df;
                 const c = palabra.columna_inicio + i * dc;
                 const input = getInput(f, c);
                 if (input && !input.value) {{
                     input.value = palabra.palabra[i].toUpperCase();
-                    input.dispatchEvent(new Event('input'));
-                    mostrarMensaje('Se revelo una letra de \"' + palabra.palabra + '\"', 'pista-msg');
+                    input.dispatchEvent(new Event("input"));
+                    pistasUsadas++;
+                    mostrarMensaje("Se revelo una letra de '" + palabra.palabra + "'", "pista-msg");
                     return;
                 }}
             }}
-            mostrarMensaje('Esa palabra ya esta completa.', 'exito');
+            mostrarMensaje("Esa palabra ya esta completa.", "exito");
         }}
 
         function limpiarErrores() {{
-            document.querySelectorAll('.celda.incorrecta').forEach(el => {{
-                el.classList.remove('incorrecta');
-                const input = el.querySelector('input');
-                if (input) input.value = '';
+            document.querySelectorAll(".celda.incorrecta").forEach(el => {{
+                el.classList.remove("incorrecta");
+                const input = el.querySelector("input");
+                if (input) input.value = "";
             }});
-            mostrarMensaje('Errores limpiados.', 'pista-msg');
+            mostrarMensaje("Errores limpiados.", "pista-msg");
         }}
 
         function reiniciar() {{
-            if (!confirm('Seguro que quieres borrar todo y empezar de nuevo?')) return;
-            document.querySelectorAll('input').forEach(input => input.value = '');
-            document.querySelectorAll('.celda').forEach(el => el.classList.remove('correcta', 'incorrecta'));
-            document.querySelectorAll('.pista-item').forEach(el => el.classList.remove('completada'));
+            if (!confirm("Seguro que quieres borrar todo y empezar de nuevo?")) return;
+            document.querySelectorAll("input").forEach(input => input.value = "");
+            document.querySelectorAll(".celda").forEach(el => el.classList.remove("correcta", "incorrecta"));
+            document.querySelectorAll(".pista-item").forEach(el => el.classList.remove("completada"));
             palabrasCompletadas.clear();
+            pistasUsadas = 0;
+            verificaciones = 0;
+            juegoTerminado = false;
+            tiempoInicio = Date.now();
             actualizarProgreso();
-            mostrarMensaje('Crucigrama reiniciado.', 'pista-msg');
+            mostrarMensaje("Crucigrama reiniciado.", "pista-msg");
         }}
 
         function mostrarMensaje(texto, tipo) {{
-            const msg = document.getElementById('mensaje');
+            const msg = document.getElementById("mensaje");
             msg.textContent = texto;
-            msg.className = 'mensaje visible ' + tipo;
-            setTimeout(() => {{ msg.classList.remove('visible'); }}, 3000);
+            msg.className = "mensaje visible " + tipo;
+            setTimeout(() => {{ msg.classList.remove("visible"); }}, 3000);
         }}
 
         init();
@@ -687,7 +798,7 @@ class WebExporter:
             <button class="tecla" onclick="tecladoVirtual('L')">L</button>
             <button class="tecla" onclick="tecladoVirtual('M')">M</button>
             <button class="tecla" onclick="tecladoVirtual('N')">N</button>
-            <button class="tecla" onclick="tecladoVirtual('\u00D1')">\u00D1</button>
+            <button class="tecla" onclick="tecladoVirtual('\u00D1')">Ñ</button>
             <button class="tecla" onclick="tecladoVirtual('O')">O</button>
             <button class="tecla" onclick="tecladoVirtual('P')">P</button>
             <button class="tecla" onclick="tecladoVirtual('Q')">Q</button>
@@ -700,7 +811,39 @@ class WebExporter:
             <button class="tecla" onclick="tecladoVirtual('X')">X</button>
             <button class="tecla" onclick="tecladoVirtual('Y')">Y</button>
             <button class="tecla" onclick="tecladoVirtual('Z')">Z</button>
-            <button class="tecla tecla-borrar" onclick="tecladoVirtual('BACKSPACE')">\u232B</button>
+            <button class="tecla tecla-borrar" onclick="tecladoVirtual('BACKSPACE')">⌫</button>
+        </div>
+        """
+
+        modal_html = """
+        <div class="modal-overlay" id="modal-overlay">
+            <div class="modal">
+                <h2>¡Felicidades!</h2>
+                <div class="subtitulo">Completaste el crucigrama</div>
+                <div class="estrellas" id="modal-estrellas"></div>
+                <div class="puntaje-grande" id="modal-puntaje"></div>
+                <div class="puntaje-label">puntos</div>
+                <div class="mensaje-final" id="modal-mensaje"></div>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-valor" id="stat-tiempo"></div>
+                        <div class="stat-label">Tiempo</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-valor" id="stat-pistas"></div>
+                        <div class="stat-label">Pistas usadas</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-valor" id="stat-verif"></div>
+                        <div class="stat-label">Verificaciones</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-valor" id="stat-letras"></div>
+                        <div class="stat-label">Letras correctas</div>
+                    </div>
+                </div>
+                <button class="btn btn-primario" onclick="cerrarModal()">Cerrar</button>
+            </div>
         </div>
         """
 
@@ -732,6 +875,7 @@ class WebExporter:
                 <div class="relleno" id="barra-relleno"></div>
             </div>
             <div class="info" id="porcentaje">0%</div>
+            <div class="info" id="cronometro" style="font-family:monospace;">00:00</div>
         </div>
 
         <div class="botones">
@@ -761,6 +905,7 @@ class WebExporter:
 
     <div class="mensaje" id="mensaje"></div>
     {teclado_html}
+    {modal_html}
 
     <script>{js}</script>
 </body>

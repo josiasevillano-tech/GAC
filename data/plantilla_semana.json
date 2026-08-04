@@ -1,0 +1,36 @@
+{
+  "semana_XX": {
+    "nombre_guia": "Guía Semanal — Semana XX",
+    "crucigramas": [
+      {
+        "tema": "Nombre del Tema 1",
+        "resena": "Escribe aquí la reseña didáctica del tema.",
+        "palabras": [
+          {"palabra": "EJEMPLO", "pista": "Pista de ejemplo para la palabra."},
+          {"palabra": "PALABRA", "pista": "Otra pista descriptiva."}
+        ]
+      },
+      {
+        "tema": "Nombre del Tema 2",
+        "resena": "Reseña del segundo tema.",
+        "palabras": [
+          {"palabra": "TEST", "pista": "Pista de prueba."}
+        ]
+      },
+      {
+        "tema": "Nombre del Tema 3",
+        "resena": "Reseña del tercer tema.",
+        "palabras": [
+          {"palabra": "DEMO", "pista": "Pista de demostración."}
+        ]
+      },
+      {
+        "tema": "Nombre del Tema 4",
+        "resena": "Reseña del cuarto tema.",
+        "palabras": [
+          {"palabra": "FINAL", "pista": "Última pista de ejemplo."}
+        ]
+      }
+    ]
+  }
+}
