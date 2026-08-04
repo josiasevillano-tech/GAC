@@ -1,10 +1,203 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Guia 1 - Libros del Nuevo Testamento</title>
-    <style>
+"""
+web_exporter.py
+Exportador web interactivo para el GAC.
+Recibe los mismos datos que Exporter (data, title, clues) y genera HTML jugable.
+Compatible con GitHub Pages.
+"""
+
+import json
+import os
+from typing import List, Dict, Any
+
+
+class WebExporter:
+    """
+    Exporta crucigramas a HTML interactivo con JavaScript puro.
+    Recibe exactamente los mismos parametros que tu Exporter actual.
+    """
+
+    def __init__(self, data, title="Guia de Estudio", clues=None, resena="", tema=""):
+        self.data = data
+        self.title = title
+        self.clues = clues or {}
+        self.resena = resena
+        self.tema = tema
+
+    def save(self, filename="crucigrama_web.html") -> str:
+        """Genera y guarda el HTML jugable."""
+        matriz = self._extraer_matriz()
+        palabras = self._extraer_palabras(matriz)
+        filas = len(matriz)
+        columnas = len(matriz[0]) if matriz else 0
+
+        print(f"[DEBUG] Filas: {filas}, Columnas: {columnas}, Palabras: {len(palabras)}")
+        for p in palabras[:3]:
+            print(f"  - {p['palabra']} ({p['direccion']}) en [{p['fila_inicio']},{p['columna_inicio']}]")
+
+        html = self._generar_html(matriz, palabras, filas, columnas)
+        filepath = os.path.abspath(filename)
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(html)
+        print("Web interactiva guardada en: " + filepath)
+        return filepath
+
+    def _extraer_matriz(self) -> List[List[str]]:
+        """Convierte la cuadricula del generador a matriz de letras/#."""
+        grid = self.data.get("solved_grid") or self.data.get("grid", [])
+        if not grid:
+            return []
+        matriz = []
+        for row in grid:
+            fila = []
+            for cell in row:
+                if isinstance(cell, dict):
+                    if cell.get("is_empty"):
+                        fila.append("#")
+                    else:
+                        letra = cell.get("letter", "")
+                        fila.append(letra.upper() if letra else " ")
+                else:
+                    # Si cell es un string directo
+                    fila.append(str(cell).upper() if str(cell).strip() else "#")
+            matriz.append(fila)
+        return matriz
+
+    def _get_clue_lists(self):
+        """Obtiene las listas de pistas probando varias claves posibles."""
+        # Probar varias combinaciones de claves
+        h_keys = ["horizontal", "across", "h", "horizontales"]
+        v_keys = ["vertical", "down", "v", "verticales"]
+
+        h_list = []
+        v_list = []
+
+        for k in h_keys:
+            if k in self.data:
+                h_list = self.data[k]
+                break
+        for k in v_keys:
+            if k in self.data:
+                v_list = self.data[k]
+                break
+
+        return h_list, v_list
+
+    def _get_word_from_item(self, item):
+        """Extrae la palabra de un item de pista probando varias claves."""
+        for key in ["word", "text", "answer", "palabra", "w"]:
+            if key in item:
+                return item[key]
+        return ""
+
+    def _get_number_from_item(self, item):
+        """Extrae el numero de un item de pista probando varias claves."""
+        for key in ["number", "num", "id", "n", "numero"]:
+            if key in item:
+                return item[key]
+        return None
+
+    def _buscar_posicion(self, grid, numero) -> tuple:
+        """Busca en la cuadricula la celda que tiene este numero."""
+        if numero is None:
+            return None, None
+        num_str = str(numero)
+        for f, row in enumerate(grid):
+            for c, cell in enumerate(row):
+                if isinstance(cell, dict):
+                    cell_num = cell.get("number") or cell.get("num") or cell.get("id") or cell.get("n")
+                    if cell_num is not None and str(cell_num) == num_str:
+                        return f, c
+        return None, None
+
+    def _buscar_palabra_en_matriz(self, matriz, palabra, direccion) -> tuple:
+        """Busca una palabra en la matriz letra por letra."""
+        if not palabra or not matriz:
+            return None, None
+        palabra = palabra.upper()
+        filas = len(matriz)
+        columnas = len(matriz[0]) if filas > 0 else 0
+
+        for f in range(filas):
+            for c in range(columnas):
+                if matriz[f][c] == palabra[0] or matriz[f][c] == " ":
+                    if direccion == "horizontal":
+                        if c + len(palabra) <= columnas:
+                            match = True
+                            for i in range(len(palabra)):
+                                if matriz[f][c + i] not in (palabra[i], " "):
+                                    match = False
+                                    break
+                            if match:
+                                return f, c
+                    else:  # vertical
+                        if f + len(palabra) <= filas:
+                            match = True
+                            for i in range(len(palabra)):
+                                if matriz[f + i][c] not in (palabra[i], " "):
+                                    match = False
+                                    break
+                            if match:
+                                return f, c
+        return None, None
+
+    def _extraer_palabras(self, matriz) -> List[Dict[str, Any]]:
+        """Extrae todas las palabras con sus posiciones."""
+        h_list, v_list = self._get_clue_lists()
+        palabras = []
+
+        # Procesar horizontales
+        for item in h_list:
+            word = self._get_word_from_item(item)
+            num = self._get_number_from_item(item)
+            pista = self.clues.get(word, "")
+
+            fila, col = self._buscar_posicion(self.data.get("solved_grid") or self.data.get("grid", []), num)
+
+            # Fallback: buscar en la matriz directamente
+            if fila is None and matriz:
+                fila, col = self._buscar_palabra_en_matriz(matriz, word, "horizontal")
+
+            if fila is not None:
+                palabras.append({
+                    "palabra": word,
+                    "pista": pista,
+                    "direccion": "horizontal",
+                    "fila_inicio": fila,
+                    "columna_inicio": col,
+                    "numero": num if num is not None else len(palabras) + 1
+                })
+
+        # Procesar verticales
+        for item in v_list:
+            word = self._get_word_from_item(item)
+            num = self._get_number_from_item(item)
+            pista = self.clues.get(word, "")
+
+            fila, col = self._buscar_posicion(self.data.get("solved_grid") or self.data.get("grid", []), num)
+
+            # Fallback: buscar en la matriz directamente
+            if fila is None and matriz:
+                fila, col = self._buscar_palabra_en_matriz(matriz, word, "vertical")
+
+            if fila is not None:
+                palabras.append({
+                    "palabra": word,
+                    "pista": pista,
+                    "direccion": "vertical",
+                    "fila_inicio": fila,
+                    "columna_inicio": col,
+                    "numero": num if num is not None else len(palabras) + 1
+                })
+
+        return palabras
+
+    def _generar_html(self, matriz, palabras, filas, columnas) -> str:
+        """Genera el HTML completo con CSS y JavaScript embebidos."""
+        palabras_js = json.dumps(palabras, ensure_ascii=False)
+        total_palabras = len(palabras)
+        resena_html = self.resena.replace("\n", "<br>")
+
+        css = """
         :root {
             --color-fondo: #f5f7fa;
             --color-primario: #2c5282;
@@ -155,23 +348,385 @@
         }
         .tecla:active { background: var(--color-celda-seleccionada); }
         .tecla-borrar { background: #fed7d7; color: #742a2a; }
-        </style>
+        """
+
+        js = f"""
+        const PALABRAS = {palabras_js};
+        const FILAS = {filas};
+        const COLUMNAS = {columnas};
+        const TOTAL_PALABRAS = {total_palabras};
+
+        let celdaActiva = null;
+        let direccionActiva = 'horizontal';
+        let palabrasCompletadas = new Set();
+
+        function init() {{
+            renderTablero();
+            renderPistas();
+            document.addEventListener('keydown', manejarTecla);
+        }}
+
+        function renderTablero() {{
+            const tablero = document.getElementById('tablero');
+            tablero.innerHTML = '';
+            tablero.style.gridTemplateColumns = 'repeat(' + COLUMNAS + ', 1fr)';
+            tablero.style.aspectRatio = COLUMNAS + ' / ' + FILAS;
+
+            for (let f = 0; f < FILAS; f++) {{
+                for (let c = 0; c < COLUMNAS; c++) {{
+                    const celda = document.createElement('div');
+                    celda.className = 'celda';
+                    celda.dataset.fila = f;
+                    celda.dataset.columna = c;
+
+                    const esNegra = !PALABRAS.some(p => {{
+                        const df = p.direccion === 'horizontal' ? 0 : 1;
+                        const dc = p.direccion === 'horizontal' ? 1 : 0;
+                        for (let i = 0; i < p.palabra.length; i++) {{
+                            if (p.fila_inicio + i * df === f && p.columna_inicio + i * dc === c) return true;
+                        }}
+                        return false;
+                    }});
+
+                    if (esNegra) {{
+                        celda.classList.add('negra');
+                        tablero.appendChild(celda);
+                        continue;
+                    }}
+
+                    const palabraInicio = PALABRAS.find(p => p.fila_inicio === f && p.columna_inicio === c);
+                    if (palabraInicio) {{
+                        const num = document.createElement('span');
+                        num.className = 'numero';
+                        num.textContent = palabraInicio.numero || getNumero(palabraInicio);
+                        celda.appendChild(num);
+                    }}
+
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.maxLength = 1;
+                    input.dataset.fila = f;
+                    input.dataset.columna = c;
+                    input.addEventListener('focus', () => seleccionarCelda(f, c));
+                    input.addEventListener('input', (e) => manejarInput(e, f, c));
+                    input.addEventListener('keydown', (e) => manejarTeclaCelda(e, f, c));
+                    input.addEventListener('click', (e) => {{ e.stopPropagation(); seleccionarCelda(f, c); }});
+                    celda.appendChild(input);
+                    tablero.appendChild(celda);
+                }}
+            }}
+        }}
+
+        function getNumero(palabra) {{
+            const ordenadas = [...PALABRAS].sort((a, b) => {{
+                if (a.fila_inicio !== b.fila_inicio) return a.fila_inicio - b.fila_inicio;
+                return a.columna_inicio - b.columna_inicio;
+            }});
+            for (let i = 0; i < ordenadas.length; i++) {{
+                if (ordenadas[i] === palabra) return i + 1;
+            }}
+            return 1;
+        }}
+
+        function renderPistas() {{
+            const ph = document.getElementById('pistas-h');
+            const pv = document.getElementById('pistas-v');
+            ph.innerHTML = '';
+            pv.innerHTML = '';
+
+            PALABRAS.forEach(p => {{
+                const div = document.createElement('div');
+                div.className = 'pista-item';
+                div.dataset.palabra = p.palabra;
+                div.innerHTML = '<span class="num">' + (p.numero || getNumero(p)) + '.</span>' + p.pista;
+                div.onclick = () => irAPalabra(p);
+                if (p.direccion === 'horizontal') ph.appendChild(div);
+                else pv.appendChild(div);
+            }});
+        }}
+
+        function seleccionarCelda(f, c) {{
+            celdaActiva = {{ fila: f, columna: c }};
+            document.querySelectorAll('.celda').forEach(el => el.classList.remove('activa', 'seleccionada'));
+            const celdaEl = getCeldaElement(f, c);
+            if (celdaEl) celdaEl.classList.add('seleccionada');
+            const palabra = encontrarPalabraEn(f, c, direccionActiva);
+            if (palabra) resaltarPalabra(palabra);
+            document.querySelectorAll('.pista-item').forEach(el => el.classList.remove('activa'));
+            if (palabra) {{
+                const pistaEl = document.querySelector('.pista-item[data-palabra="' + palabra.palabra + '"]');
+                if (pistaEl) pistaEl.classList.add('activa');
+            }}
+        }}
+
+        function encontrarPalabraEn(f, c, direccion) {{
+            return PALABRAS.find(p => {{
+                if (p.direccion !== direccion) return false;
+                const df = direccion === 'horizontal' ? 0 : 1;
+                const dc = direccion === 'horizontal' ? 1 : 0;
+                for (let i = 0; i < p.palabra.length; i++) {{
+                    if (p.fila_inicio + i * df === f && p.columna_inicio + i * dc === c) return true;
+                }}
+                return false;
+            }});
+        }}
+
+        function resaltarPalabra(palabra) {{
+            const df = palabra.direccion === 'horizontal' ? 0 : 1;
+            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
+            for (let i = 0; i < palabra.palabra.length; i++) {{
+                const el = getCeldaElement(palabra.fila_inicio + i * df, palabra.columna_inicio + i * dc);
+                if (el) el.classList.add('activa');
+            }}
+        }}
+
+        function getCeldaElement(f, c) {{
+            return document.querySelector('.celda[data-fila="' + f + '"][data-columna="' + c + '"]');
+        }}
+
+        function getInput(f, c) {{
+            const celda = getCeldaElement(f, c);
+            return celda ? celda.querySelector('input') : null;
+        }}
+
+        function irAPalabra(palabra) {{
+            direccionActiva = palabra.direccion;
+            seleccionarCelda(palabra.fila_inicio, palabra.columna_inicio);
+            const input = getInput(palabra.fila_inicio, palabra.columna_inicio);
+            if (input) input.focus();
+        }}
+
+        function manejarInput(e, f, c) {{
+            const val = e.target.value.toUpperCase();
+            e.target.value = val;
+            if (val.length === 1) {{
+                moverSiguiente(f, c);
+            }}
+        }}
+
+        function manejarTeclaCelda(e, f, c) {{
+            if (e.key === 'Enter') {{ e.preventDefault(); verificarTodo(); return; }}
+            if (e.key === 'Backspace' && !e.target.value) {{ e.preventDefault(); moverAnterior(f, c); return; }}
+            if (e.key === 'ArrowRight') {{ direccionActiva = 'horizontal'; mover(f, c, 0, 1); }}
+            if (e.key === 'ArrowLeft') {{ direccionActiva = 'horizontal'; mover(f, c, 0, -1); }}
+            if (e.key === 'ArrowDown') {{ direccionActiva = 'vertical'; mover(f, c, 1, 0); }}
+            if (e.key === 'ArrowUp') {{ direccionActiva = 'vertical'; mover(f, c, -1, 0); }}
+            if (e.key === ' ') {{ e.preventDefault(); direccionActiva = direccionActiva === 'horizontal' ? 'vertical' : 'horizontal'; seleccionarCelda(f, c); }}
+        }}
+
+        function manejarTecla(e) {{
+            if (e.key === 'Tab') {{
+                e.preventDefault();
+                if (e.shiftKey) moverAnterior(celdaActiva.fila, celdaActiva.columna);
+                else moverSiguiente(celdaActiva.fila, celdaActiva.columna);
+            }}
+        }}
+
+        function mover(f, c, df, dc) {{
+            const nf = f + df, nc = c + dc;
+            const input = getInput(nf, nc);
+            if (input) {{ input.focus(); seleccionarCelda(nf, nc); }}
+        }}
+
+        function moverSiguiente(f, c) {{
+            const palabra = encontrarPalabraEn(f, c, direccionActiva);
+            if (!palabra) return;
+            const df = palabra.direccion === 'horizontal' ? 0 : 1;
+            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
+            const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
+            if (idx + 1 < palabra.palabra.length) {{ mover(f, c, df, dc); }}
+        }}
+
+        function moverAnterior(f, c) {{
+            const palabra = encontrarPalabraEn(f, c, direccionActiva);
+            if (!palabra) return;
+            const df = palabra.direccion === 'horizontal' ? 0 : 1;
+            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
+            const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
+            if (idx > 0) {{ mover(f, c, -df, -dc); }}
+        }}
+
+        function tecladoVirtual(tecla) {{
+            if (!celdaActiva) return;
+            const input = getInput(celdaActiva.fila, celdaActiva.columna);
+            if (!input) return;
+            if (tecla === 'BACKSPACE') {{
+                if (input.value) {{ input.value = ''; }}
+                else {{ moverAnterior(celdaActiva.fila, celdaActiva.columna); }}
+            }} else {{
+                input.value = tecla;
+                input.dispatchEvent(new Event('input'));
+            }}
+        }}
+
+        function verificarTodo() {{
+            let correctas = 0;
+            let totalLetras = 0;
+            let letrasCorrectas = 0;
+
+            PALABRAS.forEach(p => {{
+                const df = p.direccion === 'horizontal' ? 0 : 1;
+                const dc = p.direccion === 'horizontal' ? 1 : 0;
+                let palabraCorrecta = true;
+
+                for (let i = 0; i < p.palabra.length; i++) {{
+                    const f = p.fila_inicio + i * df;
+                    const c = p.columna_inicio + i * dc;
+                    const input = getInput(f, c);
+                    const letraCorrecta = p.palabra[i].toUpperCase();
+                    totalLetras++;
+
+                    if (input) {{
+                        const val = input.value.toUpperCase();
+                        const celda = getCeldaElement(f, c);
+                        if (val === letraCorrecta) {{
+                            letrasCorrectas++;
+                            celda.classList.remove('incorrecta');
+                            celda.classList.add('correcta');
+                        }} else if (val) {{
+                            palabraCorrecta = false;
+                            celda.classList.remove('correcta');
+                            celda.classList.add('incorrecta');
+                        }} else {{
+                            palabraCorrecta = false;
+                            celda.classList.remove('correcta', 'incorrecta');
+                        }}
+                    }}
+                }}
+
+                if (palabraCorrecta && p.palabra.length > 0) {{
+                    correctas++;
+                    palabrasCompletadas.add(p.palabra);
+                    const pistaEl = document.querySelector('.pista-item[data-palabra="' + p.palabra + '"]');
+                    if (pistaEl) pistaEl.classList.add('completada');
+                }}
+            }});
+
+            actualizarProgreso();
+
+            if (correctas === PALABRAS.length) {{
+                mostrarMensaje('FELICITACIONES: Completaste todo el crucigrama.', 'exito');
+            }} else if (letrasCorrectas === totalLetras) {{
+                mostrarMensaje('Vas muy bien. Llevas ' + correctas + ' de ' + PALABRAS.length + ' palabras.', 'exito');
+            }} else {{
+                mostrarMensaje('Sigue intentando. Llevas ' + correctas + ' de ' + PALABRAS.length + ' palabras correctas.', 'pista-msg');
+            }}
+        }}
+
+        function actualizarProgreso() {{
+            const completadas = palabrasCompletadas.size;
+            const total = PALABRAS.length;
+            const porcentaje = total > 0 ? Math.round((completadas / total) * 100) : 0;
+            document.getElementById('contador').textContent = completadas + ' / ' + total + ' palabras';
+            document.getElementById('porcentaje').textContent = porcentaje + '%';
+            document.getElementById('barra-relleno').style.width = porcentaje + '%';
+        }}
+
+        function darPista() {{
+            if (!celdaActiva) {{ mostrarMensaje('Selecciona una celda primero.', 'error'); return; }}
+            const palabra = encontrarPalabraEn(celdaActiva.fila, celdaActiva.columna, direccionActiva);
+            if (!palabra) {{ mostrarMensaje('No hay palabra en esta direccion.', 'error'); return; }}
+            const df = palabra.direccion === 'horizontal' ? 0 : 1;
+            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
+            for (let i = 0; i < palabra.palabra.length; i++) {{
+                const f = palabra.fila_inicio + i * df;
+                const c = palabra.columna_inicio + i * dc;
+                const input = getInput(f, c);
+                if (input && !input.value) {{
+                    input.value = palabra.palabra[i].toUpperCase();
+                    input.dispatchEvent(new Event('input'));
+                    mostrarMensaje('Se revelo una letra de \"' + palabra.palabra + '\"', 'pista-msg');
+                    return;
+                }}
+            }}
+            mostrarMensaje('Esa palabra ya esta completa.', 'exito');
+        }}
+
+        function limpiarErrores() {{
+            document.querySelectorAll('.celda.incorrecta').forEach(el => {{
+                el.classList.remove('incorrecta');
+                const input = el.querySelector('input');
+                if (input) input.value = '';
+            }});
+            mostrarMensaje('Errores limpiados.', 'pista-msg');
+        }}
+
+        function reiniciar() {{
+            if (!confirm('Seguro que quieres borrar todo y empezar de nuevo?')) return;
+            document.querySelectorAll('input').forEach(input => input.value = '');
+            document.querySelectorAll('.celda').forEach(el => el.classList.remove('correcta', 'incorrecta'));
+            document.querySelectorAll('.pista-item').forEach(el => el.classList.remove('completada'));
+            palabrasCompletadas.clear();
+            actualizarProgreso();
+            mostrarMensaje('Crucigrama reiniciado.', 'pista-msg');
+        }}
+
+        function mostrarMensaje(texto, tipo) {{
+            const msg = document.getElementById('mensaje');
+            msg.textContent = texto;
+            msg.className = 'mensaje visible ' + tipo;
+            setTimeout(() => {{ msg.classList.remove('visible'); }}, 3000);
+        }}
+
+        init();
+        """
+
+        teclado_html = """
+        <div class="teclado" id="teclado">
+            <button class="tecla" onclick="tecladoVirtual('A')">A</button>
+            <button class="tecla" onclick="tecladoVirtual('B')">B</button>
+            <button class="tecla" onclick="tecladoVirtual('C')">C</button>
+            <button class="tecla" onclick="tecladoVirtual('D')">D</button>
+            <button class="tecla" onclick="tecladoVirtual('E')">E</button>
+            <button class="tecla" onclick="tecladoVirtual('F')">F</button>
+            <button class="tecla" onclick="tecladoVirtual('G')">G</button>
+            <button class="tecla" onclick="tecladoVirtual('H')">H</button>
+            <button class="tecla" onclick="tecladoVirtual('I')">I</button>
+            <button class="tecla" onclick="tecladoVirtual('J')">J</button>
+            <button class="tecla" onclick="tecladoVirtual('K')">K</button>
+            <button class="tecla" onclick="tecladoVirtual('L')">L</button>
+            <button class="tecla" onclick="tecladoVirtual('M')">M</button>
+            <button class="tecla" onclick="tecladoVirtual('N')">N</button>
+            <button class="tecla" onclick="tecladoVirtual('\u00D1')">\u00D1</button>
+            <button class="tecla" onclick="tecladoVirtual('O')">O</button>
+            <button class="tecla" onclick="tecladoVirtual('P')">P</button>
+            <button class="tecla" onclick="tecladoVirtual('Q')">Q</button>
+            <button class="tecla" onclick="tecladoVirtual('R')">R</button>
+            <button class="tecla" onclick="tecladoVirtual('S')">S</button>
+            <button class="tecla" onclick="tecladoVirtual('T')">T</button>
+            <button class="tecla" onclick="tecladoVirtual('U')">U</button>
+            <button class="tecla" onclick="tecladoVirtual('V')">V</button>
+            <button class="tecla" onclick="tecladoVirtual('W')">W</button>
+            <button class="tecla" onclick="tecladoVirtual('X')">X</button>
+            <button class="tecla" onclick="tecladoVirtual('Y')">Y</button>
+            <button class="tecla" onclick="tecladoVirtual('Z')">Z</button>
+            <button class="tecla tecla-borrar" onclick="tecladoVirtual('BACKSPACE')">\u232B</button>
+        </div>
+        """
+
+        html = f"""<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{self.title}</title>
+    <style>{css}</style>
 </head>
 <body>
     <div class="contenedor">
         <header>
-            <h1>Guia 1 - Libros del Nuevo Testamento</h1>
-            <div class="tema">Libros del Nuevo Testamento</div>
+            <h1>{self.title}</h1>
+            <div class="tema">{self.tema}</div>
         </header>
 
         <div class="resena">
             <h3>Resena del tema</h3>
-            <p>Los libros del Nuevo Testamento: conocer su propósito para comprender mejor las Escrituras<br><br>El Nuevo Testamento está formado por 27 libros escritos durante el primer siglo de la era cristiana. En ellos se registra la vida y ministerio de Jesucristo, el nacimiento y expansión de la Iglesia, la enseñanza de los apóstoles y la esperanza del regreso del Señor. Aunque cada libro posee un propósito particular, todos juntos presentan el cumplimiento de las promesas anunciadas en el Antiguo Testamento y revelan el desarrollo del plan redentor de Dios.<br><br>Estos libros pueden agruparse en varias categorías que facilitan su estudio.<br><br>Los Evangelios (Mateo, Marcos, Lucas y Juan) narran la vida, las enseñanzas, los milagros, la muerte y la resurrección de Jesucristo. Cada uno presenta una perspectiva particular, pero todos proclaman a Jesús como el Mesías prometido y el Salvador del mundo.<br><br>El libro de Hechos de los Apóstoles constituye el puente entre los Evangelios y las cartas apostólicas. Relata el nacimiento de la Iglesia, la obra del Espíritu Santo y la expansión del evangelio desde Jerusalén hasta los principales centros del mundo romano.<br><br>Las Epístolas son cartas dirigidas a iglesias o a creyentes en particular. En ellas los apóstoles explican las doctrinas fundamentales de la fe cristiana, corrigen errores, responden a problemas concretos y animan a los creyentes a vivir conforme al evangelio. Las cartas de Pablo constituyen la mayor parte de este grupo, acompañadas por las llamadas epístolas generales o universales.<br><br>El último libro es Apocalipsis, una revelación dada por Jesucristo al apóstol Juan. Mediante un lenguaje rico en símbolos e imágenes, presenta el triunfo definitivo de Cristo, el juicio de Dios sobre el mal y la esperanza del establecimiento eterno de su reino.<br><br>Comprender esta organización permite leer el Nuevo Testamento con mayor claridad. Saber si un libro es un Evangelio, un relato histórico, una carta doctrinal o un libro profético ayuda a interpretar correctamente su contenido y a apreciar el lugar que ocupa dentro de la revelación bíblica.<br><br>Este crucigrama te invita a familiarizarte con los nombres de los libros del Nuevo Testamento y, al mismo tiempo, a fortalecer tu conocimiento de la estructura de las Sagradas Escrituras. Cada libro es una pieza indispensable del mensaje que Dios ha preservado para instruir, corregir y edificar a su pueblo.</p>
+            <p>{resena_html}</p>
         </div>
 
         <div class="barra-progreso">
             <div class="info">
-                <span id="contador">0 / 20 palabras</span>
+                <span id="contador">0 / {total_palabras} palabras</span>
             </div>
             <div class="progreso-visual">
                 <div class="relleno" id="barra-relleno"></div>
@@ -205,358 +760,10 @@
     </div>
 
     <div class="mensaje" id="mensaje"></div>
-    
-        <div class="teclado" id="teclado">
-            <button class="tecla" onclick="tecladoVirtual('A')">A</button>
-            <button class="tecla" onclick="tecladoVirtual('B')">B</button>
-            <button class="tecla" onclick="tecladoVirtual('C')">C</button>
-            <button class="tecla" onclick="tecladoVirtual('D')">D</button>
-            <button class="tecla" onclick="tecladoVirtual('E')">E</button>
-            <button class="tecla" onclick="tecladoVirtual('F')">F</button>
-            <button class="tecla" onclick="tecladoVirtual('G')">G</button>
-            <button class="tecla" onclick="tecladoVirtual('H')">H</button>
-            <button class="tecla" onclick="tecladoVirtual('I')">I</button>
-            <button class="tecla" onclick="tecladoVirtual('J')">J</button>
-            <button class="tecla" onclick="tecladoVirtual('K')">K</button>
-            <button class="tecla" onclick="tecladoVirtual('L')">L</button>
-            <button class="tecla" onclick="tecladoVirtual('M')">M</button>
-            <button class="tecla" onclick="tecladoVirtual('N')">N</button>
-            <button class="tecla" onclick="tecladoVirtual('Ñ')">Ñ</button>
-            <button class="tecla" onclick="tecladoVirtual('O')">O</button>
-            <button class="tecla" onclick="tecladoVirtual('P')">P</button>
-            <button class="tecla" onclick="tecladoVirtual('Q')">Q</button>
-            <button class="tecla" onclick="tecladoVirtual('R')">R</button>
-            <button class="tecla" onclick="tecladoVirtual('S')">S</button>
-            <button class="tecla" onclick="tecladoVirtual('T')">T</button>
-            <button class="tecla" onclick="tecladoVirtual('U')">U</button>
-            <button class="tecla" onclick="tecladoVirtual('V')">V</button>
-            <button class="tecla" onclick="tecladoVirtual('W')">W</button>
-            <button class="tecla" onclick="tecladoVirtual('X')">X</button>
-            <button class="tecla" onclick="tecladoVirtual('Y')">Y</button>
-            <button class="tecla" onclick="tecladoVirtual('Z')">Z</button>
-            <button class="tecla tecla-borrar" onclick="tecladoVirtual('BACKSPACE')">⌫</button>
-        </div>
-        
+    {teclado_html}
 
-    <script>
-        const PALABRAS = [{"palabra": "APOCALIPSIS", "pista": "Libro profético de Juan que revela el fin de los tiempos", "direccion": "horizontal", "fila_inicio": 1, "columna_inicio": 3, "numero": 4}, {"palabra": "TITO", "pista": "Carta pastoral de Pablo a su colaborador en Creta", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 11, "numero": 7}, {"palabra": "JUAN", "pista": "Evangelio que presenta a Jesús como el Verbo hecho carne", "direccion": "horizontal", "fila_inicio": 4, "columna_inicio": 7, "numero": 9}, {"palabra": "HEBREOS", "pista": "Carta que muestra la superioridad de Cristo sobre el sistema antiguo", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 0, "numero": 10}, {"palabra": "TESALONIS", "pista": "Cartas de Pablo a la iglesia sobre la segunda venida de Cristo", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 11, "numero": 11}, {"palabra": "CORINTIOS", "pista": "Cartas de Pablo a la iglesia con problemas de división y moral", "direccion": "horizontal", "fila_inicio": 7, "columna_inicio": 4, "numero": 13}, {"palabra": "SANTIAGO", "pista": "Carta que enfatiza la fe demostrada por las obras", "direccion": "horizontal", "fila_inicio": 9, "columna_inicio": 12, "numero": 18}, {"palabra": "MARCOS", "pista": "Evangelio breve y dinámico, tradición atribuida al compañero de Pedro", "direccion": "horizontal", "fila_inicio": 11, "columna_inicio": 0, "numero": 19}, {"palabra": "EFESIOS", "pista": "Carta de Pablo sobre la unidad de la iglesia como cuerpo de Cristo", "direccion": "horizontal", "fila_inicio": 14, "columna_inicio": 13, "numero": 20}, {"palabra": "TIMOTEO", "pista": "Cartas pastorales de Pablo a su hijo en la fe", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 1, "numero": 1}, {"palabra": "FILIPENSES", "pista": "Carta de Pablo escrita desde la cárcel, llena de gozo", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 12, "numero": 2}, {"palabra": "HECHOS", "pista": "Libro que narra la historia de la iglesia primitiva después de Pentecostés", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 19, "numero": 3}, {"palabra": "PEDRO", "pista": "Cartas del apóstol que hablan del sufrimiento y la esperanza", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 16, "numero": 5}, {"palabra": "GALATAS", "pista": "Carta de Pablo que defiende la libertad en Cristo", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 9, "numero": 6}, {"palabra": "COLOSENSES", "pista": "Carta de Pablo que presenta a Cristo como supremo sobre todo", "direccion": "vertical", "fila_inicio": 4, "columna_inicio": 5, "numero": 8}, {"palabra": "FILEMON", "pista": "Carta personal de Pablo pidiendo clemencia para el esclavo Onésimo", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 7, "numero": 12}, {"palabra": "JUDAS", "pista": "Carta que advierte contra los falsos maestros", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 1, "numero": 14}, {"palabra": "MATEO", "pista": "Evangelio escrito por el ex recaudador de impuestos, dirigido a judíos", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 17, "numero": 15}, {"palabra": "ROMANOS", "pista": "Carta de Pablo que explica la justificación por la fe", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 19, "numero": 16}, {"palabra": "LUCAS", "pista": "Evangelio escrito por el médico, con énfasis en los marginados", "direccion": "vertical", "fila_inicio": 9, "columna_inicio": 3, "numero": 17}];
-        const FILAS = 15;
-        const COLUMNAS = 20;
-        const TOTAL_PALABRAS = 20;
-
-        let celdaActiva = null;
-        let direccionActiva = 'horizontal';
-        let palabrasCompletadas = new Set();
-
-        function init() {
-            renderTablero();
-            renderPistas();
-            document.addEventListener('keydown', manejarTecla);
-        }
-
-        function renderTablero() {
-            const tablero = document.getElementById('tablero');
-            tablero.innerHTML = '';
-            tablero.style.gridTemplateColumns = 'repeat(' + COLUMNAS + ', 1fr)';
-            tablero.style.aspectRatio = COLUMNAS + ' / ' + FILAS;
-
-            for (let f = 0; f < FILAS; f++) {
-                for (let c = 0; c < COLUMNAS; c++) {
-                    const celda = document.createElement('div');
-                    celda.className = 'celda';
-                    celda.dataset.fila = f;
-                    celda.dataset.columna = c;
-
-                    const esNegra = !PALABRAS.some(p => {
-                        const df = p.direccion === 'horizontal' ? 0 : 1;
-                        const dc = p.direccion === 'horizontal' ? 1 : 0;
-                        for (let i = 0; i < p.palabra.length; i++) {
-                            if (p.fila_inicio + i * df === f && p.columna_inicio + i * dc === c) return true;
-                        }
-                        return false;
-                    });
-
-                    if (esNegra) {
-                        celda.classList.add('negra');
-                        tablero.appendChild(celda);
-                        continue;
-                    }
-
-                    const palabraInicio = PALABRAS.find(p => p.fila_inicio === f && p.columna_inicio === c);
-                    if (palabraInicio) {
-                        const num = document.createElement('span');
-                        num.className = 'numero';
-                        num.textContent = palabraInicio.numero || getNumero(palabraInicio);
-                        celda.appendChild(num);
-                    }
-
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.maxLength = 1;
-                    input.dataset.fila = f;
-                    input.dataset.columna = c;
-                    input.addEventListener('focus', () => seleccionarCelda(f, c));
-                    input.addEventListener('input', (e) => manejarInput(e, f, c));
-                    input.addEventListener('keydown', (e) => manejarTeclaCelda(e, f, c));
-                    input.addEventListener('click', (e) => { e.stopPropagation(); seleccionarCelda(f, c); });
-                    celda.appendChild(input);
-                    tablero.appendChild(celda);
-                }
-            }
-        }
-
-        function getNumero(palabra) {
-            const ordenadas = [...PALABRAS].sort((a, b) => {
-                if (a.fila_inicio !== b.fila_inicio) return a.fila_inicio - b.fila_inicio;
-                return a.columna_inicio - b.columna_inicio;
-            });
-            for (let i = 0; i < ordenadas.length; i++) {
-                if (ordenadas[i] === palabra) return i + 1;
-            }
-            return 1;
-        }
-
-        function renderPistas() {
-            const ph = document.getElementById('pistas-h');
-            const pv = document.getElementById('pistas-v');
-            ph.innerHTML = '';
-            pv.innerHTML = '';
-
-            PALABRAS.forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'pista-item';
-                div.dataset.palabra = p.palabra;
-                div.innerHTML = '<span class="num">' + (p.numero || getNumero(p)) + '.</span>' + p.pista;
-                div.onclick = () => irAPalabra(p);
-                if (p.direccion === 'horizontal') ph.appendChild(div);
-                else pv.appendChild(div);
-            });
-        }
-
-        function seleccionarCelda(f, c) {
-            celdaActiva = { fila: f, columna: c };
-            document.querySelectorAll('.celda').forEach(el => el.classList.remove('activa', 'seleccionada'));
-            const celdaEl = getCeldaElement(f, c);
-            if (celdaEl) celdaEl.classList.add('seleccionada');
-            const palabra = encontrarPalabraEn(f, c, direccionActiva);
-            if (palabra) resaltarPalabra(palabra);
-            document.querySelectorAll('.pista-item').forEach(el => el.classList.remove('activa'));
-            if (palabra) {
-                const pistaEl = document.querySelector('.pista-item[data-palabra="' + palabra.palabra + '"]');
-                if (pistaEl) pistaEl.classList.add('activa');
-            }
-        }
-
-        function encontrarPalabraEn(f, c, direccion) {
-            return PALABRAS.find(p => {
-                if (p.direccion !== direccion) return false;
-                const df = direccion === 'horizontal' ? 0 : 1;
-                const dc = direccion === 'horizontal' ? 1 : 0;
-                for (let i = 0; i < p.palabra.length; i++) {
-                    if (p.fila_inicio + i * df === f && p.columna_inicio + i * dc === c) return true;
-                }
-                return false;
-            });
-        }
-
-        function resaltarPalabra(palabra) {
-            const df = palabra.direccion === 'horizontal' ? 0 : 1;
-            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
-            for (let i = 0; i < palabra.palabra.length; i++) {
-                const el = getCeldaElement(palabra.fila_inicio + i * df, palabra.columna_inicio + i * dc);
-                if (el) el.classList.add('activa');
-            }
-        }
-
-        function getCeldaElement(f, c) {
-            return document.querySelector('.celda[data-fila="' + f + '"][data-columna="' + c + '"]');
-        }
-
-        function getInput(f, c) {
-            const celda = getCeldaElement(f, c);
-            return celda ? celda.querySelector('input') : null;
-        }
-
-        function irAPalabra(palabra) {
-            direccionActiva = palabra.direccion;
-            seleccionarCelda(palabra.fila_inicio, palabra.columna_inicio);
-            const input = getInput(palabra.fila_inicio, palabra.columna_inicio);
-            if (input) input.focus();
-        }
-
-        function manejarInput(e, f, c) {
-            const val = e.target.value.toUpperCase();
-            e.target.value = val;
-            if (val.length === 1) {
-                moverSiguiente(f, c);
-            }
-        }
-
-        function manejarTeclaCelda(e, f, c) {
-            if (e.key === 'Enter') { e.preventDefault(); verificarTodo(); return; }
-            if (e.key === 'Backspace' && !e.target.value) { e.preventDefault(); moverAnterior(f, c); return; }
-            if (e.key === 'ArrowRight') { direccionActiva = 'horizontal'; mover(f, c, 0, 1); }
-            if (e.key === 'ArrowLeft') { direccionActiva = 'horizontal'; mover(f, c, 0, -1); }
-            if (e.key === 'ArrowDown') { direccionActiva = 'vertical'; mover(f, c, 1, 0); }
-            if (e.key === 'ArrowUp') { direccionActiva = 'vertical'; mover(f, c, -1, 0); }
-            if (e.key === ' ') { e.preventDefault(); direccionActiva = direccionActiva === 'horizontal' ? 'vertical' : 'horizontal'; seleccionarCelda(f, c); }
-        }
-
-        function manejarTecla(e) {
-            if (e.key === 'Tab') {
-                e.preventDefault();
-                if (e.shiftKey) moverAnterior(celdaActiva.fila, celdaActiva.columna);
-                else moverSiguiente(celdaActiva.fila, celdaActiva.columna);
-            }
-        }
-
-        function mover(f, c, df, dc) {
-            const nf = f + df, nc = c + dc;
-            const input = getInput(nf, nc);
-            if (input) { input.focus(); seleccionarCelda(nf, nc); }
-        }
-
-        function moverSiguiente(f, c) {
-            const palabra = encontrarPalabraEn(f, c, direccionActiva);
-            if (!palabra) return;
-            const df = palabra.direccion === 'horizontal' ? 0 : 1;
-            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
-            const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            if (idx + 1 < palabra.palabra.length) { mover(f, c, df, dc); }
-        }
-
-        function moverAnterior(f, c) {
-            const palabra = encontrarPalabraEn(f, c, direccionActiva);
-            if (!palabra) return;
-            const df = palabra.direccion === 'horizontal' ? 0 : 1;
-            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
-            const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            if (idx > 0) { mover(f, c, -df, -dc); }
-        }
-
-        function tecladoVirtual(tecla) {
-            if (!celdaActiva) return;
-            const input = getInput(celdaActiva.fila, celdaActiva.columna);
-            if (!input) return;
-            if (tecla === 'BACKSPACE') {
-                if (input.value) { input.value = ''; }
-                else { moverAnterior(celdaActiva.fila, celdaActiva.columna); }
-            } else {
-                input.value = tecla;
-                input.dispatchEvent(new Event('input'));
-            }
-        }
-
-        function verificarTodo() {
-            let correctas = 0;
-            let totalLetras = 0;
-            let letrasCorrectas = 0;
-
-            PALABRAS.forEach(p => {
-                const df = p.direccion === 'horizontal' ? 0 : 1;
-                const dc = p.direccion === 'horizontal' ? 1 : 0;
-                let palabraCorrecta = true;
-
-                for (let i = 0; i < p.palabra.length; i++) {
-                    const f = p.fila_inicio + i * df;
-                    const c = p.columna_inicio + i * dc;
-                    const input = getInput(f, c);
-                    const letraCorrecta = p.palabra[i].toUpperCase();
-                    totalLetras++;
-
-                    if (input) {
-                        const val = input.value.toUpperCase();
-                        const celda = getCeldaElement(f, c);
-                        if (val === letraCorrecta) {
-                            letrasCorrectas++;
-                            celda.classList.remove('incorrecta');
-                            celda.classList.add('correcta');
-                        } else if (val) {
-                            palabraCorrecta = false;
-                            celda.classList.remove('correcta');
-                            celda.classList.add('incorrecta');
-                        } else {
-                            palabraCorrecta = false;
-                            celda.classList.remove('correcta', 'incorrecta');
-                        }
-                    }
-                }
-
-                if (palabraCorrecta && p.palabra.length > 0) {
-                    correctas++;
-                    palabrasCompletadas.add(p.palabra);
-                    const pistaEl = document.querySelector('.pista-item[data-palabra="' + p.palabra + '"]');
-                    if (pistaEl) pistaEl.classList.add('completada');
-                }
-            });
-
-            actualizarProgreso();
-
-            if (correctas === PALABRAS.length) {
-                mostrarMensaje('FELICITACIONES: Completaste todo el crucigrama.', 'exito');
-            } else if (letrasCorrectas === totalLetras) {
-                mostrarMensaje('Vas muy bien. Llevas ' + correctas + ' de ' + PALABRAS.length + ' palabras.', 'exito');
-            } else {
-                mostrarMensaje('Sigue intentando. Llevas ' + correctas + ' de ' + PALABRAS.length + ' palabras correctas.', 'pista-msg');
-            }
-        }
-
-        function actualizarProgreso() {
-            const completadas = palabrasCompletadas.size;
-            const total = PALABRAS.length;
-            const porcentaje = total > 0 ? Math.round((completadas / total) * 100) : 0;
-            document.getElementById('contador').textContent = completadas + ' / ' + total + ' palabras';
-            document.getElementById('porcentaje').textContent = porcentaje + '%';
-            document.getElementById('barra-relleno').style.width = porcentaje + '%';
-        }
-
-        function darPista() {
-            if (!celdaActiva) { mostrarMensaje('Selecciona una celda primero.', 'error'); return; }
-            const palabra = encontrarPalabraEn(celdaActiva.fila, celdaActiva.columna, direccionActiva);
-            if (!palabra) { mostrarMensaje('No hay palabra en esta direccion.', 'error'); return; }
-            const df = palabra.direccion === 'horizontal' ? 0 : 1;
-            const dc = palabra.direccion === 'horizontal' ? 1 : 0;
-            for (let i = 0; i < palabra.palabra.length; i++) {
-                const f = palabra.fila_inicio + i * df;
-                const c = palabra.columna_inicio + i * dc;
-                const input = getInput(f, c);
-                if (input && !input.value) {
-                    input.value = palabra.palabra[i].toUpperCase();
-                    input.dispatchEvent(new Event('input'));
-                    mostrarMensaje('Se revelo una letra de "' + palabra.palabra + '"', 'pista-msg');
-                    return;
-                }
-            }
-            mostrarMensaje('Esa palabra ya esta completa.', 'exito');
-        }
-
-        function limpiarErrores() {
-            document.querySelectorAll('.celda.incorrecta').forEach(el => {
-                el.classList.remove('incorrecta');
-                const input = el.querySelector('input');
-                if (input) input.value = '';
-            });
-            mostrarMensaje('Errores limpiados.', 'pista-msg');
-        }
-
-        function reiniciar() {
-            if (!confirm('Seguro que quieres borrar todo y empezar de nuevo?')) return;
-            document.querySelectorAll('input').forEach(input => input.value = '');
-            document.querySelectorAll('.celda').forEach(el => el.classList.remove('correcta', 'incorrecta'));
-            document.querySelectorAll('.pista-item').forEach(el => el.classList.remove('completada'));
-            palabrasCompletadas.clear();
-            actualizarProgreso();
-            mostrarMensaje('Crucigrama reiniciado.', 'pista-msg');
-        }
-
-        function mostrarMensaje(texto, tipo) {
-            const msg = document.getElementById('mensaje');
-            msg.textContent = texto;
-            msg.className = 'mensaje visible ' + tipo;
-            setTimeout(() => { msg.classList.remove('visible'); }, 3000);
-        }
-
-        init();
-        </script>
+    <script>{js}</script>
 </body>
-</html>
+</html>"""
+
+        return html

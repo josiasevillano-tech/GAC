@@ -38,7 +38,7 @@
             font-size: 0.95rem; line-height: 1.6;
             border-left: 4px solid var(--color-secundario);
         }
-        .resena h3 { font-size: 1rem; color: var(--color-primario); margin-bottom: 8px; }
+        .resena h3 { font-size: 1.2rem; color: var(--color-primario); margin-bottom: 10px; }
         .barra-progreso {
             background: white; padding: 12px 16px; border-radius: var(--radio);
             box-shadow: var(--sombra); margin-bottom: 16px;
@@ -171,7 +171,7 @@
 
         <div class="barra-progreso">
             <div class="info">
-                <span id="contador">0 / 14 palabras</span>
+                <span id="contador">0 / 15 palabras</span>
             </div>
             <div class="progreso-visual">
                 <div class="relleno" id="barra-relleno"></div>
@@ -239,10 +239,10 @@
         
 
     <script>
-        const PALABRAS = [{"palabra": "ESTUDIAR", "pista": "Observar y analizar con dedicación para aprender", "direccion": "horizontal", "fila_inicio": 4, "columna_inicio": 11, "numero": 7}, {"palabra": "APRECIAR", "pista": "Valorar y reconocer la importancia de algo", "direccion": "horizontal", "fila_inicio": 6, "columna_inicio": 6, "numero": 9}, {"palabra": "REVISAR", "pista": "Mirar de nuevo para corregir o confirmar algo", "direccion": "horizontal", "fila_inicio": 8, "columna_inicio": 11, "numero": 12}, {"palabra": "EXAMINAR", "pista": "Inspeccionar algo minuciosamente para evaluarlo", "direccion": "horizontal", "fila_inicio": 10, "columna_inicio": 0, "numero": 13}, {"palabra": "DISCERNIR", "pista": "Distinguir con claridad entre lo bueno y lo malo", "direccion": "horizontal", "fila_inicio": 13, "columna_inicio": 8, "numero": 14}, {"palabra": "INSPECCIONAR", "pista": "Revisar con detenimiento un lugar o situación", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 2, "numero": 1}, {"palabra": "OBSERVAR", "pista": "Mirar con atención y cuidado para notar los detalles", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 18, "numero": 2}, {"palabra": "COMPRENDER", "pista": "Entender a fondo el significado de algo", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 0, "numero": 3}, {"palabra": "VISUALIZAR", "pista": "Formar una imagen mental de algo en la mente", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 6, "numero": 4}, {"palabra": "DETECTAR", "pista": "Descubrir algo que no es evidente a simple vista", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 9, "numero": 5}, {"palabra": "ESCANEAR", "pista": "Examinar rápidamente buscando información específica", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 12, "numero": 6}, {"palabra": "PERCIBIR", "pista": "Captar algo a través de los sentidos o la intuición", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 4, "numero": 8}, {"palabra": "ANALIZAR", "pista": "Examinar algo separando sus partes para entenderlo", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 16, "numero": 10}, {"palabra": "MIRAR", "pista": "Dirigir los ojos hacia algo o alguien", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 14, "numero": 11}];
-        const FILAS = 14;
+        const PALABRAS = [{"palabra": "OBSERVAR", "pista": "Mirar con atención y cuidado para notar los detalles", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 11, "numero": 1}, {"palabra": "VISUALIZAR", "pista": "Formar una imagen mental de algo en la mente", "direccion": "horizontal", "fila_inicio": 2, "columna_inicio": 6, "numero": 3}, {"palabra": "PERCIBIR", "pista": "Captar algo a través de los sentidos o la intuición", "direccion": "horizontal", "fila_inicio": 4, "columna_inicio": 8, "numero": 7}, {"palabra": "COMPRENDER", "pista": "Entender a fondo el significado de algo", "direccion": "horizontal", "fila_inicio": 7, "columna_inicio": 5, "numero": 11}, {"palabra": "REVISAR", "pista": "Mirar de nuevo para corregir o confirmar algo", "direccion": "horizontal", "fila_inicio": 9, "columna_inicio": 0, "numero": 13}, {"palabra": "DISCERNIR", "pista": "Distinguir con claridad entre lo bueno y lo malo", "direccion": "horizontal", "fila_inicio": 10, "columna_inicio": 10, "numero": 14}, {"palabra": "ESCANEAR", "pista": "Examinar rápidamente buscando información específica", "direccion": "horizontal", "fila_inicio": 12, "columna_inicio": 5, "numero": 15}, {"palabra": "EXAMINAR", "pista": "Inspeccionar algo minuciosamente para evaluarlo", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 14, "numero": 2}, {"palabra": "DETECTAR", "pista": "Descubrir algo que no es evidente a simple vista", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 5, "numero": 4}, {"palabra": "INSPECCIONAR", "pista": "Revisar con detenimiento un lugar o situación", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 17, "numero": 5}, {"palabra": "ESTUDIAR", "pista": "Observar y analizar con dedicación para aprender", "direccion": "vertical", "fila_inicio": 4, "columna_inicio": 3, "numero": 6}, {"palabra": "CONTEMPLAR", "pista": "Mirar con deleite y reflexión profunda", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 1, "numero": 8}, {"palabra": "APRECIAR", "pista": "Valorar y reconocer la importancia de algo", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 8, "numero": 9}, {"palabra": "ANALIZAR", "pista": "Examinar algo separando sus partes para entenderlo", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 11, "numero": 10}, {"palabra": "MIRAR", "pista": "Dirigir los ojos hacia algo o alguien", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 15, "numero": 12}];
+        const FILAS = 15;
         const COLUMNAS = 19;
-        const TOTAL_PALABRAS = 14;
+        const TOTAL_PALABRAS = 15;
 
         let celdaActiva = null;
         let direccionActiva = 'horizontal';
