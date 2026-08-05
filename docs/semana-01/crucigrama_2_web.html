@@ -226,7 +226,7 @@
 
         <div class="barra-progreso">
             <div class="info">
-                <span id="contador">0 / 18 palabras</span>
+                <span id="contador">0 / 19 palabras</span>
             </div>
             <div class="progreso-visual">
                 <div class="relleno" id="barra-relleno"></div>
@@ -326,10 +326,10 @@
         
 
     <script>
-        const PALABRAS = [{"palabra": "DAVID", "pista": "Rey de Israel, autor de muchos salmos, vencedor de Goliat", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 7, "numero": 1}, {"palabra": "ABRAHAM", "pista": "Padre de la fe, llamado por Dios para ser padre de muchas naciones", "direccion": "horizontal", "fila_inicio": 2, "columna_inicio": 0, "numero": 6}, {"palabra": "JONAS", "pista": "Profeta que fue enviado a Nínive y tragado por un gran pez", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 7, "numero": 8}, {"palabra": "JOB", "pista": "Hombre justo que soportó grandes pruebas con paciencia", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 1, "numero": 10}, {"palabra": "ELIAS", "pista": "Profeta que enfrentó a los falsos profetas en el Monte Carmelo", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 5, "numero": 11}, {"palabra": "ADAN", "pista": "Primer ser humano creado por Dios, padre de la humanidad", "direccion": "horizontal", "fila_inicio": 6, "columna_inicio": 12, "numero": 14}, {"palabra": "SAMUEL", "pista": "Juez y profeta que ungió a Saúl y a David como reyes", "direccion": "horizontal", "fila_inicio": 7, "columna_inicio": 7, "numero": 15}, {"palabra": "MOISES", "pista": "Líder que guió la salida de Egipto y recibió las tablas de la Ley en el Sinaí", "direccion": "horizontal", "fila_inicio": 10, "columna_inicio": 11, "numero": 17}, {"palabra": "ISAAC", "pista": "Hijo de Abraham, padre de Esaú y Jacob", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 10, "numero": 2}, {"palabra": "SAUL", "pista": "Primer rey de Israel, ungido por Samuel", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 0, "numero": 3}, {"palabra": "JACOB", "pista": "Nieto de Abraham, también llamado Israel, padre de las doce tribus", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 3, "numero": 4}, {"palabra": "DANIEL", "pista": "Joven hebreo que interpretó sueños y sobrevivió al foso de los leones", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 5, "numero": 5}, {"palabra": "JONATAN", "pista": "Hijo de Saúl, amigo leal de David", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 8, "numero": 7}, {"palabra": "EVA", "pista": "Primera mujer, formada de la costilla de Adán", "direccion": "vertical", "fila_inicio": 4, "columna_inicio": 14, "numero": 9}, {"palabra": "JOSE", "pista": "Hijo favorito de Jacob, vendido por sus hermanos, gobernador de Egipto", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 1, "numero": 10}, {"palabra": "SALOMON", "pista": "Hijo de David, rey conocido por su inmensa sabiduría y promotor del primer Templo", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 12, "numero": 12}, {"palabra": "RUTH", "pista": "Moabita que demostró lealtad a su suegra Noemí", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 10, "numero": 13}, {"palabra": "NOE", "pista": "Construyó el arca para salvar a su familia del diluvio", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 15, "numero": 16}];
-        const FILAS = 12;
-        const COLUMNAS = 17;
-        const TOTAL_PALABRAS = 18;
+        const PALABRAS = [{"palabra": "ISAAC", "pista": "Hijo de Abraham, padre de Esaú y Jacob", "direccion": "horizontal", "fila_inicio": 1, "columna_inicio": 8, "numero": 4}, {"palabra": "SALOMON", "pista": "Hijo de David, rey conocido por su inmensa sabiduría y promotor del primer Templo", "direccion": "horizontal", "fila_inicio": 2, "columna_inicio": 1, "numero": 6}, {"palabra": "JACOB", "pista": "Nieto de Abraham, también llamado Israel, padre de las doce tribus", "direccion": "horizontal", "fila_inicio": 2, "columna_inicio": 13, "numero": 8}, {"palabra": "ELISEO", "pista": "Sucesor de Elías, realizó muchos milagros", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 8, "numero": 9}, {"palabra": "SAUL", "pista": "Primer rey de Israel, ungido por Samuel", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 1, "numero": 10}, {"palabra": "ADAN", "pista": "Primer ser humano creado por Dios, padre de la humanidad", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 11, "numero": 11}, {"palabra": "NOE", "pista": "Construyó el arca para salvar a su familia del diluvio", "direccion": "horizontal", "fila_inicio": 7, "columna_inicio": 6, "numero": 13}, {"palabra": "SAMUEL", "pista": "Juez y profeta que ungió a Saúl y a David como reyes", "direccion": "horizontal", "fila_inicio": 8, "columna_inicio": 0, "numero": 14}, {"palabra": "RUTH", "pista": "Moabita que demostró lealtad a su suegra Noemí", "direccion": "horizontal", "fila_inicio": 8, "columna_inicio": 8, "numero": 16}, {"palabra": "EVA", "pista": "Primera mujer, formada de la costilla de Adán", "direccion": "horizontal", "fila_inicio": 11, "columna_inicio": 2, "numero": 17}, {"palabra": "DAVID", "pista": "Rey de Israel, autor de muchos salmos, vencedor de Goliat", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 10, "numero": 1}, {"palabra": "JOB", "pista": "Hombre justo que soportó grandes pruebas con paciencia", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 4, "numero": 2}, {"palabra": "JONATAN", "pista": "Hijo de Saúl, amigo leal de David", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 6, "numero": 3}, {"palabra": "MOISES", "pista": "Líder que guió la salida de Egipto y recibió las tablas de la Ley en el Sinaí", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 16, "numero": 5}, {"palabra": "ABRAHAM", "pista": "Padre de la fe, llamado por Dios para ser padre de muchas naciones", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 2, "numero": 7}, {"palabra": "JONAS", "pista": "Profeta que fue enviado a Nínive y tragado por un gran pez", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 13, "numero": 8}, {"palabra": "ESTHER", "pista": "Reina judía en Persia que intervino para salvar a su pueblo del exterminio", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 8, "numero": 9}, {"palabra": "JOSE", "pista": "Hijo favorito de Jacob, vendido por sus hermanos, gobernador de Egipto", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 0, "numero": 12}, {"palabra": "ELIAS", "pista": "Profeta que enfrentó a los falsos profetas en el Monte Carmelo", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 4, "numero": 15}];
+        const FILAS = 13;
+        const COLUMNAS = 18;
+        const TOTAL_PALABRAS = 19;
 
         let celdaActiva = null;
         let direccionActiva = "horizontal";
@@ -513,13 +513,24 @@
             if (input) { input.focus(); seleccionarCelda(nf, nc); }
         }
 
-        function moverSiguiente(f, c) {
+        function moverSiguiente(f, c, profundidad) {
+            if (profundidad === undefined) profundidad = 0;
+            if (profundidad > 5) return;
             const palabra = encontrarPalabraEn(f, c, direccionActiva);
             if (!palabra) return;
             const df = palabra.direccion === "horizontal" ? 0 : 1;
             const dc = palabra.direccion === "horizontal" ? 1 : 0;
             const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            if (idx + 1 < palabra.palabra.length) { mover(f, c, df, dc); }
+            if (idx + 1 >= palabra.palabra.length) return;
+            const nf = f + df, nc = c + dc;
+            const input = getInput(nf, nc);
+            if (!input) return;
+            input.focus();
+            seleccionarCelda(nf, nc);
+            const letraCorrecta = palabra.palabra[idx + 1].toUpperCase();
+            if (input.value && input.value.toUpperCase() === letraCorrecta) {
+                moverSiguiente(nf, nc, profundidad + 1);
+            }
         }
 
         function moverAnterior(f, c) {

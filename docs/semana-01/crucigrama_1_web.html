@@ -226,7 +226,7 @@
 
         <div class="barra-progreso">
             <div class="info">
-                <span id="contador">0 / 23 palabras</span>
+                <span id="contador">0 / 22 palabras</span>
             </div>
             <div class="progreso-visual">
                 <div class="relleno" id="barra-relleno"></div>
@@ -326,10 +326,10 @@
         
 
     <script>
-        const PALABRAS = [{"palabra": "SANFERNANDO", "pista": "Capital del estado Apure, en los llanos centrales", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 0, "numero": 6}, {"palabra": "MATURIN", "pista": "Capital del estado Monagas, centro petrolero del oriente", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 17, "numero": 8}, {"palabra": "LAGUAIRA", "pista": "Capital del estado La Guaira, principal puerto de Venezuela", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 14, "numero": 11}, {"palabra": "BARCELONA", "pista": "Capital del estado Anzoátegui, fundada en 1671", "direccion": "horizontal", "fila_inicio": 9, "columna_inicio": 7, "numero": 13}, {"palabra": "CUMANA", "pista": "Capital del estado Sucre, una de las ciudades más antiguas de América", "direccion": "horizontal", "fila_inicio": 10, "columna_inicio": 17, "numero": 16}, {"palabra": "LOSTEQUES", "pista": "Capital del estado Miranda, en la región capital", "direccion": "horizontal", "fila_inicio": 13, "columna_inicio": 7, "numero": 19}, {"palabra": "LAASUNCION", "pista": "Capital del estado Nueva Esparta, en la Isla de Margarita", "direccion": "horizontal", "fila_inicio": 15, "columna_inicio": 0, "numero": 20}, {"palabra": "CIUDADBOLIVAR", "pista": "Capital del estado Bolívar, a orillas del río Orinoco", "direccion": "horizontal", "fila_inicio": 15, "columna_inicio": 13, "numero": 21}, {"palabra": "GUANARE", "pista": "Capital del estado Portuguesa, cuna de la espiritualidad venezolana", "direccion": "horizontal", "fila_inicio": 17, "columna_inicio": 10, "numero": 22}, {"palabra": "SANJUANDELOSMORROS", "pista": "Capital del estado Guárico, en los llanos centrales", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 25, "numero": 1}, {"palabra": "BARQUISIMETO", "pista": "Capital del estado Lara, conocida como la Ciudad Crepuscular", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 5, "numero": 2}, {"palabra": "MARACAIBO", "pista": "Capital del estado Zulia, conocida como la Tierra del Sol Amada", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 7, "numero": 3}, {"palabra": "MARACAY", "pista": "Capital del estado Aragua, conocida como la Ciudad Jardín", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 18, "numero": 4}, {"palabra": "PUERTOAYACUCHO", "pista": "Capital del estado Amazonas, en la selva sur", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 20, "numero": 5}, {"palabra": "SANCARLOS", "pista": "Capital del estado Cojedes, en los llanos occidentales", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 12, "numero": 7}, {"palabra": "BARINAS", "pista": "Capital del estado Barinas, cuna de los llaneros", "direccion": "vertical", "fila_inicio": 4, "columna_inicio": 15, "numero": 9}, {"palabra": "SANCRISTOBAL", "pista": "Capital del estado Táchira, cerca de la frontera con Colombia", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 2, "numero": 10}, {"palabra": "TUCUPITA", "pista": "Capital del estado Delta Amacuro, en la región del Orinoco", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 10, "numero": 12}, {"palabra": "VALENCIA", "pista": "Capital del estado Carabobo, importante centro industrial", "direccion": "vertical", "fila_inicio": 9, "columna_inicio": 22, "numero": 14}, {"palabra": "TRUJILLO", "pista": "Capital del estado Trujillo, ciudad de la paz", "direccion": "vertical", "fila_inicio": 10, "columna_inicio": 0, "numero": 15}, {"palabra": "CARACAS", "pista": "Capital del Distrito Capital y de la República", "direccion": "vertical", "fila_inicio": 10, "columna_inicio": 17, "numero": 16}, {"palabra": "CORO", "pista": "Capital del estado Falcón, patrimonio cultural de la humanidad", "direccion": "vertical", "fila_inicio": 12, "columna_inicio": 8, "numero": 17}, {"palabra": "MERIDA", "pista": "Capital del estado Mérida, ubicada en los Andes venezolanos", "direccion": "vertical", "fila_inicio": 12, "columna_inicio": 14, "numero": 18}];
-        const FILAS = 18;
-        const COLUMNAS = 26;
-        const TOTAL_PALABRAS = 23;
+        const PALABRAS = [{"palabra": "BARQUISIMETO", "pista": "Capital del estado Lara, conocida como la Ciudad Crepuscular", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 8, "numero": 1}, {"palabra": "VALENCIA", "pista": "Capital del estado Carabobo, importante centro industrial", "direccion": "horizontal", "fila_inicio": 1, "columna_inicio": 1, "numero": 2}, {"palabra": "TUCUPITA", "pista": "Capital del estado Delta Amacuro, en la región del Orinoco", "direccion": "horizontal", "fila_inicio": 4, "columna_inicio": 12, "numero": 7}, {"palabra": "CARACAS", "pista": "Capital del Distrito Capital y de la República", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 5, "numero": 8}, {"palabra": "SANFELIPE", "pista": "Capital del estado Yaracuy, en la región central", "direccion": "horizontal", "fila_inicio": 6, "columna_inicio": 12, "numero": 10}, {"palabra": "MARACAY", "pista": "Capital del estado Aragua, conocida como la Ciudad Jardín", "direccion": "horizontal", "fila_inicio": 8, "columna_inicio": 8, "numero": 12}, {"palabra": "LOSTEQUES", "pista": "Capital del estado Miranda, en la región capital", "direccion": "horizontal", "fila_inicio": 10, "columna_inicio": 8, "numero": 16}, {"palabra": "CORO", "pista": "Capital del estado Falcón, patrimonio cultural de la humanidad", "direccion": "horizontal", "fila_inicio": 12, "columna_inicio": 9, "numero": 17}, {"palabra": "LAGUAIRA", "pista": "Capital del estado La Guaira, principal puerto de Venezuela", "direccion": "horizontal", "fila_inicio": 13, "columna_inicio": 0, "numero": 18}, {"palabra": "LAASUNCION", "pista": "Capital del estado Nueva Esparta, en la Isla de Margarita", "direccion": "horizontal", "fila_inicio": 14, "columna_inicio": 13, "numero": 19}, {"palabra": "TRUJILLO", "pista": "Capital del estado Trujillo, ciudad de la paz", "direccion": "horizontal", "fila_inicio": 15, "columna_inicio": 5, "numero": 20}, {"palabra": "SANCARLOS", "pista": "Capital del estado Cojedes, en los llanos occidentales", "direccion": "horizontal", "fila_inicio": 16, "columna_inicio": 13, "numero": 21}, {"palabra": "BARINAS", "pista": "Capital del estado Barinas, cuna de los llaneros", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 8, "numero": 1}, {"palabra": "CIUDADBOLIVAR", "pista": "Capital del estado Bolívar, a orillas del río Orinoco", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 6, "numero": 3}, {"palabra": "PUERTOAYACUCHO", "pista": "Capital del estado Amazonas, en la selva sur", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 3, "numero": 4}, {"palabra": "CUMANA", "pista": "Capital del estado Sucre, una de las ciudades más antiguas de América", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 13, "numero": 5}, {"palabra": "SANCRISTOBAL", "pista": "Capital del estado Táchira, cerca de la frontera con Colombia", "direccion": "vertical", "fila_inicio": 4, "columna_inicio": 10, "numero": 6}, {"palabra": "SANFERNANDO", "pista": "Capital del estado Apure, en los llanos centrales", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 1, "numero": 9}, {"palabra": "BARCELONA", "pista": "Capital del estado Anzoátegui, fundada en 1671", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 22, "numero": 11}, {"palabra": "MATURIN", "pista": "Capital del estado Monagas, centro petrolero del oriente", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 18, "numero": 13}, {"palabra": "MARACAIBO", "pista": "Capital del estado Zulia, conocida como la Tierra del Sol Amada", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 20, "numero": 14}, {"palabra": "MERIDA", "pista": "Capital del estado Mérida, ubicada en los Andes venezolanos", "direccion": "vertical", "fila_inicio": 9, "columna_inicio": 15, "numero": 15}];
+        const FILAS = 17;
+        const COLUMNAS = 23;
+        const TOTAL_PALABRAS = 22;
 
         let celdaActiva = null;
         let direccionActiva = "horizontal";
@@ -513,13 +513,24 @@
             if (input) { input.focus(); seleccionarCelda(nf, nc); }
         }
 
-        function moverSiguiente(f, c) {
+        function moverSiguiente(f, c, profundidad) {
+            if (profundidad === undefined) profundidad = 0;
+            if (profundidad > 5) return;
             const palabra = encontrarPalabraEn(f, c, direccionActiva);
             if (!palabra) return;
             const df = palabra.direccion === "horizontal" ? 0 : 1;
             const dc = palabra.direccion === "horizontal" ? 1 : 0;
             const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            if (idx + 1 < palabra.palabra.length) { mover(f, c, df, dc); }
+            if (idx + 1 >= palabra.palabra.length) return;
+            const nf = f + df, nc = c + dc;
+            const input = getInput(nf, nc);
+            if (!input) return;
+            input.focus();
+            seleccionarCelda(nf, nc);
+            const letraCorrecta = palabra.palabra[idx + 1].toUpperCase();
+            if (input.value && input.value.toUpperCase() === letraCorrecta) {
+                moverSiguiente(nf, nc, profundidad + 1);
+            }
         }
 
         function moverAnterior(f, c) {

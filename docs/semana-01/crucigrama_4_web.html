@@ -226,7 +226,7 @@
 
         <div class="barra-progreso">
             <div class="info">
-                <span id="contador">0 / 14 palabras</span>
+                <span id="contador">0 / 15 palabras</span>
             </div>
             <div class="progreso-visual">
                 <div class="relleno" id="barra-relleno"></div>
@@ -326,10 +326,10 @@
         
 
     <script>
-        const PALABRAS = [{"palabra": "VISUALIZAR", "pista": "Formar una imagen mental de algo en la mente", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 9, "numero": 1}, {"palabra": "ESTUDIAR", "pista": "Observar y analizar con dedicación para aprender", "direccion": "horizontal", "fila_inicio": 2, "columna_inicio": 9, "numero": 5}, {"palabra": "DETECTAR", "pista": "Descubrir algo que no es evidente a simple vista", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 6, "numero": 10}, {"palabra": "ANALIZAR", "pista": "Examinar algo separando sus partes para entenderlo", "direccion": "horizontal", "fila_inicio": 7, "columna_inicio": 6, "numero": 11}, {"palabra": "MIRAR", "pista": "Dirigir los ojos hacia algo o alguien", "direccion": "horizontal", "fila_inicio": 8, "columna_inicio": 14, "numero": 12}, {"palabra": "EXAMINAR", "pista": "Inspeccionar algo minuciosamente para evaluarlo", "direccion": "horizontal", "fila_inicio": 9, "columna_inicio": 0, "numero": 13}, {"palabra": "APRECIAR", "pista": "Valorar y reconocer la importancia de algo", "direccion": "horizontal", "fila_inicio": 11, "columna_inicio": 8, "numero": 14}, {"palabra": "INSPECCIONAR", "pista": "Revisar con detenimiento un lugar o situación", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 10, "numero": 2}, {"palabra": "COMPRENDER", "pista": "Entender a fondo el significado de algo", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 0, "numero": 3}, {"palabra": "DISCERNIR", "pista": "Distinguir con claridad entre lo bueno y lo malo", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 7, "numero": 4}, {"palabra": "REVISAR", "pista": "Mirar de nuevo para corregir o confirmar algo", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 16, "numero": 6}, {"palabra": "ESCANEAR", "pista": "Examinar rápidamente buscando información específica", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 2, "numero": 7}, {"palabra": "PERCIBIR", "pista": "Captar algo a través de los sentidos o la intuición", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 4, "numero": 8}, {"palabra": "OBSERVAR", "pista": "Mirar con atención y cuidado para notar los detalles", "direccion": "vertical", "fila_inicio": 4, "columna_inicio": 18, "numero": 9}];
-        const FILAS = 12;
-        const COLUMNAS = 19;
-        const TOTAL_PALABRAS = 14;
+        const PALABRAS = [{"palabra": "CONTEMPLAR", "pista": "Mirar con deleite y reflexión profunda", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 2, "numero": 1}, {"palabra": "VISUALIZAR", "pista": "Formar una imagen mental de algo en la mente", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 3, "numero": 3}, {"palabra": "APRECIAR", "pista": "Valorar y reconocer la importancia de algo", "direccion": "horizontal", "fila_inicio": 7, "columna_inicio": 6, "numero": 12}, {"palabra": "DISCERNIR", "pista": "Distinguir con claridad entre lo bueno y lo malo", "direccion": "horizontal", "fila_inicio": 9, "columna_inicio": 11, "numero": 13}, {"palabra": "ESCANEAR", "pista": "Examinar rápidamente buscando información específica", "direccion": "horizontal", "fila_inicio": 11, "columna_inicio": 0, "numero": 14}, {"palabra": "PERCIBIR", "pista": "Captar algo a través de los sentidos o la intuición", "direccion": "horizontal", "fila_inicio": 14, "columna_inicio": 7, "numero": 15}, {"palabra": "MIRAR", "pista": "Dirigir los ojos hacia algo o alguien", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 7, "numero": 2}, {"palabra": "INSPECCIONAR", "pista": "Revisar con detenimiento un lugar o situación", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 9, "numero": 4}, {"palabra": "COMPRENDER", "pista": "Entender a fondo el significado de algo", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 17, "numero": 5}, {"palabra": "ESTUDIAR", "pista": "Observar y analizar con dedicación para aprender", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 3, "numero": 6}, {"palabra": "EXAMINAR", "pista": "Inspeccionar algo minuciosamente para evaluarlo", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 6, "numero": 7}, {"palabra": "ANALIZAR", "pista": "Examinar algo separando sus partes para entenderlo", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 12, "numero": 8}, {"palabra": "OBSERVAR", "pista": "Mirar con atención y cuidado para notar los detalles", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 19, "numero": 9}, {"palabra": "DETECTAR", "pista": "Descubrir algo que no es evidente a simple vista", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 15, "numero": 10}, {"palabra": "REVISAR", "pista": "Mirar de nuevo para corregir o confirmar algo", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 1, "numero": 11}];
+        const FILAS = 15;
+        const COLUMNAS = 20;
+        const TOTAL_PALABRAS = 15;
 
         let celdaActiva = null;
         let direccionActiva = "horizontal";
@@ -513,13 +513,24 @@
             if (input) { input.focus(); seleccionarCelda(nf, nc); }
         }
 
-        function moverSiguiente(f, c) {
+        function moverSiguiente(f, c, profundidad) {
+            if (profundidad === undefined) profundidad = 0;
+            if (profundidad > 5) return;
             const palabra = encontrarPalabraEn(f, c, direccionActiva);
             if (!palabra) return;
             const df = palabra.direccion === "horizontal" ? 0 : 1;
             const dc = palabra.direccion === "horizontal" ? 1 : 0;
             const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            if (idx + 1 < palabra.palabra.length) { mover(f, c, df, dc); }
+            if (idx + 1 >= palabra.palabra.length) return;
+            const nf = f + df, nc = c + dc;
+            const input = getInput(nf, nc);
+            if (!input) return;
+            input.focus();
+            seleccionarCelda(nf, nc);
+            const letraCorrecta = palabra.palabra[idx + 1].toUpperCase();
+            if (input.value && input.value.toUpperCase() === letraCorrecta) {
+                moverSiguiente(nf, nc, profundidad + 1);
+            }
         }
 
         function moverAnterior(f, c) {
