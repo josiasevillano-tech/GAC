@@ -1,39 +1,25 @@
 """
 generar_sitio.py
-Genera el sitio completo:
-  - Hub principal (docs/index.html) → para tu iglesia
-  - Página de cada semana (docs/semana-XX/index.html) → para usuarios foráneos
-  - Solo muestra versiones _web.html (interactivas)
-  - Lee el <title> de cada HTML para nombrar los botones
+Genera el sitio completo con acordeones para escalar a 50+ semanas.
 """
 
 import json
-import os
 import re
 from pathlib import Path
 from typing import List, Dict
 
 
-# ─────────────────────────────────────────────────────────────
-# CONFIGURACIÓN
-# ─────────────────────────────────────────────────────────────
-
 BASE_DIR = Path("docs")
 SEMANA_PATTERN = re.compile(r"semana[_\-](\d+)", re.I)
 
 IGLESIA_PRINCIPAL = {
-    "nombre": "Escuela del Pensamiento",
-    "subtitulo": "Análisis Estructural del Evangelio de Juan",
+    "nombre": "Iglesia Agua Viva",
+    "subtitulo": "Escuela del Pensamiento",
     "logo_emoji": "📖",
 }
 
 
-# ─────────────────────────────────────────────────────────────
-# FUNCIONES AUXILIARES
-# ─────────────────────────────────────────────────────────────
-
 def leer_json_semana(ruta_carpeta: Path) -> Dict:
-    """Busca un .json dentro de la carpeta de la semana para extraer tema y reseña."""
     for archivo in ruta_carpeta.glob("*.json"):
         try:
             with open(archivo, "r", encoding="utf-8") as f:
@@ -44,14 +30,12 @@ def leer_json_semana(ruta_carpeta: Path) -> Dict:
 
 
 def extraer_titulo_html(ruta_html: Path) -> str:
-    """Lee el <title> del HTML para usarlo como nombre del botón."""
     try:
         with open(ruta_html, "r", encoding="utf-8") as f:
-            contenido = f.read(2000)  # Solo leemos el inicio
+            contenido = f.read(2000)
             match = re.search(r"<title>(.*?)</title>", contenido, re.IGNORECASE)
             if match:
                 titulo = match.group(1).strip()
-                # Si el título es muy genérico, lo limpiamos
                 if titulo and titulo != "Guia de Estudio":
                     return titulo
     except:
@@ -60,9 +44,7 @@ def extraer_titulo_html(ruta_html: Path) -> str:
 
 
 def extraer_datos_semana(carpeta: Path) -> Dict:
-    """Extrae título, reseña y lista de crucigramas de una carpeta semana-XX."""
     datos_json = leer_json_semana(carpeta)
-    
     match = SEMANA_PATTERN.match(carpeta.name)
     numero = int(match.group(1)) if match else 0
     
@@ -70,18 +52,13 @@ def extraer_datos_semana(carpeta: Path) -> Dict:
     resena = datos_json.get("resena", datos_json.get("description", datos_json.get("summary", "")))
     resena_html = resena.replace("\n", "<br>") if resena else "<em>Reseña del tema próximamente...</em>"
     
-    # Solo archivos _web.html (interactivos), ignorar los .html de impresión
     crucigramas = sorted(carpeta.glob("crucigrama_*_web.html"))
     
     lista_cruz = []
     for i, cruz in enumerate(crucigramas, 1):
-        # Intentar sacar el nombre del <title> del HTML
         nombre_titulo = extraer_titulo_html(cruz)
-        
-        # Si no tiene title útil, usar el nombre del archivo limpio
         if not nombre_titulo:
             nombre_titulo = f"Crucigrama {i}"
-        
         lista_cruz.append({
             "numero": i,
             "archivo": cruz.name,
@@ -94,12 +71,10 @@ def extraer_datos_semana(carpeta: Path) -> Dict:
         "titulo": titulo,
         "resena_html": resena_html,
         "crucigramas": lista_cruz,
-        "ruta_relativa": f"{carpeta.name}/index.html"
     }
 
 
 def encontrar_semanas() -> List[Dict]:
-    """Escanea docs/ y devuelve datos de todas las semanas encontradas."""
     if not BASE_DIR.exists():
         print(f"❌ No existe la carpeta '{BASE_DIR}'")
         return []
@@ -111,10 +86,6 @@ def encontrar_semanas() -> List[Dict]:
     
     return sorted(semanas, key=lambda x: x["numero"])
 
-
-# ─────────────────────────────────────────────────────────────
-# PLANTILLAS HTML
-# ─────────────────────────────────────────────────────────────
 
 CSS_GLOBAL = """
     <style>
@@ -142,27 +113,75 @@ CSS_GLOBAL = """
         header .emoji { font-size: 3rem; margin-bottom: 8px; display: block; }
         header h1 { color: var(--primario); font-size: 1.9rem; margin-bottom: 6px; }
         header p { color: #718096; font-size: 1.05rem; }
-        .semana-card {
+        
+        /* === ACORDEÓN === */
+        details {
             background: var(--card);
             border-radius: var(--radio);
-            padding: 24px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             box-shadow: var(--sombra);
+            overflow: hidden;
         }
-        .semana-card h2 {
+        details[open] { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+        summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: background 0.2s;
+        }
+        summary::-webkit-details-marker { display: none; }
+        summary:hover { background: #f7fafc; }
+        .summary-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+        }
+        .semana-num {
+            background: var(--primario);
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+        .semana-info h3 {
             color: var(--primario);
-            font-size: 1.25rem;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--borde);
+            font-size: 1.15rem;
+            margin-bottom: 2px;
+        }
+        .semana-info span {
+            color: #a0aec0;
+            font-size: 0.85rem;
+        }
+        .flecha {
+            color: #a0aec0;
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+        details[open] .flecha { transform: rotate(180deg); }
+        
+        /* === CONTENIDO DEL ACORDEÓN === */
+        .contenido {
+            padding: 0 24px 24px;
+            border-top: 1px solid var(--borde);
         }
         .resena {
             background: #f7fafc;
             border-left: 4px solid var(--secundario);
             padding: 16px;
             border-radius: 8px;
-            margin-bottom: 16px;
-            font-size: 1rem;
+            margin: 16px 0;
+            font-size: 0.95rem;
             color: #4a5568;
         }
         .grid {
@@ -180,17 +199,22 @@ CSS_GLOBAL = """
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.2s;
-            border: none;
-            cursor: pointer;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         .btn:hover { background: #2b6cb0; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .btn-outline {
-            background: white;
-            color: var(--secundario);
-            border: 2px solid var(--secundario);
+        
+        .badge-nueva {
+            background: #38a169;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
         }
-        .btn-outline:hover { background: var(--secundario); color: white; }
+        
         .volver {
             display: inline-flex;
             align-items: center;
@@ -202,18 +226,7 @@ CSS_GLOBAL = """
             font-size: 0.9rem;
         }
         .volver:hover { text-decoration: underline; }
-        .badge {
-            display: inline-block;
-            background: #c6f6d5;
-            color: #22543d;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        
         footer {
             text-align: center;
             margin-top: 48px;
@@ -222,9 +235,11 @@ CSS_GLOBAL = """
             color: #a0aec0;
             font-size: 0.85rem;
         }
+        
         @media (max-width: 480px) {
             header h1 { font-size: 1.5rem; }
-            .semana-card { padding: 16px; }
+            summary { padding: 16px; }
+            .contenido { padding: 0 16px 16px; }
             .grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -232,23 +247,40 @@ CSS_GLOBAL = """
 
 
 def generar_hub(semanas: List[Dict]) -> str:
-    """Genera el index.html principal (para tu iglesia, acumulativo)."""
+    total = len(semanas)
     
-    secciones = []
-    for sem in semanas:
+    acordeones = []
+    for i, sem in enumerate(semanas):
+        es_ultima = (i == total - 1)
+        abierto = " open" if es_ultima else ""
+        badge_nueva = '<span class="badge-nueva">Nueva</span>' if es_ultima else ""
+        
         botones = "\n".join([
             f'                <a class="btn" href="{sem["carpeta"]}/{cruz["archivo"]}">{cruz["titulo"]}</a>'
             for cruz in sem["crucigramas"]
         ]) or '                <span style="color:#a0aec0">Sin crucigramas aún</span>'
         
-        seccion = f'''        <div class="semana-card">
-            <div class="badge">Semana {sem["numero"]}</div>
-            <h2>{sem["titulo"]}</h2>
-            <div class="grid">
+        acordeon = f'''        <details{abierto}>
+            <summary>
+                <div class="summary-left">
+                    <div class="semana-num">{sem["numero"]}</div>
+                    <div class="semana-info">
+                        <h3>{sem["titulo"]}{badge_nueva}</h3>
+                        <span>{len(sem["crucigramas"])} crucigramas</span>
+                    </div>
+                </div>
+                <div class="flecha">▼</div>
+            </summary>
+            <div class="contenido">
+                <div class="resena">
+                    {sem["resena_html"]}
+                </div>
+                <div class="grid">
 {botones}
+                </div>
             </div>
-        </div>'''
-        secciones.append(seccion)
+        </details>'''
+        acordeones.append(acordeon)
     
     return f'''<!DOCTYPE html>
 <html lang="es">
@@ -266,7 +298,7 @@ def generar_hub(semanas: List[Dict]) -> str:
             <p>{IGLESIA_PRINCIPAL["subtitulo"]}</p>
         </header>
 
-{chr(10).join(secciones)}
+{chr(10).join(acordeones)}
 
         <footer>
             {IGLESIA_PRINCIPAL["nombre"]} — Guía de Estudio Interactiva
@@ -277,8 +309,6 @@ def generar_hub(semanas: List[Dict]) -> str:
 
 
 def generar_pagina_semana(sem: Dict, total_semanas: int) -> str:
-    """Genera el index.html de una semana individual (para usuarios foráneos)."""
-    
     botones = "\n".join([
         f'            <a class="btn" href="{cruz["archivo"]}">{cruz["titulo"]}</a>'
         for cruz in sem["crucigramas"]
@@ -298,17 +328,17 @@ def generar_pagina_semana(sem: Dict, total_semanas: int) -> str:
         
         <header>
             <span class="emoji">📚</span>
-            <h1>{sem["titulo"]}</h1>
-            <p>Guía de Estudio — Semana {sem["numero"]}</p>
+            <h1>{IGLESIA_PRINCIPAL["nombre"]}</h1>
+            <p>{IGLESIA_PRINCIPAL["subtitulo"]} — Semana {sem["numero"]}</p>
         </header>
 
-        <div class="semana-card">
-            <h2>📝 Reseña del tema</h2>
+        <div style="background: var(--card); border-radius: var(--radio); padding: 24px; box-shadow: var(--sombra);">
+            <h2 style="color: var(--primario); margin-bottom: 12px;">📝 Reseña del tema</h2>
             <div class="resena">
                 {sem["resena_html"]}
             </div>
             
-            <h2 style="margin-top: 20px; margin-bottom: 12px;">🎯 Crucigramas</h2>
+            <h2 style="color: var(--primario); margin: 20px 0 12px;">🎯 Crucigramas</h2>
             <div class="grid">
 {botones}
             </div>
@@ -322,10 +352,6 @@ def generar_pagina_semana(sem: Dict, total_semanas: int) -> str:
 </html>'''
 
 
-# ─────────────────────────────────────────────────────────────
-# FUNCIÓN PRINCIPAL
-# ─────────────────────────────────────────────────────────────
-
 def main():
     print("=" * 55)
     print("   GENERADOR DE SITIO — GUÍA DE ESTUDIO")
@@ -334,33 +360,28 @@ def main():
     semanas = encontrar_semanas()
     if not semanas:
         print("\n⚠️  No encontré carpetas tipo 'docs/semana-01/'")
-        print("   Crea al menos una carpeta con sus crucigramas _web.html")
         return
     
     print(f"\n📂 Encontradas {len(semanas)} semana(s)")
     for s in semanas:
-        print(f"   • Semana {s['numero']}: {s['titulo']} ({len(s['crucigramas'])} crucigramas interactivos)")
-        for c in s["crucigramas"]:
-            print(f"      - {c['titulo']}")
+        print(f"   • Semana {s['numero']}: {s['titulo']} ({len(s['crucigramas'])} crucigramas)")
     
     hub_html = generar_hub(semanas)
     ruta_hub = BASE_DIR / "index.html"
     with open(ruta_hub, "w", encoding="utf-8") as f:
         f.write(hub_html)
     print(f"\n✅ Hub principal generado: {ruta_hub}")
-    print(f"   🔗 https://TU_USUARIO.github.io/GAC/")
     
     for sem in semanas:
         pagina_html = generar_pagina_semana(sem, len(semanas))
         ruta_pagina = BASE_DIR / sem["carpeta"] / "index.html"
         with open(ruta_pagina, "w", encoding="utf-8") as f:
             f.write(pagina_html)
-        print(f"   ✅ {sem['carpeta']}/index.html → Guía individual")
+        print(f"   ✅ {sem['carpeta']}/index.html")
     
     ruta_iglesias = BASE_DIR / "iglesias"
     ruta_iglesias.mkdir(exist_ok=True)
     (ruta_iglesias / ".gitkeep").write_text("")
-    print(f"\n🚪 Carpeta 'iglesias/' lista para futuras suscripciones")
     
     print("\n" + "=" * 55)
     print("   RESUMEN DE LINKS")
@@ -372,7 +393,7 @@ def main():
         print(f"   Semana {sem['numero']}: https://TU_USUARIO.github.io/GAC/{sem['carpeta']}/")
     print(f"\n📋 Próximos pasos:")
     print(f"   git add docs/ generar_sitio.py")
-    print(f"   git commit -m 'feat: genera sitio con semana {semanas[-1]['numero']}'")
+    print(f"   git commit -m 'feat: acordeones, nombre Iglesia Agua Viva'")
     print(f"   git push origin guia-ia")
 
 
