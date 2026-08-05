@@ -111,9 +111,10 @@ CSS_GLOBAL = """
         .contenedor { max-width: 800px; margin: 0 auto; }
         header { text-align: center; margin-bottom: 36px; }
         header .logo {
-            width: 140px;
+            width: 200px;
             height: auto;
-            margin-bottom: 12px;
+            display: block;
+            margin: 0 auto 16px auto;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
         header h1 { color: var(--primario); font-size: 1.9rem; margin-bottom: 6px; }
@@ -243,7 +244,7 @@ CSS_GLOBAL = """
         
         @media (max-width: 480px) {
             header h1 { font-size: 1.5rem; }
-            header .logo { width: 100px; }
+            header .logo { width: 160px; }
             summary { padding: 16px; }
             .contenido { padding: 0 16px 16px; }
             .grid { grid-template-columns: 1fr; }
@@ -397,10 +398,9 @@ def main():
     for sem in semanas:
         print(f"   Semana {sem['numero']}: https://TU_USUARIO.github.io/GAC/{sem['carpeta']}/")
     print(f"\n📋 Próximos pasos:")
-    print(f"   1. Copiar tu logo a: docs/assets/logo.png")
-    print(f"   2. git add docs/ generar_sitio.py")
-    print(f"   3. git commit -m 'feat: logo en portada'")
-    print(f"   4. git push origin guia-ia")
+    print(f"   git add docs/ generar_sitio.py")
+    print(f"   git commit -m 'feat: logo mas grande y centrado'")
+    print(f"   git push origin guia-ia")
 
 
 if __name__ == "__main__":
