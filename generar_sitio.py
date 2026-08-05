@@ -1,12 +1,10 @@
 """
 generar_sitio.py
 Genera el sitio completo:
-  1. Hub principal (docs/index.html) → para tu iglesia
-  2. Página de cada semana (docs/semana-XX/index.html) → para usuarios foráneos
-  3. Deja lista la estructura para iglesias suscritas en el futuro
-
-Uso:
-  python generar_sitio.py
+  - Hub principal (docs/index.html) → para tu iglesia
+  - Página de cada semana (docs/semana-XX/index.html) → para usuarios foráneos
+  - Solo muestra versiones _web.html (interactivas)
+  - Lee el <title> de cada HTML para nombrar los botones
 """
 
 import json
@@ -23,7 +21,6 @@ from typing import List, Dict
 BASE_DIR = Path("docs")
 SEMANA_PATTERN = re.compile(r"semana[_\-](\d+)", re.I)
 
-# Datos de tu iglesia (puedes editar esto)
 IGLESIA_PRINCIPAL = {
     "nombre": "Escuela del Pensamiento",
     "subtitulo": "Análisis Estructural del Evangelio de Juan",
@@ -46,30 +43,49 @@ def leer_json_semana(ruta_carpeta: Path) -> Dict:
     return {}
 
 
+def extraer_titulo_html(ruta_html: Path) -> str:
+    """Lee el <title> del HTML para usarlo como nombre del botón."""
+    try:
+        with open(ruta_html, "r", encoding="utf-8") as f:
+            contenido = f.read(2000)  # Solo leemos el inicio
+            match = re.search(r"<title>(.*?)</title>", contenido, re.IGNORECASE)
+            if match:
+                titulo = match.group(1).strip()
+                # Si el título es muy genérico, lo limpiamos
+                if titulo and titulo != "Guia de Estudio":
+                    return titulo
+    except:
+        pass
+    return ""
+
+
 def extraer_datos_semana(carpeta: Path) -> Dict:
     """Extrae título, reseña y lista de crucigramas de una carpeta semana-XX."""
     datos_json = leer_json_semana(carpeta)
     
-    # Número de semana desde el nombre de carpeta
     match = SEMANA_PATTERN.match(carpeta.name)
     numero = int(match.group(1)) if match else 0
     
-    # Título: del JSON o por defecto
     titulo = datos_json.get("tema", datos_json.get("title", f"Semana {numero}"))
-    
-    # Reseña: del JSON o vacía
     resena = datos_json.get("resena", datos_json.get("description", datos_json.get("summary", "")))
     resena_html = resena.replace("\n", "<br>") if resena else "<em>Reseña del tema próximamente...</em>"
     
-    # Crucigramas HTML encontrados
-    crucigramas = sorted(carpeta.glob("crucigrama_*.html"))
+    # Solo archivos _web.html (interactivos), ignorar los .html de impresión
+    crucigramas = sorted(carpeta.glob("crucigrama_*_web.html"))
+    
     lista_cruz = []
     for i, cruz in enumerate(crucigramas, 1):
-        nombre = cruz.name
+        # Intentar sacar el nombre del <title> del HTML
+        nombre_titulo = extraer_titulo_html(cruz)
+        
+        # Si no tiene title útil, usar el nombre del archivo limpio
+        if not nombre_titulo:
+            nombre_titulo = f"Crucigrama {i}"
+        
         lista_cruz.append({
             "numero": i,
-            "archivo": nombre,
-            "titulo": f"Crucigrama {i}"
+            "archivo": cruz.name,
+            "titulo": nombre_titulo
         })
     
     return {
@@ -151,7 +167,7 @@ CSS_GLOBAL = """
         }
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 10px;
         }
         .btn {
@@ -209,6 +225,7 @@ CSS_GLOBAL = """
         @media (max-width: 480px) {
             header h1 { font-size: 1.5rem; }
             .semana-card { padding: 16px; }
+            .grid { grid-template-columns: 1fr; }
         }
     </style>
 """
@@ -314,18 +331,18 @@ def main():
     print("   GENERADOR DE SITIO — GUÍA DE ESTUDIO")
     print("=" * 55)
     
-    # 1. Encontrar semanas
     semanas = encontrar_semanas()
     if not semanas:
         print("\n⚠️  No encontré carpetas tipo 'docs/semana-01/'")
-        print("   Crea al menos una carpeta con sus crucigramas .html")
+        print("   Crea al menos una carpeta con sus crucigramas _web.html")
         return
     
     print(f"\n📂 Encontradas {len(semanas)} semana(s)")
     for s in semanas:
-        print(f"   • Semana {s['numero']}: {s['titulo']} ({len(s['crucigramas'])} crucigramas)")
+        print(f"   • Semana {s['numero']}: {s['titulo']} ({len(s['crucigramas'])} crucigramas interactivos)")
+        for c in s["crucigramas"]:
+            print(f"      - {c['titulo']}")
     
-    # 2. Generar hub principal
     hub_html = generar_hub(semanas)
     ruta_hub = BASE_DIR / "index.html"
     with open(ruta_hub, "w", encoding="utf-8") as f:
@@ -333,7 +350,6 @@ def main():
     print(f"\n✅ Hub principal generado: {ruta_hub}")
     print(f"   🔗 https://TU_USUARIO.github.io/GAC/")
     
-    # 3. Generar página de cada semana
     for sem in semanas:
         pagina_html = generar_pagina_semana(sem, len(semanas))
         ruta_pagina = BASE_DIR / sem["carpeta"] / "index.html"
@@ -341,13 +357,11 @@ def main():
             f.write(pagina_html)
         print(f"   ✅ {sem['carpeta']}/index.html → Guía individual")
     
-    # 4. Crear carpeta de iglesias (vacía, lista para el futuro)
     ruta_iglesias = BASE_DIR / "iglesias"
     ruta_iglesias.mkdir(exist_ok=True)
     (ruta_iglesias / ".gitkeep").write_text("")
     print(f"\n🚪 Carpeta 'iglesias/' lista para futuras suscripciones")
     
-    # 5. Resumen final
     print("\n" + "=" * 55)
     print("   RESUMEN DE LINKS")
     print("=" * 55)
@@ -357,9 +371,9 @@ def main():
     for sem in semanas:
         print(f"   Semana {sem['numero']}: https://TU_USUARIO.github.io/GAC/{sem['carpeta']}/")
     print(f"\n📋 Próximos pasos:")
-    print(f"   git add docs/")
+    print(f"   git add docs/ generar_sitio.py")
     print(f"   git commit -m 'feat: genera sitio con semana {semanas[-1]['numero']}'")
-    print(f"   git push origin main")
+    print(f"   git push origin guia-ia")
 
 
 if __name__ == "__main__":
