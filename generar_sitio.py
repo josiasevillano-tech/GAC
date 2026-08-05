@@ -15,7 +15,7 @@ SEMANA_PATTERN = re.compile(r"semana[_\-](\d+)", re.I)
 IGLESIA_PRINCIPAL = {
     "nombre": "Iglesia Agua Viva",
     "subtitulo": "Escuela del Pensamiento",
-    "logo_emoji": "📖",
+    "logo_src": "assets/logo.png",
 }
 
 
@@ -110,7 +110,12 @@ CSS_GLOBAL = """
         }
         .contenedor { max-width: 800px; margin: 0 auto; }
         header { text-align: center; margin-bottom: 36px; }
-        header .emoji { font-size: 3rem; margin-bottom: 8px; display: block; }
+        header .logo {
+            width: 140px;
+            height: auto;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
         header h1 { color: var(--primario); font-size: 1.9rem; margin-bottom: 6px; }
         header p { color: #718096; font-size: 1.05rem; }
         
@@ -238,6 +243,7 @@ CSS_GLOBAL = """
         
         @media (max-width: 480px) {
             header h1 { font-size: 1.5rem; }
+            header .logo { width: 100px; }
             summary { padding: 16px; }
             .contenido { padding: 0 16px 16px; }
             .grid { grid-template-columns: 1fr; }
@@ -293,7 +299,7 @@ def generar_hub(semanas: List[Dict]) -> str:
 <body>
     <div class="contenedor">
         <header>
-            <span class="emoji">{IGLESIA_PRINCIPAL["logo_emoji"]}</span>
+            <img class="logo" src="{IGLESIA_PRINCIPAL["logo_src"]}" alt="{IGLESIA_PRINCIPAL["nombre"]}">
             <h1>{IGLESIA_PRINCIPAL["nombre"]}</h1>
             <p>{IGLESIA_PRINCIPAL["subtitulo"]}</p>
         </header>
@@ -327,7 +333,6 @@ def generar_pagina_semana(sem: Dict, total_semanas: int) -> str:
         <a class="volver" href="../index.html">← Volver al inicio</a>
         
         <header>
-            <span class="emoji">📚</span>
             <h1>{IGLESIA_PRINCIPAL["nombre"]}</h1>
             <p>{IGLESIA_PRINCIPAL["subtitulo"]} — Semana {sem["numero"]}</p>
         </header>
@@ -392,9 +397,10 @@ def main():
     for sem in semanas:
         print(f"   Semana {sem['numero']}: https://TU_USUARIO.github.io/GAC/{sem['carpeta']}/")
     print(f"\n📋 Próximos pasos:")
-    print(f"   git add docs/ generar_sitio.py")
-    print(f"   git commit -m 'feat: acordeones, nombre Iglesia Agua Viva'")
-    print(f"   git push origin guia-ia")
+    print(f"   1. Copiar tu logo a: docs/assets/logo.png")
+    print(f"   2. git add docs/ generar_sitio.py")
+    print(f"   3. git commit -m 'feat: logo en portada'")
+    print(f"   4. git push origin guia-ia")
 
 
 if __name__ == "__main__":
