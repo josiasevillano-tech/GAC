@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escuela del Pensamiento</title>
+    <title>Iglesia Agua Viva</title>
     
     <style>
         :root {
@@ -30,27 +30,75 @@
         header .emoji { font-size: 3rem; margin-bottom: 8px; display: block; }
         header h1 { color: var(--primario); font-size: 1.9rem; margin-bottom: 6px; }
         header p { color: #718096; font-size: 1.05rem; }
-        .semana-card {
+        
+        /* === ACORDEÓN === */
+        details {
             background: var(--card);
             border-radius: var(--radio);
-            padding: 24px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             box-shadow: var(--sombra);
+            overflow: hidden;
         }
-        .semana-card h2 {
+        details[open] { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+        summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: background 0.2s;
+        }
+        summary::-webkit-details-marker { display: none; }
+        summary:hover { background: #f7fafc; }
+        .summary-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+        }
+        .semana-num {
+            background: var(--primario);
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+        .semana-info h3 {
             color: var(--primario);
-            font-size: 1.25rem;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--borde);
+            font-size: 1.15rem;
+            margin-bottom: 2px;
+        }
+        .semana-info span {
+            color: #a0aec0;
+            font-size: 0.85rem;
+        }
+        .flecha {
+            color: #a0aec0;
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+        details[open] .flecha { transform: rotate(180deg); }
+        
+        /* === CONTENIDO DEL ACORDEÓN === */
+        .contenido {
+            padding: 0 24px 24px;
+            border-top: 1px solid var(--borde);
         }
         .resena {
             background: #f7fafc;
             border-left: 4px solid var(--secundario);
             padding: 16px;
             border-radius: 8px;
-            margin-bottom: 16px;
-            font-size: 1rem;
+            margin: 16px 0;
+            font-size: 0.95rem;
             color: #4a5568;
         }
         .grid {
@@ -68,17 +116,22 @@
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.2s;
-            border: none;
-            cursor: pointer;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         .btn:hover { background: #2b6cb0; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .btn-outline {
-            background: white;
-            color: var(--secundario);
-            border: 2px solid var(--secundario);
+        
+        .badge-nueva {
+            background: #38a169;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
         }
-        .btn-outline:hover { background: var(--secundario); color: white; }
+        
         .volver {
             display: inline-flex;
             align-items: center;
@@ -90,18 +143,7 @@
             font-size: 0.9rem;
         }
         .volver:hover { text-decoration: underline; }
-        .badge {
-            display: inline-block;
-            background: #c6f6d5;
-            color: #22543d;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        
         footer {
             text-align: center;
             margin-top: 48px;
@@ -110,9 +152,11 @@
             color: #a0aec0;
             font-size: 0.85rem;
         }
+        
         @media (max-width: 480px) {
             header h1 { font-size: 1.5rem; }
-            .semana-card { padding: 16px; }
+            summary { padding: 16px; }
+            .contenido { padding: 0 16px 16px; }
             .grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -122,23 +166,36 @@
     <div class="contenedor">
         <header>
             <span class="emoji">📖</span>
-            <h1>Escuela del Pensamiento</h1>
-            <p>Análisis Estructural del Evangelio de Juan</p>
+            <h1>Iglesia Agua Viva</h1>
+            <p>Escuela del Pensamiento</p>
         </header>
 
-        <div class="semana-card">
-            <div class="badge">Semana 1</div>
-            <h2>Semana 1</h2>
-            <div class="grid">
+        <details open>
+            <summary>
+                <div class="summary-left">
+                    <div class="semana-num">1</div>
+                    <div class="semana-info">
+                        <h3>Semana 1<span class="badge-nueva">Nueva</span></h3>
+                        <span>4 crucigramas</span>
+                    </div>
+                </div>
+                <div class="flecha">▼</div>
+            </summary>
+            <div class="contenido">
+                <div class="resena">
+                    <em>Reseña del tema próximamente...</em>
+                </div>
+                <div class="grid">
                 <a class="btn" href="semana-01/crucigrama_1_web.html">Guia 1 - Capitales de Venezuela</a>
                 <a class="btn" href="semana-01/crucigrama_2_web.html">Guia 1 - Personajes Bíblicos</a>
                 <a class="btn" href="semana-01/crucigrama_3_web.html">Guia 1 - Libros del Nuevo Testamento</a>
                 <a class="btn" href="semana-01/crucigrama_4_web.html">Guia 1 - Ver: aprender una palabra, aprender una forma de pensar</a>
+                </div>
             </div>
-        </div>
+        </details>
 
         <footer>
-            Escuela del Pensamiento — Guía de Estudio Interactiva
+            Iglesia Agua Viva — Guía de Estudio Interactiva
         </footer>
     </div>
 </body>
