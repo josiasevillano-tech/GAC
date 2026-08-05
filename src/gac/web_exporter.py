@@ -447,7 +447,7 @@ class WebExporter:
                     input.maxLength = 1;
                     input.dataset.fila = f;
                     input.dataset.columna = c;
-                    input.addEventListener("focus", () => seleccionarCelda(f, c));
+                    input.addEventListener("focus", () => {{ seleccionarCelda(f, c); setTimeout(() => input.select(), 10); }});
                     input.addEventListener("input", (e) => manejarInput(e, f, c));
                     input.addEventListener("keydown", (e) => manejarTeclaCelda(e, f, c));
                     input.addEventListener("click", (e) => {{ e.stopPropagation(); seleccionarCelda(f, c); }});
@@ -567,13 +567,24 @@ class WebExporter:
             if (input) {{ input.focus(); seleccionarCelda(nf, nc); }}
         }}
 
-        function moverSiguiente(f, c) {{
+        function moverSiguiente(f, c, profundidad) {{
+            if (profundidad === undefined) profundidad = 0;
+            if (profundidad > 5) return;
             const palabra = encontrarPalabraEn(f, c, direccionActiva);
             if (!palabra) return;
             const df = palabra.direccion === "horizontal" ? 0 : 1;
             const dc = palabra.direccion === "horizontal" ? 1 : 0;
             const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            if (idx + 1 < palabra.palabra.length) {{ mover(f, c, df, dc); }}
+            if (idx + 1 >= palabra.palabra.length) return;
+            const nf = f + df, nc = c + dc;
+            const input = getInput(nf, nc);
+            if (!input) return;
+            input.focus();
+            seleccionarCelda(nf, nc);
+            const letraCorrecta = palabra.palabra[idx + 1].toUpperCase();
+            if (input.value && input.value.toUpperCase() === letraCorrecta) {{
+                moverSiguiente(nf, nc, profundidad + 1);
+            }}
         }}
 
         function moverAnterior(f, c) {{
@@ -583,19 +594,6 @@ class WebExporter:
             const dc = palabra.direccion === "horizontal" ? 1 : 0;
             const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
             if (idx > 0) {{ mover(f, c, -df, -dc); }}
-        }}
-
-        function tecladoVirtual(tecla) {{
-            if (!celdaActiva) return;
-            const input = getInput(celdaActiva.fila, celdaActiva.columna);
-            if (!input) return;
-            if (tecla === "BACKSPACE") {{
-                if (input.value) {{ input.value = ""; }}
-                else {{ moverAnterior(celdaActiva.fila, celdaActiva.columna); }}
-            }} else {{
-                input.value = tecla;
-                input.dispatchEvent(new Event("input"));
-            }}
         }}
 
         function verificarTodo() {{
@@ -782,39 +780,6 @@ class WebExporter:
         init();
         """
 
-        teclado_html = """
-        <div class="teclado" id="teclado">
-            <button class="tecla" onclick="tecladoVirtual('A')">A</button>
-            <button class="tecla" onclick="tecladoVirtual('B')">B</button>
-            <button class="tecla" onclick="tecladoVirtual('C')">C</button>
-            <button class="tecla" onclick="tecladoVirtual('D')">D</button>
-            <button class="tecla" onclick="tecladoVirtual('E')">E</button>
-            <button class="tecla" onclick="tecladoVirtual('F')">F</button>
-            <button class="tecla" onclick="tecladoVirtual('G')">G</button>
-            <button class="tecla" onclick="tecladoVirtual('H')">H</button>
-            <button class="tecla" onclick="tecladoVirtual('I')">I</button>
-            <button class="tecla" onclick="tecladoVirtual('J')">J</button>
-            <button class="tecla" onclick="tecladoVirtual('K')">K</button>
-            <button class="tecla" onclick="tecladoVirtual('L')">L</button>
-            <button class="tecla" onclick="tecladoVirtual('M')">M</button>
-            <button class="tecla" onclick="tecladoVirtual('N')">N</button>
-            <button class="tecla" onclick="tecladoVirtual('\u00D1')">Ñ</button>
-            <button class="tecla" onclick="tecladoVirtual('O')">O</button>
-            <button class="tecla" onclick="tecladoVirtual('P')">P</button>
-            <button class="tecla" onclick="tecladoVirtual('Q')">Q</button>
-            <button class="tecla" onclick="tecladoVirtual('R')">R</button>
-            <button class="tecla" onclick="tecladoVirtual('S')">S</button>
-            <button class="tecla" onclick="tecladoVirtual('T')">T</button>
-            <button class="tecla" onclick="tecladoVirtual('U')">U</button>
-            <button class="tecla" onclick="tecladoVirtual('V')">V</button>
-            <button class="tecla" onclick="tecladoVirtual('W')">W</button>
-            <button class="tecla" onclick="tecladoVirtual('X')">X</button>
-            <button class="tecla" onclick="tecladoVirtual('Y')">Y</button>
-            <button class="tecla" onclick="tecladoVirtual('Z')">Z</button>
-            <button class="tecla tecla-borrar" onclick="tecladoVirtual('BACKSPACE')">⌫</button>
-        </div>
-        """
-
         modal_html = """
         <div class="modal-overlay" id="modal-overlay">
             <div class="modal">
@@ -904,7 +869,6 @@ class WebExporter:
     </div>
 
     <div class="mensaje" id="mensaje"></div>
-    {teclado_html}
     {modal_html}
 
     <script>{js}</script>

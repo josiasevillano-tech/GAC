@@ -226,7 +226,7 @@
 
         <div class="barra-progreso">
             <div class="info">
-                <span id="contador">0 / 15 palabras</span>
+                <span id="contador">0 / 14 palabras</span>
             </div>
             <div class="progreso-visual">
                 <div class="relleno" id="barra-relleno"></div>
@@ -262,38 +262,6 @@
 
     <div class="mensaje" id="mensaje"></div>
     
-        <div class="teclado" id="teclado">
-            <button class="tecla" onclick="tecladoVirtual('A')">A</button>
-            <button class="tecla" onclick="tecladoVirtual('B')">B</button>
-            <button class="tecla" onclick="tecladoVirtual('C')">C</button>
-            <button class="tecla" onclick="tecladoVirtual('D')">D</button>
-            <button class="tecla" onclick="tecladoVirtual('E')">E</button>
-            <button class="tecla" onclick="tecladoVirtual('F')">F</button>
-            <button class="tecla" onclick="tecladoVirtual('G')">G</button>
-            <button class="tecla" onclick="tecladoVirtual('H')">H</button>
-            <button class="tecla" onclick="tecladoVirtual('I')">I</button>
-            <button class="tecla" onclick="tecladoVirtual('J')">J</button>
-            <button class="tecla" onclick="tecladoVirtual('K')">K</button>
-            <button class="tecla" onclick="tecladoVirtual('L')">L</button>
-            <button class="tecla" onclick="tecladoVirtual('M')">M</button>
-            <button class="tecla" onclick="tecladoVirtual('N')">N</button>
-            <button class="tecla" onclick="tecladoVirtual('Ñ')">Ñ</button>
-            <button class="tecla" onclick="tecladoVirtual('O')">O</button>
-            <button class="tecla" onclick="tecladoVirtual('P')">P</button>
-            <button class="tecla" onclick="tecladoVirtual('Q')">Q</button>
-            <button class="tecla" onclick="tecladoVirtual('R')">R</button>
-            <button class="tecla" onclick="tecladoVirtual('S')">S</button>
-            <button class="tecla" onclick="tecladoVirtual('T')">T</button>
-            <button class="tecla" onclick="tecladoVirtual('U')">U</button>
-            <button class="tecla" onclick="tecladoVirtual('V')">V</button>
-            <button class="tecla" onclick="tecladoVirtual('W')">W</button>
-            <button class="tecla" onclick="tecladoVirtual('X')">X</button>
-            <button class="tecla" onclick="tecladoVirtual('Y')">Y</button>
-            <button class="tecla" onclick="tecladoVirtual('Z')">Z</button>
-            <button class="tecla tecla-borrar" onclick="tecladoVirtual('BACKSPACE')">⌫</button>
-        </div>
-        
-    
         <div class="modal-overlay" id="modal-overlay">
             <div class="modal">
                 <h2>¡Felicidades!</h2>
@@ -326,10 +294,10 @@
         
 
     <script>
-        const PALABRAS = [{"palabra": "CONTEMPLAR", "pista": "Mirar con deleite y reflexión profunda", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 2, "numero": 1}, {"palabra": "VISUALIZAR", "pista": "Formar una imagen mental de algo en la mente", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 3, "numero": 3}, {"palabra": "APRECIAR", "pista": "Valorar y reconocer la importancia de algo", "direccion": "horizontal", "fila_inicio": 7, "columna_inicio": 6, "numero": 12}, {"palabra": "DISCERNIR", "pista": "Distinguir con claridad entre lo bueno y lo malo", "direccion": "horizontal", "fila_inicio": 9, "columna_inicio": 11, "numero": 13}, {"palabra": "ESCANEAR", "pista": "Examinar rápidamente buscando información específica", "direccion": "horizontal", "fila_inicio": 11, "columna_inicio": 0, "numero": 14}, {"palabra": "PERCIBIR", "pista": "Captar algo a través de los sentidos o la intuición", "direccion": "horizontal", "fila_inicio": 14, "columna_inicio": 7, "numero": 15}, {"palabra": "MIRAR", "pista": "Dirigir los ojos hacia algo o alguien", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 7, "numero": 2}, {"palabra": "INSPECCIONAR", "pista": "Revisar con detenimiento un lugar o situación", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 9, "numero": 4}, {"palabra": "COMPRENDER", "pista": "Entender a fondo el significado de algo", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 17, "numero": 5}, {"palabra": "ESTUDIAR", "pista": "Observar y analizar con dedicación para aprender", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 3, "numero": 6}, {"palabra": "EXAMINAR", "pista": "Inspeccionar algo minuciosamente para evaluarlo", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 6, "numero": 7}, {"palabra": "ANALIZAR", "pista": "Examinar algo separando sus partes para entenderlo", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 12, "numero": 8}, {"palabra": "OBSERVAR", "pista": "Mirar con atención y cuidado para notar los detalles", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 19, "numero": 9}, {"palabra": "DETECTAR", "pista": "Descubrir algo que no es evidente a simple vista", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 15, "numero": 10}, {"palabra": "REVISAR", "pista": "Mirar de nuevo para corregir o confirmar algo", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 1, "numero": 11}];
+        const PALABRAS = [{"palabra": "ESCANEAR", "pista": "Examinar rápidamente buscando información específica", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 3, "numero": 1}, {"palabra": "COMPRENDER", "pista": "Entender a fondo el significado de algo", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 9, "numero": 6}, {"palabra": "REVISAR", "pista": "Mirar de nuevo para corregir o confirmar algo", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 0, "numero": 7}, {"palabra": "DISCERNIR", "pista": "Distinguir con claridad entre lo bueno y lo malo", "direccion": "horizontal", "fila_inicio": 7, "columna_inicio": 5, "numero": 9}, {"palabra": "EXAMINAR", "pista": "Inspeccionar algo minuciosamente para evaluarlo", "direccion": "horizontal", "fila_inicio": 11, "columna_inicio": 7, "numero": 11}, {"palabra": "DETECTAR", "pista": "Descubrir algo que no es evidente a simple vista", "direccion": "horizontal", "fila_inicio": 14, "columna_inicio": 4, "numero": 12}, {"palabra": "ESTUDIAR", "pista": "Observar y analizar con dedicación para aprender", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 3, "numero": 1}, {"palabra": "OBSERVAR", "pista": "Mirar con atención y cuidado para notar los detalles", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 17, "numero": 2}, {"palabra": "INSPECCIONAR", "pista": "Revisar con detenimiento un lugar o situación", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 1, "numero": 3}, {"palabra": "ANALIZAR", "pista": "Examinar algo separando sus partes para entenderlo", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 15, "numero": 4}, {"palabra": "PERCIBIR", "pista": "Captar algo a través de los sentidos o la intuición", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 6, "numero": 5}, {"palabra": "CONTEMPLAR", "pista": "Mirar con deleite y reflexión profunda", "direccion": "vertical", "fila_inicio": 3, "columna_inicio": 9, "numero": 6}, {"palabra": "APRECIAR", "pista": "Valorar y reconocer la importancia de algo", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 13, "numero": 8}, {"palabra": "MIRAR", "pista": "Dirigir los ojos hacia algo o alguien", "direccion": "vertical", "fila_inicio": 10, "columna_inicio": 11, "numero": 10}];
         const FILAS = 15;
-        const COLUMNAS = 20;
-        const TOTAL_PALABRAS = 15;
+        const COLUMNAS = 19;
+        const TOTAL_PALABRAS = 14;
 
         let celdaActiva = null;
         let direccionActiva = "horizontal";
@@ -393,7 +361,7 @@
                     input.maxLength = 1;
                     input.dataset.fila = f;
                     input.dataset.columna = c;
-                    input.addEventListener("focus", () => seleccionarCelda(f, c));
+                    input.addEventListener("focus", () => { seleccionarCelda(f, c); setTimeout(() => input.select(), 10); });
                     input.addEventListener("input", (e) => manejarInput(e, f, c));
                     input.addEventListener("keydown", (e) => manejarTeclaCelda(e, f, c));
                     input.addEventListener("click", (e) => { e.stopPropagation(); seleccionarCelda(f, c); });
@@ -540,19 +508,6 @@
             const dc = palabra.direccion === "horizontal" ? 1 : 0;
             const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
             if (idx > 0) { mover(f, c, -df, -dc); }
-        }
-
-        function tecladoVirtual(tecla) {
-            if (!celdaActiva) return;
-            const input = getInput(celdaActiva.fila, celdaActiva.columna);
-            if (!input) return;
-            if (tecla === "BACKSPACE") {
-                if (input.value) { input.value = ""; }
-                else { moverAnterior(celdaActiva.fila, celdaActiva.columna); }
-            } else {
-                input.value = tecla;
-                input.dispatchEvent(new Event("input"));
-            }
         }
 
         function verificarTodo() {
