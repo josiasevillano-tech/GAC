@@ -306,7 +306,7 @@
         let pistasUsadas = 0;
         let verificaciones = 0;
         let juegoTerminado = false;
-
+        let moviendo = false;
         function init() {
             renderTablero();
             renderPistas();
@@ -359,9 +359,20 @@
                     const input = document.createElement("input");
                     input.type = "text";
                     input.maxLength = 1;
+                    input.autocomplete = "off";
+                    input.autocorrect = "off";
+                    input.autocapitalize = "off";
+                    input.spellcheck = false;
+                    input.enterKeyHint = "next";
                     input.dataset.fila = f;
                     input.dataset.columna = c;
-                    input.addEventListener("focus", () => { seleccionarCelda(f, c); setTimeout(() => input.select(), 10); });
+                    input.addEventListener("focus", () => { 
+                        seleccionarCelda(f, c); 
+                        const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                        if (!esMovil) {
+                            setTimeout(() => input.select(), 10); 
+                        }
+                    });
                     input.addEventListener("input", (e) => manejarInput(e, f, c));
                     input.addEventListener("keydown", (e) => manejarTeclaCelda(e, f, c));
                     input.addEventListener("click", (e) => { e.stopPropagation(); seleccionarCelda(f, c); });
@@ -482,17 +493,20 @@
         }
 
         function moverSiguiente(f, c) {
+    if (moviendo) return;
+    moviendo = true;
     const palabra = encontrarPalabraEn(f, c, direccionActiva);
-    if (!palabra) return;
+    if (!palabra) { moviendo = false; return; }
     const df = palabra.direccion === "horizontal" ? 0 : 1;
     const dc = palabra.direccion === "horizontal" ? 1 : 0;
     const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-    if (idx + 1 >= palabra.palabra.length) return;
+    if (idx + 1 >= palabra.palabra.length) { moviendo = false; return; }
     const nf = f + df, nc = c + dc;
     const input = getInput(nf, nc);
-    if (!input) return;
+    if (!input) { moviendo = false; return; }
     input.focus();
     seleccionarCelda(nf, nc);
+    setTimeout(() => { moviendo = false; }, 150);
 }
 
         function moverAnterior(f, c) {
