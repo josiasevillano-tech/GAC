@@ -366,13 +366,15 @@
                     input.enterKeyHint = "next";
                     input.dataset.fila = f;
                     input.dataset.columna = c;
-                    input.addEventListener("focus", () => { 
-                        seleccionarCelda(f, c); 
-                        const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                        if (!esMovil) {
-                            setTimeout(() => input.select(), 10); 
-                        }
-                    });
+                    input.addEventListener("focus", () => {
+                    if (
+                        !celdaActiva ||
+                        celdaActiva.fila !== f ||
+                        celdaActiva.columna !== c
+                    ) {
+                     seleccionarCelda(f, c);
+                 }
+                });
                     input.addEventListener("input", (e) => manejarInput(e, f, c));
                     input.addEventListener("keydown", (e) => manejarTeclaCelda(e, f, c));
                     input.addEventListener("click", (e) => { e.stopPropagation(); seleccionarCelda(f, c); });
@@ -460,13 +462,50 @@
             if (input) input.focus();
         }
 
-        function manejarInput(e, f, c) {
-            const val = e.target.value.toUpperCase();
-            e.target.value = val;
-            if (val.length === 1) {
-                moverSiguiente(f, c);
-            }
-        }
+       let procesandoEntrada = false;
+
+function avanzarHastaCeldaLibre(f, c) {
+
+    const palabra = encontrarPalabraEn(f, c, direccionActiva);
+
+    if (!palabra) return;
+
+    const df = palabra.direccion === "horizontal" ? 0 : 1;
+    const dc = palabra.direccion === "horizontal" ? 1 : 0;
+
+    let nf = f;
+    let nc = c;
+
+    while (true) {
+
+        nf += df;
+        nc += dc;
+
+        const input = getInput(nf, nc);
+
+        if (!input)
+            return;
+
+        if (input.value.trim() !== "")
+            continue;
+
+        seleccionarCelda(nf, nc);
+
+        requestAnimationFrame(() => {
+
+            input.focus({
+                preventScroll:true
+            });
+
+        });
+
+        return;
+
+    }
+
+}
+
+        
 
         function manejarTeclaCelda(e, f, c) {
             if (e.key === "Enter") { e.preventDefault(); verificarTodo(); return; }
@@ -487,45 +526,18 @@
         }
 
         function mover(f, c, df, dc) {
-            const nf = f + df;
-            const nc = c + dc;
-            const input = getInput(nf, nc);
+    const nf = f + df;
+    const nc = c + dc;
+    const input = getInput(nf, nc);
 
-            if (input) {
-                input.focus({ preventScroll: true });
-            }
-        }
+    if (!input) return;
 
-        function moverSiguiente(f, c) {
-    const palabra = encontrarPalabraEn(f, c, direccionActiva);
-    if (!palabra) return;
-
-    const df = palabra.direccion === "horizontal" ? 0 : 1;
-    const dc = palabra.direccion === "horizontal" ? 1 : 0;
-
-    let nf = f;
-    let nc = c;
-
-    while (true) {
-        nf += df;
-        nc += dc;
-
-        const input = getInput(nf, nc);
-
-        // Fin de la palabra
-        if (!input) return;
-
-        // Si la casilla está vacía, detenerse aquí
-        if (input.value.trim() === "") {
-            input.focus({ preventScroll: true });
-            seleccionarCelda(nf, nc);
-            return;
-        }
-
-        // Si la casilla ya contiene una letra (cruce),
-        // continuar buscando la siguiente libre.
-    }
+    requestAnimationFrame(() => {
+        input.focus({ preventScroll: true });
+    });
 }
+
+        
 
         function moverAnterior(f, c) {
             const palabra = encontrarPalabraEn(f, c, direccionActiva);
