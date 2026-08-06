@@ -487,9 +487,13 @@
         }
 
         function mover(f, c, df, dc) {
-            const nf = f + df, nc = c + dc;
+            const nf = f + df;
+            const nc = c + dc;
             const input = getInput(nf, nc);
-            if (input) { input.focus(); seleccionarCelda(nf, nc); }
+
+            if (input) {
+                input.focus({ preventScroll: true });
+            }
         }
 
         function moverSiguiente(f, c) {
