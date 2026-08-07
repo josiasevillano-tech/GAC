@@ -155,7 +155,6 @@
         }
         .tecla:active { background: var(--color-celda-seleccionada); }
         .tecla-borrar { background: #fed7d7; color: #742a2a; }
-        /* === MODAL DE PUNTUACION === */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.6); z-index: 2000;
@@ -306,7 +305,9 @@
         let pistasUsadas = 0;
         let verificaciones = 0;
         let juegoTerminado = false;
-        
+        let moviendo = false;
+        let ultimoInputTime = 0;
+
         function init() {
             renderTablero();
             renderPistas();
@@ -366,15 +367,13 @@
                     input.enterKeyHint = "next";
                     input.dataset.fila = f;
                     input.dataset.columna = c;
-                    input.addEventListener("focus", () => {
-                    if (
-                        !celdaActiva ||
-                        celdaActiva.fila !== f ||
-                        celdaActiva.columna !== c
-                    ) {
-                     seleccionarCelda(f, c);
-                 }
-                });
+                    input.addEventListener("focus", () => { 
+                        seleccionarCelda(f, c); 
+                        const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                        if (!esMovil) {
+                            setTimeout(() => input.select(), 10); 
+                        }
+                    });
                     input.addEventListener("input", (e) => manejarInput(e, f, c));
                     input.addEventListener("keydown", (e) => manejarTeclaCelda(e, f, c));
                     input.addEventListener("click", (e) => { e.stopPropagation(); seleccionarCelda(f, c); });
@@ -462,50 +461,19 @@
             if (input) input.focus();
         }
 
-       let procesandoEntrada = false;
-
-function avanzarHastaCeldaLibre(f, c) {
-
-    const palabra = encontrarPalabraEn(f, c, direccionActiva);
-
-    if (!palabra) return;
-
-    const df = palabra.direccion === "horizontal" ? 0 : 1;
-    const dc = palabra.direccion === "horizontal" ? 1 : 0;
-
-    let nf = f;
-    let nc = c;
-
-    while (true) {
-
-        nf += df;
-        nc += dc;
-
-        const input = getInput(nf, nc);
-
-        if (!input)
-            return;
-
-        if (input.value.trim() !== "")
-            continue;
-
-        seleccionarCelda(nf, nc);
-
-        requestAnimationFrame(() => {
-
-            input.focus({
-                preventScroll:true
-            });
-
-        });
-
-        return;
-
-    }
-
-}
-
-        
+        function manejarInput(e, f, c) {
+            const ahora = Date.now();
+            if (ahora - ultimoInputTime < 200) {
+                e.target.value = e.target.value.slice(-1).toUpperCase();
+                return;
+            }
+            ultimoInputTime = ahora;
+            const val = e.target.value.toUpperCase();
+            e.target.value = val;
+            if (val.length === 1) {
+                moverSiguiente(f, c);
+            }
+        }
 
         function manejarTeclaCelda(e, f, c) {
             if (e.key === "Enter") { e.preventDefault(); verificarTodo(); return; }
@@ -526,18 +494,27 @@ function avanzarHastaCeldaLibre(f, c) {
         }
 
         function mover(f, c, df, dc) {
-    const nf = f + df;
-    const nc = c + dc;
-    const input = getInput(nf, nc);
+            const nf = f + df, nc = c + dc;
+            const input = getInput(nf, nc);
+            if (input) { input.focus(); seleccionarCelda(nf, nc); }
+        }
 
-    if (!input) return;
-
-    requestAnimationFrame(() => {
-        input.focus({ preventScroll: true });
-    });
-}
-
-        
+        function moverSiguiente(f, c) {
+            if (moviendo) return;
+            moviendo = true;
+            const palabra = encontrarPalabraEn(f, c, direccionActiva);
+            if (!palabra) { moviendo = false; return; }
+            const df = palabra.direccion === "horizontal" ? 0 : 1;
+            const dc = palabra.direccion === "horizontal" ? 1 : 0;
+            const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
+            if (idx + 1 >= palabra.palabra.length) { moviendo = false; return; }
+            const nf = f + df, nc = c + dc;
+            const input = getInput(nf, nc);
+            if (!input) { moviendo = false; return; }
+            input.focus();
+            seleccionarCelda(nf, nc);
+            setTimeout(() => { moviendo = false; }, 250);
+        }
 
         function moverAnterior(f, c) {
             const palabra = encontrarPalabraEn(f, c, direccionActiva);
