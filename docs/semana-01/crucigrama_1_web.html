@@ -368,12 +368,13 @@
                     input.dataset.fila = f;
                     input.dataset.columna = c;
                     input.addEventListener("focus", () => { 
-                        seleccionarCelda(f, c); 
-                        const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                        if (!esMovil) {
-                            setTimeout(() => input.select(), 10); 
+                    seleccionarCelda(f, c); 
+                     setTimeout(() => {
+                        if (input.value.length > 0) {
+                            input.setSelectionRange(0, input.value.length);
                         }
-                    });
+                    }, 10);
+                });
                     input.addEventListener("input", (e) => manejarInput(e, f, c));
                     input.addEventListener("keydown", (e) => manejarTeclaCelda(e, f, c));
                     input.addEventListener("click", (e) => { e.stopPropagation(); seleccionarCelda(f, c); });
