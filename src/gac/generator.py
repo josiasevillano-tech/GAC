@@ -1,11 +1,11 @@
-from board import Board
-from direction import Direction
-from metrics import Metrics
+﻿from .board import Board
+from .direction import Direction
+from .metrics import Metrics
 
 
 class Generator:
     """
-    Generador automático de crucigramas.
+    Generador automÃ¡tico de crucigramas.
     """
 
     COMPACTNESS_WEIGHT = 1
@@ -21,7 +21,7 @@ class Generator:
         """
         Establece la lista de palabras a generar.
         Ordena por longitud descendente y baraja aleatoriamente
-        dentro de cada grupo del mismo tamaño.
+        dentro de cada grupo del mismo tamaÃ±o.
         """
         import random
         from itertools import groupby
@@ -46,7 +46,7 @@ class Generator:
 
     def generate(self):
         """
-        Genera un crucigrama (versión básica).
+        Genera un crucigrama (versiÃ³n bÃ¡sica).
         """
         if not self.words:
             return False
@@ -75,7 +75,7 @@ class Generator:
 
     def generate_with_backtracking(self, max_attempts=100):
         """
-        Genera un crucigrama usando múltiples intentos
+        Genera un crucigrama usando mÃºltiples intentos
         y seleccionando el mejor tablero.
         """
         import random
@@ -126,7 +126,7 @@ class Generator:
         return True
 
     def try_place_anywhere(self, word, placed_words):
-        """Intenta colocar una palabra en cualquier posición válida."""
+        """Intenta colocar una palabra en cualquier posiciÃ³n vÃ¡lida."""
         candidates = []
 
         for placed in self.board.placements:
@@ -189,7 +189,7 @@ class Generator:
 
     def compute_start_position(self, placed_row, placed_col, placed_direction,
                                placed_index, new_index):
-        """Calcula la posición inicial de una palabra para cruzarla con otra."""
+        """Calcula la posiciÃ³n inicial de una palabra para cruzarla con otra."""
         dr, dc = placed_direction.value
         cross_row = placed_row + placed_index * dr
         cross_col = placed_col + placed_index * dc
@@ -200,7 +200,7 @@ class Generator:
             return cross_row, cross_col - new_index
 
     def find_candidate_positions(self, placed, word):
-        """Encuentra todas las posiciones válidas para colocar una palabra."""
+        """Encuentra todas las posiciones vÃ¡lidas para colocar una palabra."""
         candidates = []
         crosses = self.find_crosses(placed["word"], word)
 
@@ -238,7 +238,7 @@ class Generator:
         return best
 
     def evaluate_candidate(self, board, word, candidate):
-        """Asigna una puntuación a un candidato."""
+        """Asigna una puntuaciÃ³n a un candidato."""
         test_board = board.clone()
         test_board.place_word(
             candidate["row"], candidate["col"], word, candidate["direction"]
@@ -253,7 +253,7 @@ class Generator:
         )
 
     def score_compactness(self, board):
-        """Calcula la puntuación por compacidad."""
+        """Calcula la puntuaciÃ³n por compacidad."""
         return -board.bounding_area()
 
     def score_intersections(self, board):
