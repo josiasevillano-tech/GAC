@@ -52,6 +52,8 @@ datos_crucigrama_3 = {
         "que el mensaje de salvaciÃ³n alcanzara a todos los pueblos de la tierra. Su historia tambiÃ©n recuerda que una comprensiÃ³n "
         "cada vez mÃ¡s profunda del propÃ³sito de Dios transforma la manera de vivir y de servir."
     ),
+    "rows": 20,
+    "cols": 20,
     "words": [
         "SIMON", "PIEDRA", "GALILEA", "PESCADOR", "ANDRES",
         "LLAMAMIENTO", "REDES", "LLAVES", "FE", "CAMINAR",
@@ -87,14 +89,30 @@ output_dir = "docs/semana-02"
 os.makedirs(output_dir, exist_ok=True)
 
 # Generar crucigrama
-gen = Generator(datos_crucigrama_3)
+gen = Generator(
+    rows=datos_crucigrama_3["rows"],
+    cols=datos_crucigrama_3["cols"]
+)
+gen.set_words(datos_crucigrama_3["words"])
 resultado = gen.generate()
 
 # Exportar HTMLs
-web = WebExporter(resultado, **datos_crucigrama_3)
+web = WebExporter(
+    resultado,
+    title=datos_crucigrama_3["title"],
+    tema=datos_crucigrama_3["tema"],
+    clues=datos_crucigrama_3["clues"],
+    resena=datos_crucigrama_3["resena"]
+)
 web.save(os.path.join(output_dir, "crucigrama_3_web.html"))
 
-estatico = Exporter(resultado, **datos_crucigrama_3)
+estatico = Exporter(
+    resultado,
+    title=datos_crucigrama_3["title"],
+    subtitle=datos_crucigrama_3["tema"],
+    clues=datos_crucigrama_3["clues"],
+    resena=datos_crucigrama_3["resena"]
+)
 estatico.save(os.path.join(output_dir, "crucigrama_3.html"))
 
 print("âœ… Archivos creados correctamente en la carpeta 'docs/semana-02/'.")

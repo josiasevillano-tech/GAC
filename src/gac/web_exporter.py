@@ -567,23 +567,30 @@ class WebExporter:
             if (input) {{ input.focus(); seleccionarCelda(nf, nc); }}
         }}
 
-        function moverSiguiente(f, c, profundidad) {{
-            if (profundidad === undefined) profundidad = 0;
-            if (profundidad > 5) return;
+        function moverSiguiente(f, c) {{
             const palabra = encontrarPalabraEn(f, c, direccionActiva);
             if (!palabra) return;
             const df = palabra.direccion === "horizontal" ? 0 : 1;
             const dc = palabra.direccion === "horizontal" ? 1 : 0;
-            const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            if (idx + 1 >= palabra.palabra.length) return;
-            const nf = f + df, nc = c + dc;
-            const input = getInput(nf, nc);
-            if (!input) return;
-            input.focus();
-            seleccionarCelda(nf, nc);
-            const letraCorrecta = palabra.palabra[idx + 1].toUpperCase();
-            if (input.value && input.value.toUpperCase() === letraCorrecta) {{
-                moverSiguiente(nf, nc, profundidad + 1);
+            const idxInicial = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
+            let destinoF = f, destinoC = c;
+            for (let i = idxInicial + 1; i < palabra.palabra.length; i++) {{
+                const nf = palabra.fila_inicio + i * df;
+                const nc = palabra.columna_inicio + i * dc;
+                const input = getInput(nf, nc);
+                if (!input) break;
+                const letraCorrecta = palabra.palabra[i].toUpperCase();
+                destinoF = nf;
+                destinoC = nc;
+                if (!input.value || input.value.toUpperCase() !== letraCorrecta) {{
+                    break;
+                }}
+            }}
+            if (destinoF === f && destinoC === c) return;
+            const inputDestino = getInput(destinoF, destinoC);
+            if (inputDestino) {{
+                inputDestino.focus();
+                seleccionarCelda(destinoF, destinoC);
             }}
         }}
 
