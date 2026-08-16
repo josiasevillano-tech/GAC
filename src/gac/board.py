@@ -28,57 +28,96 @@ class Board:
 
     def can_place_word(self, row, col, word, direction):
         """
-        Determina si una palabra puede colocarse en el tablero.
-        Reglas:
-          1. Dentro de los límites.
-          2. Letras coincidentes en cruces.
-          3. NO formar palabras accidentales perpendiculares.
-          4. Extremos libres: antes y después de la palabra no debe haber letras.
+        Determina si una palabra puede colocarse legalmente.
+
+        Permite:
+        - colocar dentro del tablero;
+        - cruzar letras existentes si coinciden;
+        - impedir contactos laterales que no sean cruces;
+        - impedir letras pegadas inmediatamente antes o después.
         """
         dr, dc = direction.value
 
-        # ── Regla 4: Extremos libres ──
-        # Celda ANTES del inicio
-        before_r, before_c = row - dr, col - dc
-        if self.is_inside(before_r, before_c) and self.get_cell(before_r, before_c) is not None:
+        # La posición inicial debe estar dentro del tablero.
+        if not self.is_inside(row, col):
             return False
 
-        # Celda DESPUÉS del final
-        after_r, after_c = row + len(word) * dr, col + len(word) * dc
-        if self.is_inside(after_r, after_c) and self.get_cell(after_r, after_c) is not None:
+        # Calcular la posición final.
+        end_row = row + (len(word) - 1) * dr
+        end_col = col + (len(word) - 1) * dc
+
+        # La palabra completa debe quedar dentro del tablero.
+        if not self.is_inside(end_row, end_col):
             return False
 
-        current_row, current_col = row, col
+        # Celda inmediatamente anterior.
+        before_row = row - dr
+        before_col = col - dc
+
+        if self.is_inside(before_row, before_col):
+            if self.get_cell(before_row, before_col) is not None:
+                return False
+
+        # Celda inmediatamente posterior.
+        after_row = end_row + dr
+        after_col = end_col + dc
+
+        if self.is_inside(after_row, after_col):
+            if self.get_cell(after_row, after_col) is not None:
+                return False
+
+        current_row = row
+        current_col = col
+        crossings = 0
 
         for letter in word:
-            # Regla 1: Dentro del tablero
-            if not self.is_inside(current_row, current_col):
-                return False
-
-            # Regla 2: Letra coincidente en cruces
             current_letter = self.get_cell(current_row, current_col)
-            if current_letter is not None and current_letter != letter:
-                return False
 
-            # Regla 3: No formar palabras accidentales perpendiculares
-            if current_letter is None:
-                if dr == 0:  # Horizontal: verificar arriba/abajo
-                    if (self.is_inside(current_row - 1, current_col) and
-                            self.get_cell(current_row - 1, current_col) is not None):
+            # Si ya existe una letra, debe coincidir.
+            if current_letter is not None:
+                if current_letter != letter:
+                    return False
+
+                crossings += 1
+
+            else:
+                # Las casillas nuevas no pueden tocar lateralmente
+                # otras palabras.
+                if dr == 0:
+                    # Palabra horizontal.
+                    above = self.get_cell(
+                        current_row - 1,
+                        current_col
+                    )
+                    below = self.get_cell(
+                        current_row + 1,
+                        current_col
+                    )
+
+                    if above is not None or below is not None:
                         return False
-                    if (self.is_inside(current_row + 1, current_col) and
-                            self.get_cell(current_row + 1, current_col) is not None):
-                        return False
-                else:  # Vertical: verificar izquierda/derecha
-                    if (self.is_inside(current_row, current_col - 1) and
-                            self.get_cell(current_row, current_col - 1) is not None):
-                        return False
-                    if (self.is_inside(current_row, current_col + 1) and
-                            self.get_cell(current_row, current_col + 1) is not None):
+
+                else:
+                    # Palabra vertical.
+                    left = self.get_cell(
+                        current_row,
+                        current_col - 1
+                    )
+                    right = self.get_cell(
+                        current_row,
+                        current_col + 1
+                    )
+
+                    if left is not None or right is not None:
                         return False
 
             current_row += dr
             current_col += dc
+
+        # Si ya hay palabras en el tablero, una nueva palabra
+        # debe conectarse mediante al menos un cruce.
+        if self.cells and crossings == 0:
+            return False
 
         return True
 

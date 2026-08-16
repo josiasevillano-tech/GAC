@@ -1,27 +1,64 @@
-﻿from .board import Board
+"""
+Generador automático de crucigramas.
+
+Interfaz principal (compatible con la arquitectura original):
+    gen = Generator(datos_crucigrama)
+    resultado = gen.generate()
+
+Interfaz de pruebas (conservada):
+    gen = Generator(rows=20, cols=20)
+    gen.set_words([...])
+    resultado = gen.generate()
+"""
+
+from .board import Board
 from .direction import Direction
 from .metrics import Metrics
 
 
 class Generator:
     """
-    Generador automÃ¡tico de crucigramas.
+    Generador automático de crucigramas.
     """
 
     COMPACTNESS_WEIGHT = 1
     INTERSECTIONS_WEIGHT = 1
 
-    def __init__(self, rows=15, cols=15):
-        self.board = Board(rows, cols)
+    def __init__(self, datos=None, rows=15, cols=15, max_attempts=50000):
+        """
+        Inicializa el generador.
+
+        Modo original (interfaz pública):
+            Generator(datos_crucigrama)  # dict con 'words', opcional 'rows', 'cols'
+
+        Modo de pruebas (conservado):
+            Generator(rows=20, cols=20)
+        """
+        # Inicializar SIEMPRE primero para evitar que set_words() sea sobreescrito
         self.words = []
         self.weight_compactness = 1
         self.weight_intersections = 1
+        self.max_attempts = max_attempts
+        self.datos = None
+
+        if isinstance(datos, dict):
+            self.datos = datos
+            self.rows = datos.get("rows", rows)
+            self.cols = datos.get("cols", cols)
+            if "words" in datos:
+                self.set_words(datos["words"])
+        else:
+            # Modo compatible: Generator(20, 20) o Generator()
+            self.rows = datos if isinstance(datos, int) else rows
+            self.cols = cols if isinstance(cols, int) else 20
+
+        self.board = Board(self.rows, self.cols)
 
     def set_words(self, words):
         """
         Establece la lista de palabras a generar.
         Ordena por longitud descendente y baraja aleatoriamente
-        dentro de cada grupo del mismo tamaÃ±o.
+        dentro de cada grupo del mismo tamaño.
         """
         import random
         from itertools import groupby
@@ -46,76 +83,293 @@ class Generator:
 
     def generate(self):
         """
-        Genera un crucigrama (versiÃ³n bÃ¡sica).
+        Genera un crucigrama mediante backtracking y devuelve los datos
+        listos para los exportadores (Exporter / WebExporter).
+
+        Si no se han cargado palabras manualmente y existe self.datos,
+        intenta cargarlas desde el diccionario.
+
+        Returns:
+            dict con grid, solved_grid, horizontal, vertical, metrics.
+            None si no se pudo generar.
         """
+        # Si no hay palabras cargadas pero tenemos datos, intentar cargar
+        if not self.words and self.datos and "words" in self.datos:
+            self.set_words(self.datos["words"])
+
         if not self.words:
-            return False
+            return None
 
-        self.board = Board(self.board.rows, self.board.cols)
+        # Ejecutar el backtracking reparado (cuerpo probado: 20/20 palabras)
+        success = self.generate_with_backtracking(max_attempts=self.max_attempts)
 
-        first_word = self.words[0]
-        row = self.board.rows // 2
-        col = (self.board.cols - len(first_word)) // 2
+        if success:
+            return self.get_crossword_data()
+        else:
+            return None
 
-        self.board.place_word(row, col, first_word, Direction.HORIZONTAL)
-
-        for word in self.words[1:]:
-            if self.is_word_placed(word):
-                continue
-            for placed in reversed(self.board.placements):
-                if self.try_place_word(placed, word):
-                    break
-
-        self.board.assign_numbers()
-
-        metrics = Metrics(self.board)
-        metrics.report()
-
-        return True
-
-    def generate_with_backtracking(self, max_attempts=100):
+    def generate_with_backtracking(self, max_attempts=50000):
         """
-        Genera un crucigrama usando mÃºltiples intentos
-        y seleccionando el mejor tablero.
+        Genera el mejor crucigrama mediante búsqueda con retroceso.
+
+        Prioridad:
+        1. Colocar todas las palabras posibles.
+        2. Maximizar los cruces.
+        3. Minimizar el área delimitadora.
         """
+
         import random
 
         if not self.words:
             return False
 
+        original_words = list(self.words)
+
         best_board = None
-        best_score = -1
+        best_word_count = -1
+        best_cross_count = -1
+        best_area = float("inf")
 
-        for attempt in range(max_attempts):
-            self.board = Board(self.board.rows, self.board.cols)
+        # Contador global de nodos (reiniciado por cada intento)
+        nodes = 0
 
-            shuffled = self.words.copy()
-            random.shuffle(shuffled)
+        def evaluate_board(board):
+            metrics = Metrics(board)
 
-            first_word = shuffled[0]
-            row = self.board.rows // 2
-            col = (self.board.cols - len(first_word)) // 2
-            self.board.place_word(row, col, first_word, Direction.HORIZONTAL)
-
-            placed_words = [first_word]
-            failed_words = []
-
-            for word in shuffled[1:]:
-                if self.try_place_anywhere(word, placed_words):
-                    placed_words.append(word)
-                else:
-                    failed_words.append(word)
-
-            metrics = Metrics(self.board)
-            score = (
-                metrics.word_count() * 100 +
-                metrics.cross_count() * 10 -
+            return (
+                metrics.word_count(),
+                metrics.cross_count(),
                 metrics.bounding_area()
             )
 
-            if score > best_score:
-                best_score = score
-                best_board = self.board.clone()
+        def save_if_better(board):
+            nonlocal best_board
+            nonlocal best_word_count
+            nonlocal best_cross_count
+            nonlocal best_area
+
+            word_count, cross_count, area = evaluate_board(board)
+
+            better = False
+
+            if word_count > best_word_count:
+                better = True
+
+            elif word_count == best_word_count:
+                if cross_count > best_cross_count:
+                    better = True
+
+                elif (
+                    cross_count == best_cross_count
+                    and area < best_area
+                ):
+                    better = True
+
+            if better:
+                best_word_count = word_count
+                best_cross_count = cross_count
+                best_area = area
+                best_board = board.clone()
+
+        def candidate_positions(board, word):
+            candidates = []
+
+            for placed in board.placements:
+                crosses = self.find_crosses(
+                    placed["word"],
+                    word
+                )
+
+                for _, placed_index, new_index in crosses:
+
+                    row, col = self.compute_start_position(
+                        placed["row"],
+                        placed["col"],
+                        placed["direction"],
+                        placed_index,
+                        new_index
+                    )
+
+                    if (
+                        placed["direction"]
+                        == Direction.HORIZONTAL
+                    ):
+                        direction = Direction.VERTICAL
+                    else:
+                        direction = Direction.HORIZONTAL
+
+                    if board.can_place_word(
+                        row,
+                        col,
+                        word,
+                        direction
+                    ):
+                        candidate = {
+                            "row": row,
+                            "col": col,
+                            "direction": direction
+                        }
+
+                        if candidate not in candidates:
+                            candidates.append(candidate)
+
+            random.shuffle(candidates)
+
+            return candidates
+
+        def search(board, remaining, max_nodes):
+            nonlocal nodes
+
+            nodes += 1
+
+            if nodes > max_nodes:
+                return
+
+            save_if_better(board)
+
+            if not remaining:
+                return
+
+            # Elegimos primero la palabra con menos
+            # posibilidades. Esto es una heurística
+            # fundamental para el backtracking.
+            options = []
+
+            for word in remaining:
+                candidates = candidate_positions(
+                    board,
+                    word
+                )
+
+                options.append(
+                    (len(candidates), word, candidates)
+                )
+
+            # CORRECCIÓN 1: Filtrar solo palabras que tienen
+            # al menos 1 candidato válido. Si la palabra más
+            # restringida (MVR) tiene 0 candidatos, no abandonamos
+            # el camino completo; en su lugar, intentamos con las
+            # palabras que SÍ pueden colocarse para "abrir" el
+            # tablero y crear nuevos cruces para las difíciles.
+            valid_options = [
+                opt for opt in options if opt[0] > 0
+            ]
+
+            if not valid_options:
+                # Ninguna palabra restante puede colocarse en
+                # este tablero: camino inválido.
+                return
+
+            # Primero la palabra más restringida ENTRE LAS VÁLIDAS.
+            valid_options.sort(key=lambda item: item[0])
+
+            candidate_count, word, candidates = valid_options[0]
+
+            new_remaining = [
+                w for w in remaining
+                if w != word
+            ]
+
+            for candidate in candidates:
+                row = candidate["row"]
+                col = candidate["col"]
+                direction = candidate["direction"]
+
+                new_board = board.clone()
+
+                if not new_board.place_word(
+                    row,
+                    col,
+                    word,
+                    direction
+                ):
+                    continue
+
+                search(
+                    new_board,
+                    new_remaining,
+                    max_nodes
+                )
+
+                # Si ya conseguimos todas, no hace falta
+                # seguir buscando en este nivel.
+                if best_word_count == len(original_words):
+                    return
+
+        # ==================================================
+        # Probamos diferentes palabras iniciales.
+        # ==================================================
+
+        # CORRECCIÓN 2: En lugar de barajar aleatoriamente y
+        # tomar la primera, probamos CADA palabra como inicial
+        # empezando por la más larga. Las palabras largas tienen
+        # más letras y por tanto más oportunidades de cruce,
+        # lo que aumenta drásticamente las probabilidades de
+        # éxito del backtracking.
+        words_by_length = sorted(
+            original_words,
+            key=len,
+            reverse=True
+        )
+
+        for first_word in words_by_length:
+
+            # CORRECCIÓN 3: Reiniciar el contador de nodos para
+            # cada intento con palabra inicial diferente. Antes
+            # el contador era global y los intentos posteriores
+            # se quedaban sin presupuesto de exploración.
+            nodes = 0
+
+            board = Board(
+                self.board.rows,
+                self.board.cols
+            )
+
+            row = board.rows // 2
+            col = (
+                board.cols - len(first_word)
+            ) // 2
+
+            if not board.can_place_word(
+                row,
+                col,
+                first_word,
+                Direction.HORIZONTAL
+            ):
+                continue
+
+            if not board.place_word(
+                row,
+                col,
+                first_word,
+                Direction.HORIZONTAL
+            ):
+                continue
+
+            remaining = [
+                w for w in original_words
+                if w != first_word
+            ]
+            random.shuffle(remaining)
+
+            # Presupuesto de nodos proporcional al total,
+            # con un mínimo razonable para no abortar muy pronto.
+            max_nodes = max(
+                max_attempts // len(words_by_length),
+                10000
+            )
+
+            search(
+                board,
+                remaining,
+                max_nodes
+            )
+
+            if best_word_count == len(original_words):
+                break
+
+        if best_board is None:
+            return False
 
         self.board = best_board
         self.board.assign_numbers()
@@ -123,10 +377,12 @@ class Generator:
         metrics = Metrics(self.board)
         metrics.report()
 
-        return True
+        return best_word_count == len(original_words)
 
     def try_place_anywhere(self, word, placed_words):
-        """Intenta colocar una palabra en cualquier posiciÃ³n vÃ¡lida."""
+        """
+        Intenta colocar una palabra en cualquier posición válida."""
+
         candidates = []
 
         for placed in self.board.placements:
@@ -189,7 +445,7 @@ class Generator:
 
     def compute_start_position(self, placed_row, placed_col, placed_direction,
                                placed_index, new_index):
-        """Calcula la posiciÃ³n inicial de una palabra para cruzarla con otra."""
+        """Calcula la posición inicial de una palabra para cruzarla con otra."""
         dr, dc = placed_direction.value
         cross_row = placed_row + placed_index * dr
         cross_col = placed_col + placed_index * dc
@@ -200,7 +456,7 @@ class Generator:
             return cross_row, cross_col - new_index
 
     def find_candidate_positions(self, placed, word):
-        """Encuentra todas las posiciones vÃ¡lidas para colocar una palabra."""
+        """Encuentra todas las posiciones válidas para colocar una palabra."""
         candidates = []
         crosses = self.find_crosses(placed["word"], word)
 
@@ -238,7 +494,7 @@ class Generator:
         return best
 
     def evaluate_candidate(self, board, word, candidate):
-        """Asigna una puntuaciÃ³n a un candidato."""
+        """Asigna una puntuación a un candidato."""
         test_board = board.clone()
         test_board.place_word(
             candidate["row"], candidate["col"], word, candidate["direction"]
@@ -253,7 +509,7 @@ class Generator:
         )
 
     def score_compactness(self, board):
-        """Calcula la puntuaciÃ³n por compacidad."""
+        """Calcula la puntuación por compacidad."""
         return -board.bounding_area()
 
     def score_intersections(self, board):
