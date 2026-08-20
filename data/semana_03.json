@@ -1,0 +1,431 @@
+{
+  "iglesia": "Agua Viva",
+  "guia_numero": 3,
+  "bloques": [
+    {
+      "orden": 1,
+      "tipo": "sermon",
+      "pastor": "Edwin Navarro",
+      "titulo": "El Cansancio de los Valientes",
+      "resena": [
+        "Vivimos en una cultura obsesionada con el rendimiento y el honor al merito. Premiamos las noches sin dormir, aplaudimos las agendas saturadas y condecoramos publicamente a quienes lo entregan todo en el altar del esfuerzo. Sin embargo, en esa busqueda implacable de resultados, hemos olvidado que los heroes de la fe no eran de hierro; eran hombres de carne y hueso.",
+        "Moises no colapso por falta de fe en Dios, sino por el peso sostenido de una multitud insatisfecha. El pueblo, tras presenciar prodigios, cayo en el murmullo por comida, y escuchar el llanto y la queja constante de miles de familias sofoco la salud mental del lider. En medio de la angustia, Moises oro sin filtros religiosos, derramando su corazon ante el Senor con total honestidad.",
+        "Dios no reprendio a Moises por admitir su limite; en su lugar, le ofrecio una solucion estructural y espiritual. Mando reunir a setenta ancianos sobre los cuales pondria del mismo Espiritu que estaba en Moises, para que llevaran el peso del pueblo junto a el. El remedio de Dios para el colapso emocional no fue demandar mas esfuerzo, sino multiplicar los hombros y dividir el trabajo.",
+        "El profeta Jeremias representa a los valientes que sirven fielmente sin ver el aplauso del publico ni los resultados masivos que el mundo suele celebrar. Jeremias experimento una angustia profunda al sentir que la palabra de Dios solo le traia afrenta y escarnio cada dia, y enfrento ademas la murmuracion de la multitud y la conspiracion de sus propios amigos intimos.",
+        "A pesar de esa presion, Jeremias logro levantar un canto de confianza al reconocer que el Senor estaba con el como un poderoso gigante. Sin embargo, el peso extremo de la soledad volvio a salir a la superficie, mostrando que los hombres y mujeres mas piadosos pueden experimentar momentos oscuros de desesperanza sin que eso invalide su llamado.",
+        "El Senor no rechaza al siervo que derrama su dolor sin filtros; Dios procesa nuestra honestidad, no nuestra religiosidad. Aprender a descansar implica soltar el peso de los resultados y las expectativas ajenas, porque el papel del valiente es ser fiel, y la responsabilidad del avivamiento y el respaldo final le pertenecen exclusivamente al Senor. El remedio para el agotamiento espiritual es correr a los pies de Aquel que dijo: Venid a mi todos los que estais trabajados y cargados, y yo os hare descansar."
+      ],
+      "crucigrama": {
+        "tema": "El Cansancio de los Valientes",
+        "rows": 20,
+        "cols": 20,
+        "max_attempts": 300,
+        "words": [
+          {
+            "word": "QUEJA",
+            "clue": "Sensación de molestia o disconformidad que, repetida de forma continua, desgasta la salud mental de quien la escucha."
+          },
+          {
+            "word": "JEREMIAS",
+            "clue": "Nombre del profeta a quien la palabra de Dios le resultaba en sus huesos como un «fuego ardiente»."
+          },
+          {
+            "word": "COLAPSO",
+            "clue": "Estado de agotamiento extremo al que pueden llegar incluso los hombres de fe más fuertes al llevar cargas pesadas."
+          },
+          {
+            "word": "MOISES",
+            "clue": "Líder del pueblo de Israel que colapsó emocionalmente debido a la pesada atmósfera de reclamos de la multitud."
+          },
+          {
+            "word": "HONESTIDAD",
+            "clue": "Actitud del corazón que Dios procesa con amor, en lugar de exigir oraciones bien elaboradas o religiosamente correctas."
+          },
+          {
+            "word": "GOTA",
+            "clue": "Elemento natural con el que el autor compara el impacto continuo de la queja sobre el alma."
+          },
+          {
+            "word": "SETENTA",
+            "clue": "Número de ancianos que Dios ordenó reunir para dividir la carga de trabajo y el peso espiritual que llevaba Moisés."
+          },
+          {
+            "word": "ESCARNIO",
+            "clue": "Expresión despectiva o de humillación constante que sufría Jeremías por predicar fielmente el mensaje de Dios."
+          },
+          {
+            "word": "NUMEROS",
+            "clue": "Lugar Bíblico (libro del Antiguo Testamento) donde se relata el llanto del pueblo por comida y la oración desesperada de Moisés."
+          },
+          {
+            "word": "COMUNIDAD",
+            "clue": "Recurso humano e institucional que Dios proveyó a Moisés para no llevar el peso de la multitud en soledad."
+          },
+          {
+            "word": "SOLEDAD",
+            "clue": "Sentimiento profundo e invisible que afectaba a Jeremías al servir fielmente sin ver aplausos ni resultados masivos."
+          },
+          {
+            "word": "GIGANTE",
+            "clue": "Metáfora bíblica usada por el profeta Jeremías para describir la presencia protectora de Dios en medio de la conspiración."
+          },
+          {
+            "word": "MURMULLO",
+            "clue": "Acción que el pueblo realizó tras presenciar grandes prodigios, manifestando su insatisfacción."
+          },
+          {
+            "word": "RELIGIOSIDAD",
+            "clue": "Acto religioso formal y superficial que aparenta fuerza, en contraste con la vulnerabilidad sincera ante Dios."
+          },
+          {
+            "word": "GRACIA",
+            "clue": "Regalo divino o favor inmerecido que, según el sermón, también alcanza al guerrero que se encuentra exhausto."
+          },
+          {
+            "word": "DESCANSO",
+            "clue": "Lugar o estado al que Jesús invita a ir a todos los que están trabajados y cargados."
+          },
+          {
+            "word": "HEROES",
+            "clue": "Calificativo que aplica la sociedad a las personas de fe, olvidando que son seres humanos de carne y hueso."
+          },
+          {
+            "word": "DESCENTRALIZAR",
+            "clue": "Acción estratégica dada por Dios para solucionar el desgaste de un líder, que consiste en dividir el trabajo entre varios."
+          },
+          {
+            "word": "AMIGOS",
+            "clue": "Traición proveniente de las personas más cercanas a Jeremías que tramaban su caída."
+          },
+          {
+            "word": "COMIDA",
+            "clue": "Elemento que el pueblo de Israel demandaba entre lágrimas en el desierto, sofocando la paciencia de su líder."
+          }
+        ]
+      }
+    },
+    {
+      "orden": 2,
+      "tipo": "personaje_biblico",
+      "resena": [
+        "Como llego un hombre formado en el mas estricto ambiente religioso de su tiempo a convertirse en uno de los principales instrumentos para llevar el evangelio a las naciones? Pablo nacio en Tarso de Cilicia, del pueblo judio, y poseia ciudadania romana. Fue educado en Jerusalen a los pies de Gamaliel, y llego a ser profundamente celoso de las tradiciones de sus padres, persiguiendo a la iglesia con gran intensidad.",
+        "Pablo consideraba que perseguir a los cristianos era una manera de defender la fe que profesaba, y obtuvo autorizacion para dirigirse a Damasco y llevar presos a los seguidores de Cristo. Pero en el camino, Jesucristo se le manifesto y lo confronto: Saulo, Saulo, por que me persigues? Aquel encuentro cambio por completo el rumbo de su vida.",
+        "El perseguidor se convirtio en predicador, y aquel que habia intentado destruir la iglesia comenzo a anunciar precisamente la fe que antes procuraba combatir. Dios lo habia escogido para llevar el nombre de Jesus en presencia de los gentiles, de reyes y de los hijos de Israel.",
+        "Desde Antioquia, Pablo comenzo una labor misionera que lo llevo, junto con distintos colaboradores, por regiones de Asia Menor, Macedonia, Grecia y finalmente hasta Roma. Su estrategia consistia en establecer comunidades de creyentes, ensenarles la Palabra, formar lideres y fortalecer las iglesias despues de su partida, sin abandonar la mision a pesar de las persecuciones, prisiones y dificultades.",
+        "La expansion de su ministerio fue extraordinaria, pero su obra no termino en los lugares que visito: su legado continuo mediante sus cartas, dirigidas a iglesias y colaboradores que necesitaban ensenanza, correccion y animo. En ellas encontramos explicaciones profundas acerca del evangelio, la salvacion, la fe y la esperanza futura.",
+        "Al acercarse al final de su ministerio, Pablo pudo escribir a Timoteo: He peleado la buena batalla, he acabado la carrera, he guardado la fe. Pablo paso de perseguir a la Iglesia a trabajar por su expansion, y de utilizar su extraordinaria preparacion para defender una comprension equivocada, a ponerla al servicio del evangelio de Jesucristo."
+      ],
+      "crucigrama": {
+        "tema": "Pablo: el apóstol que llevó el evangelio a las naciones",
+        "rows": 20,
+        "cols": 20,
+        "max_attempts": 300,
+        "words": [
+          {
+            "word": "PABLO",
+            "clue": "Apóstol que llevó el evangelio a numerosas regiones del mundo conocido de su tiempo."
+          },
+          {
+            "word": "TARSO",
+            "clue": "Ciudad de Cilicia donde nació Pablo."
+          },
+          {
+            "word": "GAMALIEL",
+            "clue": "Maestro a cuyos pies fue educado Pablo en Jerusalén."
+          },
+          {
+            "word": "JERUSALEN",
+            "clue": "Ciudad donde Pablo recibió su formación religiosa."
+          },
+          {
+            "word": "CRISTO",
+            "clue": "Aquel a quien Pablo perseguía antes de encontrarse con Él en el camino a Damasco."
+          },
+          {
+            "word": "DAMASCO",
+            "clue": "Ciudad hacia la que se dirigía Pablo cuando tuvo su encuentro con Cristo."
+          },
+          {
+            "word": "LLAMAMIENTO",
+            "clue": "Encargo recibido por Pablo para llevar el nombre de Jesús a gentiles, reyes e israelitas."
+          },
+          {
+            "word": "GENTILES",
+            "clue": "Pueblos a los que Pablo fue llamado especialmente a anunciar el evangelio."
+          },
+          {
+            "word": "ANTIOQUIA",
+            "clue": "Lugar desde donde Pablo comenzó una importante etapa de su labor misionera."
+          },
+          {
+            "word": "MISIONERO",
+            "clue": "Persona que anuncia el evangelio y lo lleva a nuevos lugares; así puede describirse la labor de Pablo."
+          },
+          {
+            "word": "EVANGELIO",
+            "clue": "Mensaje que Pablo pasó de perseguir a proclamar entre las naciones."
+          },
+          {
+            "word": "IGLESIAS",
+            "clue": "Comunidades de creyentes que Pablo procuraba establecer, enseñar y fortalecer."
+          },
+          {
+            "word": "COLABORADORES",
+            "clue": "Personas que acompañaron y ayudaron a Pablo en diferentes etapas de su ministerio."
+          },
+          {
+            "word": "PERSECUCION",
+            "clue": "Una de las dificultades que Pablo enfrentó por causa del evangelio."
+          },
+          {
+            "word": "ROMA",
+            "clue": "Ciudad a la que finalmente llegó Pablo después de años de ministerio y viajes."
+          },
+          {
+            "word": "CARTAS",
+            "clue": "Escritos mediante los cuales Pablo continuó enseñando a las iglesias y colaboradores."
+          },
+          {
+            "word": "ENSENANZA",
+            "clue": "Parte fundamental del ministerio de Pablo para formar y fortalecer a las iglesias."
+          },
+          {
+            "word": "SALVACION",
+            "clue": "Uno de los temas fundamentales que Pablo explicó en sus escritos al enseñar el evangelio."
+          },
+          {
+            "word": "FE",
+            "clue": "Elemento fundamental de la vida cristiana que Pablo desarrolla ampliamente en sus cartas."
+          },
+          {
+            "word": "LEGADO",
+            "clue": "Lo que Pablo dejó a la Iglesia mediante su obra misionera y sus escritos."
+          }
+        ]
+      }
+    },
+    {
+      "orden": 3,
+      "tipo": "libro_biblico",
+      "resena": [
+        "Moises es el autor del Pentateuco, afirmado expresamente por el testimonio del propio Jesucristo en los Evangelios y respaldado por la ensenanza de los apostoles en el Nuevo Testamento. Como primer libro de este conjunto, Genesis constituye el punto de partida de la historia biblica que conduce hacia la formacion del pueblo de Israel.",
+        "Genesis significa origen o comienzo, y su contenido corresponde precisamente a esa perspectiva. El libro presenta los grandes comienzos de la historia biblica: la creacion, la humanidad, el pecado, el diluvio, las naciones y, posteriormente, la historia de los patriarcas. A traves de Abraham, Isaac, Jacob y Jose, el relato comienza a concentrarse en una familia mediante la cual Dios desarrollara su proposito.",
+        "Uno de los aportes fundamentales de Genesis es presentar el punto de partida de la historia de la salvacion. El libro comienza con la creacion, pero posteriormente muestra como el pecado introduce una ruptura profunda en la relacion entre Dios y el ser humano. Con el llamamiento de Abraham comienza una nueva etapa: Dios establece una promesa, anuncia la formacion de una descendencia y vincula esa promesa con un proposito que trasciende al propio Abraham.",
+        "La promesa hecha a Abraham constituye uno de los puntos fundamentales de esta progresion. Dios anuncia que hara de el una gran nacion y que en el serian benditas todas las familias de la tierra. El relato continua mostrando como esa promesa pasa de Abraham a Isaac, de Isaac a Jacob y de Jacob a sus hijos: la historia de una familia se convierte asi en el comienzo de la historia de un pueblo.",
+        "La eleccion de Abraham esta vinculada desde el principio con la bendicion de todas las familias de la tierra. Israel no aparece en Genesis simplemente como un pueblo escogido para recibir beneficios particulares, sino como parte de un proposito que tiene un alcance mucho mayor, que continuara avanzando a lo largo de las Escrituras hasta alcanzar su expresion plena en Cristo y extenderse hacia todas las naciones.",
+        "Al cerrar el libro, todavia no encontramos el cumplimiento completo de esa promesa: encontramos a Jacob y sus hijos establecidos en Egipto, y la historia queda preparada para continuar. Genesis abre asi la historia de la salvacion y establece desde sus primeras paginas el alcance universal del proposito de Dios: una bendicion que comienza con una familia, se desarrolla mediante un pueblo y tiene como horizonte final a todas las naciones."
+      ],
+      "crucigrama": {
+        "tema": "Génesis: Fundamento de la Historia de la Salvación",
+        "rows": 20,
+        "cols": 20,
+        "max_attempts": 300,
+        "words": [
+          {
+            "word": "CAIDA",
+            "clue": "Acontecimiento mediante el cual el pecado entró en la experiencia de la humanidad."
+          },
+          {
+            "word": "EDEN",
+            "clue": "Lugar donde Dios colocó al ser humano después de crearlo."
+          },
+          {
+            "word": "ADAN",
+            "clue": "Primer hombre presentado en el relato de Génesis."
+          },
+          {
+            "word": "EVA",
+            "clue": "Mujer creada para acompañar al primer hombre."
+          },
+          {
+            "word": "PECADO",
+            "clue": "Desobediencia que introdujo una ruptura entre Dios y la humanidad."
+          },
+          {
+            "word": "DILUVIO",
+            "clue": "Gran inundación mediante la cual Dios juzgó la corrupción de la humanidad."
+          },
+          {
+            "word": "CAIN",
+            "clue": "Primer hijo de Adán y Eva, conocido por haber dado muerte a su hermano Abel."
+          },
+          {
+            "word": "NOE",
+            "clue": "Hombre que construyó el arca y encontró gracia ante Dios."
+          },
+          {
+            "word": "TORRE",
+            "clue": "Construcción que los habitantes de Babel quisieron levantar hasta el cielo."
+          },
+          {
+            "word": "ABRAHAM",
+            "clue": "Hombre llamado por Dios para convertirse en padre de una gran nación."
+          },
+          {
+            "word": "PROMESA",
+            "clue": "Compromiso de Dios con Abraham relacionado con su descendencia y la bendición de las naciones."
+          },
+          {
+            "word": "ISAAC",
+            "clue": "Hijo de Abraham y Sara, nacido como cumplimiento de una promesa."
+          },
+          {
+            "word": "JACOB",
+            "clue": "Hijo de Isaac que recibió el nombre de Israel."
+          },
+          {
+            "word": "ISRAEL",
+            "clue": "Nombre que recibió Jacob y que posteriormente identificaría a sus descendientes."
+          },
+          {
+            "word": "JOSE",
+            "clue": "Hijo de Jacob que llegó a ocupar una posición de autoridad en Egipto."
+          },
+          {
+            "word": "EGIPTO",
+            "clue": "País donde José llegó a ser gobernador y donde posteriormente se estableció su familia."
+          },
+          {
+            "word": "PACTO",
+            "clue": "Acuerdo solemne mediante el cual Dios establece una relación y compromisos con determinadas personas."
+          },
+          {
+            "word": "CIRCUNCISION",
+            "clue": "Señal establecida por Dios como parte del pacto con Abraham."
+          },
+          {
+            "word": "BENDICION",
+            "clue": "Beneficio o favor concedido por Dios."
+          },
+          {
+            "word": "DESCENDENCIA",
+            "clue": "Conjunto de personas que proceden de un antepasado o familia."
+          }
+        ]
+      }
+    },
+    {
+      "orden": 4,
+      "tipo": "vocabulario",
+      "resena": [
+        "La palabra esperanza expresa la expectativa de que algo deseado o considerado favorable pueda llegar a suceder. Cuando una persona espera, dirige su pensamiento hacia el futuro y mantiene abierta la posibilidad de alcanzar aquello que anhela. Por eso, la esperanza esta estrechamente relacionada con palabras como expectativa, confianza, ilusion, deseo y posibilidad, aunque cada una posee sus propios matices.",
+        "Utilizamos esta palabra en numerosos ambitos de la vida: una persona puede tener esperanza de conseguir un empleo, de superar una dificultad o de alcanzar una meta. La esperanza cumple una funcion importante en nuestra manera de pensar, ya que nos permite considerar el futuro no solamente como algo que todavia no existe, sino como un espacio en el que pueden hacerse realidad determinadas posibilidades.",
+        "Sin embargo, la esperanza no siempre significa certeza. Podemos esperar algo sin tener garantia absoluta de que sucedera. Una de las caracteristicas mas interesantes de la esperanza es su relacion con el futuro: una persona que pierde toda esperanza puede dejar de considerar posibles determinadas alternativas, mientras que conservarla mantiene abierta la posibilidad de actuar, perseverar y buscar soluciones.",
+        "La Biblia utiliza esta palabra dentro de un horizonte particularmente amplio. En sus paginas, la esperanza no se limita a un deseo optimista acerca del futuro, sino que puede estar vinculada con la confianza en las promesas de Dios. Pablo relaciona la esperanza con aquello que todavia no vemos y con la perseverancia mientras esperamos su cumplimiento; Pedro la presenta como una realidad fundamental de la vida cristiana, vinculada con la resurreccion de Jesucristo.",
+        "Comprender mejor la palabra esperanza nos permite distinguir entre desear, esperar, confiar y tener certeza. Estas diferencias pueden parecer pequenas en una conversacion cotidiana, pero adquieren gran importancia cuando queremos expresar con precision lo que pensamos. La esperanza, entonces, no es solamente una palabra que debemos conocer para resolver un crucigrama: es una herramienta mas para comprender el mundo, comprender a los demas y comprender mejor aquello que leemos."
+      ],
+      "crucigrama": {
+        "tema": "Esperanza: Una Palabra que Abre el Futuro",
+        "rows": 20,
+        "cols": 20,
+        "max_attempts": 300,
+        "words": [
+          {
+            "word": "ESPERANZA",
+            "clue": "Confianza o expectativa de que algo deseado llegue a suceder."
+          },
+          {
+            "word": "ESPERAR",
+            "clue": "Permanecer en expectativa de que algo ocurra."
+          },
+          {
+            "word": "EXPECTATIVA",
+            "clue": "Espera de que ocurra algo determinado."
+          },
+          {
+            "word": "CONFIANZA",
+            "clue": "Seguridad que se tiene respecto de alguien o algo."
+          },
+          {
+            "word": "ILUSION",
+            "clue": "Esperanza o deseo de conseguir algo que se considera posible."
+          },
+          {
+            "word": "OPTIMISMO",
+            "clue": "Tendencia a considerar favorablemente las posibilidades futuras."
+          },
+          {
+            "word": "POSIBILIDAD",
+            "clue": "Circunstancia de que algo pueda ocurrir o existir."
+          },
+          {
+            "word": "PROBABILIDAD",
+            "clue": "Mayor o menor posibilidad de que suceda un acontecimiento."
+          },
+          {
+            "word": "ANHELO",
+            "clue": "Deseo intenso de conseguir algo."
+          },
+          {
+            "word": "ASPIRACION",
+            "clue": "Deseo de alcanzar una meta o situación determinada."
+          },
+          {
+            "word": "DESEO",
+            "clue": "Impulso o inclinación hacia aquello que se quiere conseguir."
+          },
+          {
+            "word": "PROPOSITO",
+            "clue": "Intención de realizar o conseguir algo."
+          },
+          {
+            "word": "META",
+            "clue": "Fin que una persona se propone alcanzar."
+          },
+          {
+            "word": "PERSEVERANCIA",
+            "clue": "Constancia para continuar con un propósito a pesar de las dificultades."
+          },
+          {
+            "word": "ANIMO",
+            "clue": "Disposición interior para afrontar una situación o realizar algo."
+          },
+          {
+            "word": "PROMESA",
+            "clue": "Compromiso de realizar o conceder algo en el futuro."
+          },
+          {
+            "word": "CERTEZA",
+            "clue": "Conocimiento seguro de que algo es verdadero o sucederá."
+          },
+          {
+            "word": "FUTURO",
+            "clue": "Tiempo que todavía está por llegar."
+          },
+          {
+            "word": "PROYECCION",
+            "clue": "Consideración de una situación futura a partir de posibilidades presentes."
+          },
+          {
+            "word": "CONVICCION",
+            "clue": "Seguridad firme acerca de una idea o creencia."
+          }
+        ]
+      }
+    },
+    {
+      "orden": 5,
+      "tipo": "boletin",
+      "titulo": "Actividades de la semana [PLACEHOLDER - reemplazar con el contenido real]",
+      "introduccion": "[PLACEHOLDER] Aqui va una breve introduccion a las actividades de la semana.",
+      "actividades": [
+        {
+          "titulo": "[PLACEHOLDER] Nombre de la actividad 1",
+          "fecha": "2026-08-28",
+          "hora": "7:00 PM",
+          "descripcion": "[PLACEHOLDER] Descripcion de la actividad. Reemplazar con el contenido real.",
+          "imagen": null,
+          "video": null
+        },
+        {
+          "titulo": "[PLACEHOLDER] Nombre de la actividad 2",
+          "fecha": "2026-08-30",
+          "hora": "5:00 PM",
+          "descripcion": "[PLACEHOLDER] Descripcion de la actividad. Reemplazar con el contenido real.",
+          "imagen": null,
+          "video": null
+        }
+      ]
+    }
+  ]
+}

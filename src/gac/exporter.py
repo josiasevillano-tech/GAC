@@ -6,12 +6,13 @@ class Exporter:
     Exporta un crucigrama a HTML profesional listo para imprimir en A4.
     """
 
-    def __init__(self, data, title="Guia de Estudio", subtitle="Crucigrama", clues=None, resena=""):
+    def __init__(self, data, title="Guia de Estudio", subtitle="Crucigrama", clues=None, resena="", sello=None):
         self.data = data
         self.title = title
         self.subtitle = subtitle
         self.clues = clues or {}
         self.resena = resena
+        self.sello = sello
 
     def _render_grid(self, grid, cell_size, show_letters=False, css_class="crossword"):
         """Renderiza una cuadricula como HTML."""
@@ -54,6 +55,7 @@ class Exporter:
             .page-break { page-break-after: always; break-after: page; }
             .page1-header { text-align: center; margin-bottom: 10px; border-bottom: 2px solid #000; padding-bottom: 6px; }
             .page1-header h1 { font-size: 20pt; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 3px 0; font-weight: bold; }
+            .sello { font-size: 9pt; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; color: #555; margin: 0 0 4px 0; }
             .page1-header h2 { font-size: 11pt; font-weight: normal; color: #333; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
             .intro-section { margin-bottom: 16px; }
             .intro-section h3 { font-size: 11pt; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 2px; margin: 0 0 6px 0; }
@@ -92,9 +94,12 @@ class Exporter:
         else:
             intro_text = "Lee atentamente las pistas de cada direccion y completa el crucigrama con las palabras correspondientes. Este ejercicio te ayudara a reforzar tu conocimiento sobre el tema."
 
+        sello_html = f'<div class="sello">{self.sello}</div>' if self.sello else ""
+
         page1 = f"""
         <div class="page">
             <div class="page1-header">
+                {sello_html}
                 <h1>{self.title}</h1>
                 <h2>{self.subtitle}</h2>
             </div>
@@ -138,6 +143,7 @@ class Exporter:
         page2 = f"""
         <div class="page">
             <div class="page2-header">
+                {sello_html}
                 <h1>{self.title}</h1>
             </div>
             <div class="board-section">

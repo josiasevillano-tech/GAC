@@ -1,178 +1,10 @@
-"""
-web_exporter.py
-Exportador web interactivo para el GAC.
-Recibe los mismos datos que Exporter (data, title, clues) y genera HTML jugable.
-Compatible con GitHub Pages.
-"""
-
-import json
-import os
-from typing import List, Dict, Any
-
-
-class WebExporter:
-    """
-    Exporta crucigramas a HTML interactivo con JavaScript puro.
-    Recibe exactamente los mismos parametros que tu Exporter actual.
-    """
-
-    def __init__(self, data, title="Guia de Estudio", clues=None, resena="", tema="", sello=None):
-        self.data = data
-        self.title = title
-        self.clues = clues or {}
-        self.resena = resena
-        self.tema = tema
-        self.sello = sello
-
-    def save(self, filename="crucigrama_web.html") -> str:
-        """Genera y guarda el HTML jugable."""
-        matriz = self._extraer_matriz()
-        palabras = self._extraer_palabras(matriz)
-        filas = len(matriz)
-        columnas = len(matriz[0]) if matriz else 0
-
-        print(f"[DEBUG] Filas: {filas}, Columnas: {columnas}, Palabras: {len(palabras)}")
-        for p in palabras[:3]:
-            print(f"  - {p['palabra']} ({p['direccion']}) en [{p['fila_inicio']},{p['columna_inicio']}]")
-
-        html = self._generar_html(matriz, palabras, filas, columnas)
-        filepath = os.path.abspath(filename)
-        with open(filepath, "w", encoding="utf-8") as f2:
-            f2.write(html)
-        print("Web interactiva guardada en: " + filepath)
-        return filepath
-
-    def _extraer_matriz(self) -> List[List[str]]:
-        """Convierte la cuadricula del generador a matriz de letras/#."""
-        grid = self.data.get("solved_grid") or self.data.get("grid", [])
-        if not grid:
-            return []
-        matriz = []
-        for row in grid:
-            fila = []
-            for cell in row:
-                if isinstance(cell, dict):
-                    if cell.get("is_empty"):
-                        fila.append("#")
-                    else:
-                        letra = cell.get("letter", "")
-                        fila.append(letra.upper() if letra else " ")
-                else:
-                    fila.append(str(cell).upper() if str(cell).strip() else "#")
-            matriz.append(fila)
-        return matriz
-
-    def _get_clue_lists(self):
-        h_keys = ["horizontal", "across", "h", "horizontales"]
-        v_keys = ["vertical", "down", "v", "verticales"]
-        h_list = []
-        v_list = []
-        for k in h_keys:
-            if k in self.data:
-                h_list = self.data[k]
-                break
-        for k in v_keys:
-            if k in self.data:
-                v_list = self.data[k]
-                break
-        return h_list, v_list
-
-    def _get_word_from_item(self, item):
-        for key in ["word", "text", "answer", "palabra", "w"]:
-            if key in item:
-                return item[key]
-        return ""
-
-    def _get_number_from_item(self, item):
-        for key in ["number", "num", "id", "n", "numero"]:
-            if key in item:
-                return item[key]
-        return None
-
-    def _buscar_posicion(self, grid, numero) -> tuple:
-        if numero is None:
-            return None, None
-        num_str = str(numero)
-        for f, row in enumerate(grid):
-            for c, cell in enumerate(row):
-                if isinstance(cell, dict):
-                    cell_num = cell.get("number") or cell.get("num") or cell.get("id") or cell.get("n")
-                    if cell_num is not None and str(cell_num) == num_str:
-                        return f, c
-        return None, None
-
-    def _buscar_palabra_en_matriz(self, matriz, palabra, direccion) -> tuple:
-        if not palabra or not matriz:
-            return None, None
-        palabra = palabra.upper()
-        filas = len(matriz)
-        columnas = len(matriz[0]) if filas > 0 else 0
-        for f in range(filas):
-            for c in range(columnas):
-                if matriz[f][c] == palabra[0] or matriz[f][c] == " ":
-                    if direccion == "horizontal":
-                        if c + len(palabra) <= columnas:
-                            match = True
-                            for i in range(len(palabra)):
-                                if matriz[f][c + i] not in (palabra[i], " "):
-                                    match = False
-                                    break
-                            if match:
-                                return f, c
-                    else:
-                        if f + len(palabra) <= filas:
-                            match = True
-                            for i in range(len(palabra)):
-                                if matriz[f + i][c] not in (palabra[i], " "):
-                                    match = False
-                                    break
-                            if match:
-                                return f, c
-        return None, None
-
-    def _extraer_palabras(self, matriz) -> List[Dict[str, Any]]:
-        h_list, v_list = self._get_clue_lists()
-        palabras = []
-        for item in h_list:
-            word = self._get_word_from_item(item)
-            num = self._get_number_from_item(item)
-            pista = self.clues.get(word, "")
-            fila, col = self._buscar_posicion(self.data.get("solved_grid") or self.data.get("grid", []), num)
-            if fila is None and matriz:
-                fila, col = self._buscar_palabra_en_matriz(matriz, word, "horizontal")
-            if fila is not None:
-                palabras.append({
-                    "palabra": word,
-                    "pista": pista,
-                    "direccion": "horizontal",
-                    "fila_inicio": fila,
-                    "columna_inicio": col,
-                    "numero": num if num is not None else len(palabras) + 1
-                })
-        for item in v_list:
-            word = self._get_word_from_item(item)
-            num = self._get_number_from_item(item)
-            pista = self.clues.get(word, "")
-            fila, col = self._buscar_posicion(self.data.get("solved_grid") or self.data.get("grid", []), num)
-            if fila is None and matriz:
-                fila, col = self._buscar_palabra_en_matriz(matriz, word, "vertical")
-            if fila is not None:
-                palabras.append({
-                    "palabra": word,
-                    "pista": pista,
-                    "direccion": "vertical",
-                    "fila_inicio": fila,
-                    "columna_inicio": col,
-                    "numero": num if num is not None else len(palabras) + 1
-                })
-        return palabras
-
-    def _generar_html(self, matriz, palabras, filas, columnas) -> str:
-        palabras_js = json.dumps(palabras, ensure_ascii=False)
-        total_palabras = len(palabras)
-        resena_html = self.resena.replace("\n", "<br>")
-
-        css = """
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pablo: el apóstol que llevó el evangelio a las naciones</title>
+    <style>
         :root {
             --color-fondo: #f5f7fa;
             --color-primario: #2c5282;
@@ -379,472 +211,24 @@ class WebExporter:
         .mensaje-final.bronce { background: #feebc8; color: #7c2d12; }
         .mensaje-final.normal { background: #ebf8ff; color: #2c5282; }
         .modal .btn { width: 100%; margin-top: 8px; }
-        """
-
-        js = f"""
-        const PALABRAS = {palabras_js};
-        const FILAS = {filas};
-        const COLUMNAS = {columnas};
-        const TOTAL_PALABRAS = {total_palabras};
-
-        let celdaActiva = null;
-        let direccionActiva = "horizontal";
-        let palabrasCompletadas = new Set();
-        let tiempoInicio = Date.now();
-        let pistasUsadas = 0;
-        let verificaciones = 0;
-        let juegoTerminado = false;
-
-        function init() {{
-            renderTablero();
-            renderPistas();
-            document.addEventListener("keydown", manejarTecla);
-            iniciarCronometro();
-        }}
-
-        function iniciarCronometro() {{
-            setInterval(() => {{
-                if (juegoTerminado) return;
-                const segundos = Math.floor((Date.now() - tiempoInicio) / 1000);
-                const min = Math.floor(segundos / 60).toString().padStart(2, "0");
-                const sec = (segundos % 60).toString().padStart(2, "0");
-                const el = document.getElementById("cronometro");
-                if (el) el.textContent = min + ":" + sec;
-            }}, 1000);
-        }}
-
-        function renderTablero() {{
-            const tablero = document.getElementById("tablero");
-            tablero.innerHTML = "";
-            tablero.style.gridTemplateColumns = "repeat(" + COLUMNAS + ", 1fr)";
-            tablero.style.aspectRatio = COLUMNAS + " / " + FILAS;
-            for (let f = 0; f < FILAS; f++) {{
-                for (let c = 0; c < COLUMNAS; c++) {{
-                    const celda = document.createElement("div");
-                    celda.className = "celda";
-                    celda.dataset.fila = f;
-                    celda.dataset.columna = c;
-                    const esNegra = !PALABRAS.some(p => {{
-                        const df = p.direccion === "horizontal" ? 0 : 1;
-                        const dc = p.direccion === "horizontal" ? 1 : 0;
-                        for (let i = 0; i < p.palabra.length; i++) {{
-                            if (p.fila_inicio + i * df === f && p.columna_inicio + i * dc === c) return true;
-                        }}
-                        return false;
-                    }});
-                    if (esNegra) {{
-                        celda.classList.add("negra");
-                        tablero.appendChild(celda);
-                        continue;
-                    }}
-                    const palabraInicio = PALABRAS.find(p => p.fila_inicio === f && p.columna_inicio === c);
-                    if (palabraInicio) {{
-                        const num = document.createElement("span");
-                        num.className = "numero";
-                        num.textContent = palabraInicio.numero || getNumero(palabraInicio);
-                        celda.appendChild(num);
-                    }}
-                    const input = document.createElement("input");
-                    input.type = "text";
-                    input.maxLength = 1;
-                    input.dataset.fila = f;
-                    input.dataset.columna = c;
-                    input.addEventListener("focus", () => {{ seleccionarCelda(f, c); setTimeout(() => input.select(), 10); }});
-                    input.addEventListener("input", (e) => manejarInput(e, f, c));
-                    input.addEventListener("keydown", (e) => manejarTeclaCelda(e, f, c));
-                    input.addEventListener("click", (e) => {{ e.stopPropagation(); seleccionarCelda(f, c); }});
-                    celda.appendChild(input);
-                    tablero.appendChild(celda);
-                }}
-            }}
-        }}
-
-        function getNumero(palabra) {{
-            const ordenadas = [...PALABRAS].sort((a, b) => {{
-                if (a.fila_inicio !== b.fila_inicio) return a.fila_inicio - b.fila_inicio;
-                return a.columna_inicio - b.columna_inicio;
-            }});
-            for (let i = 0; i < ordenadas.length; i++) {{
-                if (ordenadas[i] === palabra) return i + 1;
-            }}
-            return 1;
-        }}
-
-        function renderPistas() {{
-            const ph = document.getElementById("pistas-h");
-            const pv = document.getElementById("pistas-v");
-            ph.innerHTML = "";
-            pv.innerHTML = "";
-            PALABRAS.forEach(p => {{
-                const div = document.createElement("div");
-                div.className = "pista-item";
-                div.dataset.palabra = p.palabra;
-                div.innerHTML = '<span class="num">' + (p.numero || getNumero(p)) + '. </span>' + p.pista;
-                div.onclick = () => irAPalabra(p);
-                if (p.direccion === "horizontal") ph.appendChild(div);
-                else pv.appendChild(div);
-            }});
-        }}
-
-        function seleccionarCelda(f, c) {{
-            celdaActiva = {{ fila: f, columna: c }};
-            document.querySelectorAll(".celda").forEach(el => el.classList.remove("activa", "seleccionada"));
-            const celdaEl = getCeldaElement(f, c);
-            if (celdaEl) celdaEl.classList.add("seleccionada");
-            const palabra = encontrarPalabraEn(f, c, direccionActiva);
-            if (palabra) resaltarPalabra(palabra);
-            document.querySelectorAll(".pista-item").forEach(el => el.classList.remove("activa"));
-            if (palabra) {{
-                const pistaEl = document.querySelector('.pista-item[data-palabra="' + palabra.palabra + '"]');
-                if (pistaEl) pistaEl.classList.add("activa");
-            }}
-        }}
-
-        function encontrarPalabraEn(f, c, direccion) {{
-            return PALABRAS.find(p => {{
-                if (p.direccion !== direccion) return false;
-                const df = direccion === "horizontal" ? 0 : 1;
-                const dc = direccion === "horizontal" ? 1 : 0;
-                for (let i = 0; i < p.palabra.length; i++) {{
-                    if (p.fila_inicio + i * df === f && p.columna_inicio + i * dc === c) return true;
-                }}
-                return false;
-            }});
-        }}
-
-        function resaltarPalabra(palabra) {{
-            const df = palabra.direccion === "horizontal" ? 0 : 1;
-            const dc = palabra.direccion === "horizontal" ? 1 : 0;
-            for (let i = 0; i < palabra.palabra.length; i++) {{
-                const el = getCeldaElement(palabra.fila_inicio + i * df, palabra.columna_inicio + i * dc);
-                if (el) el.classList.add("activa");
-            }}
-        }}
-
-        function getCeldaElement(f, c) {{
-            return document.querySelector('.celda[data-fila="' + f + '"][data-columna="' + c + '"]');
-        }}
-
-        function getInput(f, c) {{
-            const celda = getCeldaElement(f, c);
-            return celda ? celda.querySelector("input") : null;
-        }}
-
-        function irAPalabra(palabra) {{
-            direccionActiva = palabra.direccion;
-            seleccionarCelda(palabra.fila_inicio, palabra.columna_inicio);
-            const input = getInput(palabra.fila_inicio, palabra.columna_inicio);
-            if (input) input.focus();
-        }}
-
-        function manejarInput(e, f, c) {{
-            const val = e.target.value.toUpperCase();
-            e.target.value = val;
-            if (val.length === 1) {{
-                moverSiguiente(f, c);
-            }}
-        }}
-
-        function manejarTeclaCelda(e, f, c) {{
-            if (e.key === "Enter") {{ e.preventDefault(); verificarTodo(); return; }}
-            if (e.key === "Backspace" && !e.target.value) {{ e.preventDefault(); moverAnterior(f, c); return; }}
-            if (e.key === "ArrowRight") {{ direccionActiva = "horizontal"; mover(f, c, 0, 1); }}
-            if (e.key === "ArrowLeft") {{ direccionActiva = "horizontal"; mover(f, c, 0, -1); }}
-            if (e.key === "ArrowDown") {{ direccionActiva = "vertical"; mover(f, c, 1, 0); }}
-            if (e.key === "ArrowUp") {{ direccionActiva = "vertical"; mover(f, c, -1, 0); }}
-            if (e.key === " ") {{ e.preventDefault(); direccionActiva = direccionActiva === "horizontal" ? "vertical" : "horizontal"; seleccionarCelda(f, c); }}
-        }}
-
-        function manejarTecla(e) {{
-            if (e.key === "Tab") {{
-                e.preventDefault();
-                if (e.shiftKey) moverAnterior(celdaActiva.fila, celdaActiva.columna);
-                else moverSiguiente(celdaActiva.fila, celdaActiva.columna);
-            }}
-        }}
-
-        function mover(f, c, df, dc) {{
-            const nf = f + df, nc = c + dc;
-            const input = getInput(nf, nc);
-            if (input) {{ input.focus(); seleccionarCelda(nf, nc); }}
-        }}
-
-        function moverSiguiente(f, c) {{
-            const palabra = encontrarPalabraEn(f, c, direccionActiva);
-            if (!palabra) return;
-            const df = palabra.direccion === "horizontal" ? 0 : 1;
-            const dc = palabra.direccion === "horizontal" ? 1 : 0;
-            const idxInicial = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            let destinoF = f, destinoC = c;
-            for (let i = idxInicial + 1; i < palabra.palabra.length; i++) {{
-                const nf = palabra.fila_inicio + i * df;
-                const nc = palabra.columna_inicio + i * dc;
-                const input = getInput(nf, nc);
-                if (!input) break;
-                const letraCorrecta = palabra.palabra[i].toUpperCase();
-                destinoF = nf;
-                destinoC = nc;
-                if (!input.value || input.value.toUpperCase() !== letraCorrecta) {{
-                    break;
-                }}
-            }}
-            if (destinoF === f && destinoC === c) return;
-            const inputDestino = getInput(destinoF, destinoC);
-            if (inputDestino) {{
-                inputDestino.focus();
-                seleccionarCelda(destinoF, destinoC);
-            }}
-        }}
-
-        function moverAnterior(f, c) {{
-            const palabra = encontrarPalabraEn(f, c, direccionActiva);
-            if (!palabra) return;
-            const df = palabra.direccion === "horizontal" ? 0 : 1;
-            const dc = palabra.direccion === "horizontal" ? 1 : 0;
-            const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            if (idx > 0) {{ mover(f, c, -df, -dc); }}
-        }}
-
-        function verificarTodo() {{
-            if (juegoTerminado) return;
-            verificaciones++;
-            let correctas = 0;
-            let totalLetras = 0;
-            let letrasCorrectas = 0;
-            let letrasIncorrectas = 0;
-
-            PALABRAS.forEach(p => {{
-                const df = p.direccion === "horizontal" ? 0 : 1;
-                const dc = p.direccion === "horizontal" ? 1 : 0;
-                let palabraCorrecta = true;
-                for (let i = 0; i < p.palabra.length; i++) {{
-                    const f = p.fila_inicio + i * df;
-                    const c = p.columna_inicio + i * dc;
-                    const input = getInput(f, c);
-                    const letraCorrecta = p.palabra[i].toUpperCase();
-                    totalLetras++;
-                    if (input) {{
-                        const val = input.value.toUpperCase();
-                        const celda = getCeldaElement(f, c);
-                        if (val === letraCorrecta) {{
-                            letrasCorrectas++;
-                            celda.classList.remove("incorrecta");
-                            celda.classList.add("correcta");
-                        }} else if (val) {{
-                            palabraCorrecta = false;
-                            letrasIncorrectas++;
-                            celda.classList.remove("correcta");
-                            celda.classList.add("incorrecta");
-                        }} else {{
-                            palabraCorrecta = false;
-                            celda.classList.remove("correcta", "incorrecta");
-                        }}
-                    }}
-                }}
-                if (palabraCorrecta && p.palabra.length > 0) {{
-                    correctas++;
-                    palabrasCompletadas.add(p.palabra);
-                    const pistaEl = document.querySelector('.pista-item[data-palabra="' + p.palabra + '"]');
-                    if (pistaEl) pistaEl.classList.add("completada");
-                }}
-            }});
-
-            actualizarProgreso();
-
-            if (correctas === PALABRAS.length) {{
-                juegoTerminado = true;
-                const tiempoSegundos = Math.floor((Date.now() - tiempoInicio) / 1000);
-                mostrarPuntuacion(correctas, letrasCorrectas, letrasIncorrectas, tiempoSegundos);
-            }} else if (letrasCorrectas === totalLetras) {{
-                mostrarMensaje("Vas muy bien. Llevas " + correctas + " de " + PALABRAS.length + " palabras.", "exito");
-            }} else {{
-                mostrarMensaje("Sigue intentando. Llevas " + correctas + " de " + PALABRAS.length + " palabras correctas.", "pista-msg");
-            }}
-        }}
-
-        function calcularPuntuacion(correctas, letrasCorrectas, letrasIncorrectas, tiempoSeg) {{
-            let puntos = 1000;
-            puntos += correctas * 100;
-            puntos += letrasCorrectas * 10;
-            puntos -= letrasIncorrectas * 5;
-            puntos -= pistasUsadas * 50;
-            puntos -= verificaciones * 10;
-            const minutos = Math.floor(tiempoSeg / 60);
-            if (minutos <= 3) puntos += 200;
-            else if (minutos <= 5) puntos += 100;
-            else if (minutos <= 10) puntos += 50;
-            else puntos -= (minutos - 10) * 10;
-            return Math.max(0, Math.round(puntos));
-        }}
-
-        function calcularEstrellas(puntuacion) {{
-            if (puntuacion >= 1500) return 5;
-            if (puntuacion >= 1200) return 4;
-            if (puntuacion >= 900) return 3;
-            if (puntuacion >= 600) return 2;
-            return 1;
-        }}
-
-        function mensajeFinal(puntuacion) {{
-            var r = {{}};
-            if (puntuacion >= 1500) {{
-                r.texto = "EXCEPCIONAL: Dominas el tema a la perfeccion.";
-                r.clase = "oro";
-            }} else if (puntuacion >= 1200) {{
-                r.texto = "MUY BIEN: Gran conocimiento del tema.";
-                r.clase = "plata";
-            }} else if (puntuacion >= 900) {{
-                r.texto = "BIEN: Buen desempeno, sigue practicando.";
-                r.clase = "bronce";
-            }} else {{
-                r.texto = "SIGUE ESTUDIANDO: Cada intento te acerca a la meta.";
-                r.clase = "normal";
-            }}
-            return r;
-        }}
-
-        function mostrarPuntuacion(correctas, letrasCorrectas, letrasIncorrectas, tiempoSeg) {{
-            const puntuacion = calcularPuntuacion(correctas, letrasCorrectas, letrasIncorrectas, tiempoSeg);
-            const estrellas = calcularEstrellas(puntuacion);
-            const msg = mensajeFinal(puntuacion);
-            const min = Math.floor(tiempoSeg / 60).toString().padStart(2, "0");
-            const sec = (tiempoSeg % 60).toString().padStart(2, "0");
-
-            document.getElementById("modal-puntaje").textContent = puntuacion;
-            document.getElementById("modal-estrellas").textContent = "★".repeat(estrellas) + "☆".repeat(5 - estrellas);
-            document.getElementById("modal-mensaje").textContent = msg.texto;
-            document.getElementById("modal-mensaje").className = "mensaje-final " + msg.clase;
-            document.getElementById("stat-tiempo").textContent = min + ":" + sec;
-            document.getElementById("stat-pistas").textContent = pistasUsadas;
-            document.getElementById("stat-verif").textContent = verificaciones;
-            document.getElementById("stat-letras").textContent = letrasCorrectas + "/" + (letrasCorrectas + letrasIncorrectas);
-
-            document.getElementById("modal-overlay").classList.add("visible");
-        }}
-
-        function cerrarModal() {{
-            document.getElementById("modal-overlay").classList.remove("visible");
-        }}
-
-        function actualizarProgreso() {{
-            const completadas = palabrasCompletadas.size;
-            const total = PALABRAS.length;
-            const porcentaje = total > 0 ? Math.round((completadas / total) * 100) : 0;
-            document.getElementById("contador").textContent = completadas + " / " + total + " palabras";
-            document.getElementById("porcentaje").textContent = porcentaje + "%";
-            document.getElementById("barra-relleno").style.width = porcentaje + "%";
-        }}
-
-        function darPista() {{
-            if (!celdaActiva) {{ mostrarMensaje("Selecciona una celda primero.", "error"); return; }}
-            const palabra = encontrarPalabraEn(celdaActiva.fila, celdaActiva.columna, direccionActiva);
-            if (!palabra) {{ mostrarMensaje("No hay palabra en esta direccion.", "error"); return; }}
-            const df = palabra.direccion === "horizontal" ? 0 : 1;
-            const dc = palabra.direccion === "horizontal" ? 1 : 0;
-            for (let i = 0; i < palabra.palabra.length; i++) {{
-                const f = palabra.fila_inicio + i * df;
-                const c = palabra.columna_inicio + i * dc;
-                const input = getInput(f, c);
-                if (input && !input.value) {{
-                    input.value = palabra.palabra[i].toUpperCase();
-                    input.dispatchEvent(new Event("input"));
-                    pistasUsadas++;
-                    mostrarMensaje("Se revelo una letra de '" + palabra.palabra + "'", "pista-msg");
-                    return;
-                }}
-            }}
-            mostrarMensaje("Esa palabra ya esta completa.", "exito");
-        }}
-
-        function limpiarErrores() {{
-            document.querySelectorAll(".celda.incorrecta").forEach(el => {{
-                el.classList.remove("incorrecta");
-                const input = el.querySelector("input");
-                if (input) input.value = "";
-            }});
-            mostrarMensaje("Errores limpiados.", "pista-msg");
-        }}
-
-        function reiniciar() {{
-            if (!confirm("Seguro que quieres borrar todo y empezar de nuevo?")) return;
-            document.querySelectorAll("input").forEach(input => input.value = "");
-            document.querySelectorAll(".celda").forEach(el => el.classList.remove("correcta", "incorrecta"));
-            document.querySelectorAll(".pista-item").forEach(el => el.classList.remove("completada"));
-            palabrasCompletadas.clear();
-            pistasUsadas = 0;
-            verificaciones = 0;
-            juegoTerminado = false;
-            tiempoInicio = Date.now();
-            actualizarProgreso();
-            mostrarMensaje("Crucigrama reiniciado.", "pista-msg");
-        }}
-
-        function mostrarMensaje(texto, tipo) {{
-            const msg = document.getElementById("mensaje");
-            msg.textContent = texto;
-            msg.className = "mensaje visible " + tipo;
-            setTimeout(() => {{ msg.classList.remove("visible"); }}, 3000);
-        }}
-
-        init();
-        """
-
-        modal_html = """
-        <div class="modal-overlay" id="modal-overlay">
-            <div class="modal">
-                <h2>¡Felicidades!</h2>
-                <div class="subtitulo">Completaste el crucigrama</div>
-                <div class="estrellas" id="modal-estrellas"></div>
-                <div class="puntaje-grande" id="modal-puntaje"></div>
-                <div class="puntaje-label">puntos</div>
-                <div class="mensaje-final" id="modal-mensaje"></div>
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <div class="stat-valor" id="stat-tiempo"></div>
-                        <div class="stat-label">Tiempo</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-valor" id="stat-pistas"></div>
-                        <div class="stat-label">Pistas usadas</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-valor" id="stat-verif"></div>
-                        <div class="stat-label">Verificaciones</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-valor" id="stat-letras"></div>
-                        <div class="stat-label">Letras correctas</div>
-                    </div>
-                </div>
-                <button class="btn btn-primario" onclick="cerrarModal()">Cerrar</button>
-            </div>
-        </div>
-        """
-
-        html = f"""<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{self.title}</title>
-    <style>{css}</style>
+        </style>
 </head>
 <body>
     <div class="contenedor">
         <header>
-            {f'<div class="sello">{self.sello}</div>' if self.sello else ''}
-            <h1>{self.title}</h1>
-            <div class="tema">{self.tema}</div>
+            
+            <h1>Pablo: el apóstol que llevó el evangelio a las naciones</h1>
+            <div class="tema">Pablo: el apóstol que llevó el evangelio a las naciones</div>
         </header>
 
         <div class="resena">
             <h3>Resena del tema</h3>
-            <p>{resena_html}</p>
+            <p>Como llego un hombre formado en el mas estricto ambiente religioso de su tiempo a convertirse en uno de los principales instrumentos para llevar el evangelio a las naciones? Pablo nacio en Tarso de Cilicia, del pueblo judio, y poseia ciudadania romana. Fue educado en Jerusalen a los pies de Gamaliel, y llego a ser profundamente celoso de las tradiciones de sus padres, persiguiendo a la iglesia con gran intensidad.<br><br>Pablo consideraba que perseguir a los cristianos era una manera de defender la fe que profesaba, y obtuvo autorizacion para dirigirse a Damasco y llevar presos a los seguidores de Cristo. Pero en el camino, Jesucristo se le manifesto y lo confronto: Saulo, Saulo, por que me persigues? Aquel encuentro cambio por completo el rumbo de su vida.<br><br>El perseguidor se convirtio en predicador, y aquel que habia intentado destruir la iglesia comenzo a anunciar precisamente la fe que antes procuraba combatir. Dios lo habia escogido para llevar el nombre de Jesus en presencia de los gentiles, de reyes y de los hijos de Israel.<br><br>Desde Antioquia, Pablo comenzo una labor misionera que lo llevo, junto con distintos colaboradores, por regiones de Asia Menor, Macedonia, Grecia y finalmente hasta Roma. Su estrategia consistia en establecer comunidades de creyentes, ensenarles la Palabra, formar lideres y fortalecer las iglesias despues de su partida, sin abandonar la mision a pesar de las persecuciones, prisiones y dificultades.<br><br>La expansion de su ministerio fue extraordinaria, pero su obra no termino en los lugares que visito: su legado continuo mediante sus cartas, dirigidas a iglesias y colaboradores que necesitaban ensenanza, correccion y animo. En ellas encontramos explicaciones profundas acerca del evangelio, la salvacion, la fe y la esperanza futura.<br><br>Al acercarse al final de su ministerio, Pablo pudo escribir a Timoteo: He peleado la buena batalla, he acabado la carrera, he guardado la fe. Pablo paso de perseguir a la Iglesia a trabajar por su expansion, y de utilizar su extraordinaria preparacion para defender una comprension equivocada, a ponerla al servicio del evangelio de Jesucristo.</p>
         </div>
 
         <div class="barra-progreso">
             <div class="info">
-                <span id="contador">0 / {total_palabras} palabras</span>
+                <span id="contador">0 / 20 palabras</span>
             </div>
             <div class="progreso-visual">
                 <div class="relleno" id="barra-relleno"></div>
@@ -879,10 +263,444 @@ class WebExporter:
     </div>
 
     <div class="mensaje" id="mensaje"></div>
-    {modal_html}
+    
+        <div class="modal-overlay" id="modal-overlay">
+            <div class="modal">
+                <h2>¡Felicidades!</h2>
+                <div class="subtitulo">Completaste el crucigrama</div>
+                <div class="estrellas" id="modal-estrellas"></div>
+                <div class="puntaje-grande" id="modal-puntaje"></div>
+                <div class="puntaje-label">puntos</div>
+                <div class="mensaje-final" id="modal-mensaje"></div>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-valor" id="stat-tiempo"></div>
+                        <div class="stat-label">Tiempo</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-valor" id="stat-pistas"></div>
+                        <div class="stat-label">Pistas usadas</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-valor" id="stat-verif"></div>
+                        <div class="stat-label">Verificaciones</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-valor" id="stat-letras"></div>
+                        <div class="stat-label">Letras correctas</div>
+                    </div>
+                </div>
+                <button class="btn btn-primario" onclick="cerrarModal()">Cerrar</button>
+            </div>
+        </div>
+        
 
-    <script>{js}</script>
+    <script>
+        const PALABRAS = [{"palabra": "IGLESIAS", "pista": "Comunidades de creyentes que Pablo procuraba establecer, enseñar y fortalecer.", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 6, "numero": 1}, {"palabra": "ANTIOQUIA", "pista": "Lugar desde donde Pablo comenzó una importante etapa de su labor misionera.", "direccion": "horizontal", "fila_inicio": 2, "columna_inicio": 0, "numero": 5}, {"palabra": "MISIONERO", "pista": "Persona que anuncia el evangelio y lo lleva a nuevos lugares; así puede describirse la labor de Pablo.", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 8, "numero": 6}, {"palabra": "COLABORADORES", "pista": "Personas que acompañaron y ayudaron a Pablo en diferentes etapas de su ministerio.", "direccion": "horizontal", "fila_inicio": 10, "columna_inicio": 3, "numero": 13}, {"palabra": "JERUSALEN", "pista": "Ciudad donde Pablo recibió su formación religiosa.", "direccion": "horizontal", "fila_inicio": 13, "columna_inicio": 9, "numero": 15}, {"palabra": "CARTAS", "pista": "Escritos mediante los cuales Pablo continuó enseñando a las iglesias y colaboradores.", "direccion": "horizontal", "fila_inicio": 15, "columna_inicio": 13, "numero": 17}, {"palabra": "ROMA", "pista": "Ciudad a la que finalmente llegó Pablo después de años de ministerio y viajes.", "direccion": "horizontal", "fila_inicio": 16, "columna_inicio": 6, "numero": 18}, {"palabra": "LEGADO", "pista": "Lo que Pablo dejó a la Iglesia mediante su obra misionera y sus escritos.", "direccion": "horizontal", "fila_inicio": 18, "columna_inicio": 9, "numero": 19}, {"palabra": "EVANGELIO", "pista": "Mensaje que Pablo pasó de perseguir a proclamar entre las naciones.", "direccion": "horizontal", "fila_inicio": 19, "columna_inicio": 1, "numero": 20}, {"palabra": "LLAMAMIENTO", "pista": "Encargo recibido por Pablo para llevar el nombre de Jesús a gentiles, reyes e israelitas.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 8, "numero": 2}, {"palabra": "SALVACION", "pista": "Uno de los temas fundamentales que Pablo explicó en sus escritos al enseñar el evangelio.", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 0, "numero": 3}, {"palabra": "TARSO", "pista": "Ciudad de Cilicia donde nació Pablo.", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 15, "numero": 4}, {"palabra": "PERSECUCION", "pista": "Una de las dificultades que Pablo enfrentó por causa del evangelio.", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 3, "numero": 7}, {"palabra": "GENTILES", "pista": "Pueblos a los que Pablo fue llamado especialmente a anunciar el evangelio.", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 5, "numero": 8}, {"palabra": "CRISTO", "pista": "Aquel a quien Pablo perseguía antes de encontrarse con Él en el camino a Damasco.", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 12, "numero": 9}, {"palabra": "GAMALIEL", "pista": "Maestro a cuyos pies fue educado Pablo en Jerusalén.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 10, "numero": 10}, {"palabra": "ENSENANZA", "pista": "Parte fundamental del ministerio de Pablo para formar y fortalecer a las iglesias.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 17, "numero": 11}, {"palabra": "FE", "pista": "Elemento fundamental de la vida cristiana que Pablo desarrolla ampliamente en sus cartas.", "direccion": "vertical", "fila_inicio": 9, "columna_inicio": 14, "numero": 12}, {"palabra": "DAMASCO", "pista": "Ciudad hacia la que se dirigía Pablo cuando tuvo su encuentro con Cristo.", "direccion": "vertical", "fila_inicio": 12, "columna_inicio": 14, "numero": 14}, {"palabra": "PABLO", "pista": "Apóstol que llevó el evangelio a numerosas regiones del mundo conocido de su tiempo.", "direccion": "vertical", "fila_inicio": 15, "columna_inicio": 9, "numero": 16}];
+        const FILAS = 20;
+        const COLUMNAS = 19;
+        const TOTAL_PALABRAS = 20;
+
+        let celdaActiva = null;
+        let direccionActiva = "horizontal";
+        let palabrasCompletadas = new Set();
+        let tiempoInicio = Date.now();
+        let pistasUsadas = 0;
+        let verificaciones = 0;
+        let juegoTerminado = false;
+
+        function init() {
+            renderTablero();
+            renderPistas();
+            document.addEventListener("keydown", manejarTecla);
+            iniciarCronometro();
+        }
+
+        function iniciarCronometro() {
+            setInterval(() => {
+                if (juegoTerminado) return;
+                const segundos = Math.floor((Date.now() - tiempoInicio) / 1000);
+                const min = Math.floor(segundos / 60).toString().padStart(2, "0");
+                const sec = (segundos % 60).toString().padStart(2, "0");
+                const el = document.getElementById("cronometro");
+                if (el) el.textContent = min + ":" + sec;
+            }, 1000);
+        }
+
+        function renderTablero() {
+            const tablero = document.getElementById("tablero");
+            tablero.innerHTML = "";
+            tablero.style.gridTemplateColumns = "repeat(" + COLUMNAS + ", 1fr)";
+            tablero.style.aspectRatio = COLUMNAS + " / " + FILAS;
+            for (let f = 0; f < FILAS; f++) {
+                for (let c = 0; c < COLUMNAS; c++) {
+                    const celda = document.createElement("div");
+                    celda.className = "celda";
+                    celda.dataset.fila = f;
+                    celda.dataset.columna = c;
+                    const esNegra = !PALABRAS.some(p => {
+                        const df = p.direccion === "horizontal" ? 0 : 1;
+                        const dc = p.direccion === "horizontal" ? 1 : 0;
+                        for (let i = 0; i < p.palabra.length; i++) {
+                            if (p.fila_inicio + i * df === f && p.columna_inicio + i * dc === c) return true;
+                        }
+                        return false;
+                    });
+                    if (esNegra) {
+                        celda.classList.add("negra");
+                        tablero.appendChild(celda);
+                        continue;
+                    }
+                    const palabraInicio = PALABRAS.find(p => p.fila_inicio === f && p.columna_inicio === c);
+                    if (palabraInicio) {
+                        const num = document.createElement("span");
+                        num.className = "numero";
+                        num.textContent = palabraInicio.numero || getNumero(palabraInicio);
+                        celda.appendChild(num);
+                    }
+                    const input = document.createElement("input");
+                    input.type = "text";
+                    input.maxLength = 1;
+                    input.dataset.fila = f;
+                    input.dataset.columna = c;
+                    input.addEventListener("focus", () => { seleccionarCelda(f, c); setTimeout(() => input.select(), 10); });
+                    input.addEventListener("input", (e) => manejarInput(e, f, c));
+                    input.addEventListener("keydown", (e) => manejarTeclaCelda(e, f, c));
+                    input.addEventListener("click", (e) => { e.stopPropagation(); seleccionarCelda(f, c); });
+                    celda.appendChild(input);
+                    tablero.appendChild(celda);
+                }
+            }
+        }
+
+        function getNumero(palabra) {
+            const ordenadas = [...PALABRAS].sort((a, b) => {
+                if (a.fila_inicio !== b.fila_inicio) return a.fila_inicio - b.fila_inicio;
+                return a.columna_inicio - b.columna_inicio;
+            });
+            for (let i = 0; i < ordenadas.length; i++) {
+                if (ordenadas[i] === palabra) return i + 1;
+            }
+            return 1;
+        }
+
+        function renderPistas() {
+            const ph = document.getElementById("pistas-h");
+            const pv = document.getElementById("pistas-v");
+            ph.innerHTML = "";
+            pv.innerHTML = "";
+            PALABRAS.forEach(p => {
+                const div = document.createElement("div");
+                div.className = "pista-item";
+                div.dataset.palabra = p.palabra;
+                div.innerHTML = '<span class="num">' + (p.numero || getNumero(p)) + '. </span>' + p.pista;
+                div.onclick = () => irAPalabra(p);
+                if (p.direccion === "horizontal") ph.appendChild(div);
+                else pv.appendChild(div);
+            });
+        }
+
+        function seleccionarCelda(f, c) {
+            celdaActiva = { fila: f, columna: c };
+            document.querySelectorAll(".celda").forEach(el => el.classList.remove("activa", "seleccionada"));
+            const celdaEl = getCeldaElement(f, c);
+            if (celdaEl) celdaEl.classList.add("seleccionada");
+            const palabra = encontrarPalabraEn(f, c, direccionActiva);
+            if (palabra) resaltarPalabra(palabra);
+            document.querySelectorAll(".pista-item").forEach(el => el.classList.remove("activa"));
+            if (palabra) {
+                const pistaEl = document.querySelector('.pista-item[data-palabra="' + palabra.palabra + '"]');
+                if (pistaEl) pistaEl.classList.add("activa");
+            }
+        }
+
+        function encontrarPalabraEn(f, c, direccion) {
+            return PALABRAS.find(p => {
+                if (p.direccion !== direccion) return false;
+                const df = direccion === "horizontal" ? 0 : 1;
+                const dc = direccion === "horizontal" ? 1 : 0;
+                for (let i = 0; i < p.palabra.length; i++) {
+                    if (p.fila_inicio + i * df === f && p.columna_inicio + i * dc === c) return true;
+                }
+                return false;
+            });
+        }
+
+        function resaltarPalabra(palabra) {
+            const df = palabra.direccion === "horizontal" ? 0 : 1;
+            const dc = palabra.direccion === "horizontal" ? 1 : 0;
+            for (let i = 0; i < palabra.palabra.length; i++) {
+                const el = getCeldaElement(palabra.fila_inicio + i * df, palabra.columna_inicio + i * dc);
+                if (el) el.classList.add("activa");
+            }
+        }
+
+        function getCeldaElement(f, c) {
+            return document.querySelector('.celda[data-fila="' + f + '"][data-columna="' + c + '"]');
+        }
+
+        function getInput(f, c) {
+            const celda = getCeldaElement(f, c);
+            return celda ? celda.querySelector("input") : null;
+        }
+
+        function irAPalabra(palabra) {
+            direccionActiva = palabra.direccion;
+            seleccionarCelda(palabra.fila_inicio, palabra.columna_inicio);
+            const input = getInput(palabra.fila_inicio, palabra.columna_inicio);
+            if (input) input.focus();
+        }
+
+        function manejarInput(e, f, c) {
+            const val = e.target.value.toUpperCase();
+            e.target.value = val;
+            if (val.length === 1) {
+                moverSiguiente(f, c);
+            }
+        }
+
+        function manejarTeclaCelda(e, f, c) {
+            if (e.key === "Enter") { e.preventDefault(); verificarTodo(); return; }
+            if (e.key === "Backspace" && !e.target.value) { e.preventDefault(); moverAnterior(f, c); return; }
+            if (e.key === "ArrowRight") { direccionActiva = "horizontal"; mover(f, c, 0, 1); }
+            if (e.key === "ArrowLeft") { direccionActiva = "horizontal"; mover(f, c, 0, -1); }
+            if (e.key === "ArrowDown") { direccionActiva = "vertical"; mover(f, c, 1, 0); }
+            if (e.key === "ArrowUp") { direccionActiva = "vertical"; mover(f, c, -1, 0); }
+            if (e.key === " ") { e.preventDefault(); direccionActiva = direccionActiva === "horizontal" ? "vertical" : "horizontal"; seleccionarCelda(f, c); }
+        }
+
+        function manejarTecla(e) {
+            if (e.key === "Tab") {
+                e.preventDefault();
+                if (e.shiftKey) moverAnterior(celdaActiva.fila, celdaActiva.columna);
+                else moverSiguiente(celdaActiva.fila, celdaActiva.columna);
+            }
+        }
+
+        function mover(f, c, df, dc) {
+            const nf = f + df, nc = c + dc;
+            const input = getInput(nf, nc);
+            if (input) { input.focus(); seleccionarCelda(nf, nc); }
+        }
+
+        function moverSiguiente(f, c) {
+            const palabra = encontrarPalabraEn(f, c, direccionActiva);
+            if (!palabra) return;
+            const df = palabra.direccion === "horizontal" ? 0 : 1;
+            const dc = palabra.direccion === "horizontal" ? 1 : 0;
+            const idxInicial = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
+            let destinoF = f, destinoC = c;
+            for (let i = idxInicial + 1; i < palabra.palabra.length; i++) {
+                const nf = palabra.fila_inicio + i * df;
+                const nc = palabra.columna_inicio + i * dc;
+                const input = getInput(nf, nc);
+                if (!input) break;
+                const letraCorrecta = palabra.palabra[i].toUpperCase();
+                destinoF = nf;
+                destinoC = nc;
+                if (!input.value || input.value.toUpperCase() !== letraCorrecta) {
+                    break;
+                }
+            }
+            if (destinoF === f && destinoC === c) return;
+            const inputDestino = getInput(destinoF, destinoC);
+            if (inputDestino) {
+                inputDestino.focus();
+                seleccionarCelda(destinoF, destinoC);
+            }
+        }
+
+        function moverAnterior(f, c) {
+            const palabra = encontrarPalabraEn(f, c, direccionActiva);
+            if (!palabra) return;
+            const df = palabra.direccion === "horizontal" ? 0 : 1;
+            const dc = palabra.direccion === "horizontal" ? 1 : 0;
+            const idx = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
+            if (idx > 0) { mover(f, c, -df, -dc); }
+        }
+
+        function verificarTodo() {
+            if (juegoTerminado) return;
+            verificaciones++;
+            let correctas = 0;
+            let totalLetras = 0;
+            let letrasCorrectas = 0;
+            let letrasIncorrectas = 0;
+
+            PALABRAS.forEach(p => {
+                const df = p.direccion === "horizontal" ? 0 : 1;
+                const dc = p.direccion === "horizontal" ? 1 : 0;
+                let palabraCorrecta = true;
+                for (let i = 0; i < p.palabra.length; i++) {
+                    const f = p.fila_inicio + i * df;
+                    const c = p.columna_inicio + i * dc;
+                    const input = getInput(f, c);
+                    const letraCorrecta = p.palabra[i].toUpperCase();
+                    totalLetras++;
+                    if (input) {
+                        const val = input.value.toUpperCase();
+                        const celda = getCeldaElement(f, c);
+                        if (val === letraCorrecta) {
+                            letrasCorrectas++;
+                            celda.classList.remove("incorrecta");
+                            celda.classList.add("correcta");
+                        } else if (val) {
+                            palabraCorrecta = false;
+                            letrasIncorrectas++;
+                            celda.classList.remove("correcta");
+                            celda.classList.add("incorrecta");
+                        } else {
+                            palabraCorrecta = false;
+                            celda.classList.remove("correcta", "incorrecta");
+                        }
+                    }
+                }
+                if (palabraCorrecta && p.palabra.length > 0) {
+                    correctas++;
+                    palabrasCompletadas.add(p.palabra);
+                    const pistaEl = document.querySelector('.pista-item[data-palabra="' + p.palabra + '"]');
+                    if (pistaEl) pistaEl.classList.add("completada");
+                }
+            });
+
+            actualizarProgreso();
+
+            if (correctas === PALABRAS.length) {
+                juegoTerminado = true;
+                const tiempoSegundos = Math.floor((Date.now() - tiempoInicio) / 1000);
+                mostrarPuntuacion(correctas, letrasCorrectas, letrasIncorrectas, tiempoSegundos);
+            } else if (letrasCorrectas === totalLetras) {
+                mostrarMensaje("Vas muy bien. Llevas " + correctas + " de " + PALABRAS.length + " palabras.", "exito");
+            } else {
+                mostrarMensaje("Sigue intentando. Llevas " + correctas + " de " + PALABRAS.length + " palabras correctas.", "pista-msg");
+            }
+        }
+
+        function calcularPuntuacion(correctas, letrasCorrectas, letrasIncorrectas, tiempoSeg) {
+            let puntos = 1000;
+            puntos += correctas * 100;
+            puntos += letrasCorrectas * 10;
+            puntos -= letrasIncorrectas * 5;
+            puntos -= pistasUsadas * 50;
+            puntos -= verificaciones * 10;
+            const minutos = Math.floor(tiempoSeg / 60);
+            if (minutos <= 3) puntos += 200;
+            else if (minutos <= 5) puntos += 100;
+            else if (minutos <= 10) puntos += 50;
+            else puntos -= (minutos - 10) * 10;
+            return Math.max(0, Math.round(puntos));
+        }
+
+        function calcularEstrellas(puntuacion) {
+            if (puntuacion >= 1500) return 5;
+            if (puntuacion >= 1200) return 4;
+            if (puntuacion >= 900) return 3;
+            if (puntuacion >= 600) return 2;
+            return 1;
+        }
+
+        function mensajeFinal(puntuacion) {
+            var r = {};
+            if (puntuacion >= 1500) {
+                r.texto = "EXCEPCIONAL: Dominas el tema a la perfeccion.";
+                r.clase = "oro";
+            } else if (puntuacion >= 1200) {
+                r.texto = "MUY BIEN: Gran conocimiento del tema.";
+                r.clase = "plata";
+            } else if (puntuacion >= 900) {
+                r.texto = "BIEN: Buen desempeno, sigue practicando.";
+                r.clase = "bronce";
+            } else {
+                r.texto = "SIGUE ESTUDIANDO: Cada intento te acerca a la meta.";
+                r.clase = "normal";
+            }
+            return r;
+        }
+
+        function mostrarPuntuacion(correctas, letrasCorrectas, letrasIncorrectas, tiempoSeg) {
+            const puntuacion = calcularPuntuacion(correctas, letrasCorrectas, letrasIncorrectas, tiempoSeg);
+            const estrellas = calcularEstrellas(puntuacion);
+            const msg = mensajeFinal(puntuacion);
+            const min = Math.floor(tiempoSeg / 60).toString().padStart(2, "0");
+            const sec = (tiempoSeg % 60).toString().padStart(2, "0");
+
+            document.getElementById("modal-puntaje").textContent = puntuacion;
+            document.getElementById("modal-estrellas").textContent = "★".repeat(estrellas) + "☆".repeat(5 - estrellas);
+            document.getElementById("modal-mensaje").textContent = msg.texto;
+            document.getElementById("modal-mensaje").className = "mensaje-final " + msg.clase;
+            document.getElementById("stat-tiempo").textContent = min + ":" + sec;
+            document.getElementById("stat-pistas").textContent = pistasUsadas;
+            document.getElementById("stat-verif").textContent = verificaciones;
+            document.getElementById("stat-letras").textContent = letrasCorrectas + "/" + (letrasCorrectas + letrasIncorrectas);
+
+            document.getElementById("modal-overlay").classList.add("visible");
+        }
+
+        function cerrarModal() {
+            document.getElementById("modal-overlay").classList.remove("visible");
+        }
+
+        function actualizarProgreso() {
+            const completadas = palabrasCompletadas.size;
+            const total = PALABRAS.length;
+            const porcentaje = total > 0 ? Math.round((completadas / total) * 100) : 0;
+            document.getElementById("contador").textContent = completadas + " / " + total + " palabras";
+            document.getElementById("porcentaje").textContent = porcentaje + "%";
+            document.getElementById("barra-relleno").style.width = porcentaje + "%";
+        }
+
+        function darPista() {
+            if (!celdaActiva) { mostrarMensaje("Selecciona una celda primero.", "error"); return; }
+            const palabra = encontrarPalabraEn(celdaActiva.fila, celdaActiva.columna, direccionActiva);
+            if (!palabra) { mostrarMensaje("No hay palabra en esta direccion.", "error"); return; }
+            const df = palabra.direccion === "horizontal" ? 0 : 1;
+            const dc = palabra.direccion === "horizontal" ? 1 : 0;
+            for (let i = 0; i < palabra.palabra.length; i++) {
+                const f = palabra.fila_inicio + i * df;
+                const c = palabra.columna_inicio + i * dc;
+                const input = getInput(f, c);
+                if (input && !input.value) {
+                    input.value = palabra.palabra[i].toUpperCase();
+                    input.dispatchEvent(new Event("input"));
+                    pistasUsadas++;
+                    mostrarMensaje("Se revelo una letra de '" + palabra.palabra + "'", "pista-msg");
+                    return;
+                }
+            }
+            mostrarMensaje("Esa palabra ya esta completa.", "exito");
+        }
+
+        function limpiarErrores() {
+            document.querySelectorAll(".celda.incorrecta").forEach(el => {
+                el.classList.remove("incorrecta");
+                const input = el.querySelector("input");
+                if (input) input.value = "";
+            });
+            mostrarMensaje("Errores limpiados.", "pista-msg");
+        }
+
+        function reiniciar() {
+            if (!confirm("Seguro que quieres borrar todo y empezar de nuevo?")) return;
+            document.querySelectorAll("input").forEach(input => input.value = "");
+            document.querySelectorAll(".celda").forEach(el => el.classList.remove("correcta", "incorrecta"));
+            document.querySelectorAll(".pista-item").forEach(el => el.classList.remove("completada"));
+            palabrasCompletadas.clear();
+            pistasUsadas = 0;
+            verificaciones = 0;
+            juegoTerminado = false;
+            tiempoInicio = Date.now();
+            actualizarProgreso();
+            mostrarMensaje("Crucigrama reiniciado.", "pista-msg");
+        }
+
+        function mostrarMensaje(texto, tipo) {
+            const msg = document.getElementById("mensaje");
+            msg.textContent = texto;
+            msg.className = "mensaje visible " + tipo;
+            setTimeout(() => { msg.classList.remove("visible"); }, 3000);
+        }
+
+        init();
+        </script>
 </body>
-</html>"""
-
-        return html
+</html>
