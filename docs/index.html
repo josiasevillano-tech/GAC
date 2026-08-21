@@ -31,12 +31,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            gap: 40px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
-        header .logo {
-            width: 450px;
+        header .logo-wrapper img {
+            width: 220px;
             height: auto;
-            max-width: 92vw;
+            max-width: 42vw;
             display: block;
             filter: drop-shadow(0 3px 6px rgba(0,0,0,0.12));
         }
@@ -167,7 +169,8 @@
         
         @media (max-width: 480px) {
             header h1 { font-size: 1.5rem; }
-            header .logo { width: 340px; }
+            header .logo-wrapper { gap: 20px; }
+            header .logo-wrapper img { width: 140px; max-width: 44vw; }
             summary { padding: 16px; }
             .contenido { padding: 0 16px 16px; }
             .grid { grid-template-columns: 1fr; }
@@ -179,7 +182,8 @@
     <div class="contenedor">
         <header>
             <div class="logo-wrapper">
-                <img class="logo" src="assets/logo.png" alt="Iglesia Agua Viva">
+                <img src="assets/logo.png" alt="Iglesia Agua Viva">
+                <img src="assets/logo-ovice.png" alt="OVICE - Organización Venezolana de Iglesias Cristianas Evangélicas">
             </div>
             <h1>Iglesia Agua Viva</h1>
             <p>Escuela del Pensamiento</p>
