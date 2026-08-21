@@ -197,7 +197,7 @@ class WebExporter:
             min-height: 100vh;
         }
         .contenedor { max-width: 800px; margin: 0 auto; }
-                header { text-align: center; margin-bottom: 20px; }
+        header { text-align: center; margin-bottom: 20px; }
         header .sello { font-size: 0.75rem; letter-spacing: 1.5px; color: #718096; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
         header h1 { font-size: 1.5rem; color: var(--color-primario); margin-bottom: 4px; }
         header .tema { font-size: 0.9rem; color: #718096; font-weight: 500; }
@@ -575,24 +575,14 @@ class WebExporter:
             const df = palabra.direccion === "horizontal" ? 0 : 1;
             const dc = palabra.direccion === "horizontal" ? 1 : 0;
             const idxInicial = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            let destinoF = f, destinoC = c;
-            for (let i = idxInicial + 1; i < palabra.palabra.length; i++) {{
-                const nf = palabra.fila_inicio + i * df;
-                const nc = palabra.columna_inicio + i * dc;
-                const input = getInput(nf, nc);
-                if (!input) break;
-                const letraCorrecta = palabra.palabra[i].toUpperCase();
-                destinoF = nf;
-                destinoC = nc;
-                if (!input.value || input.value.toUpperCase() !== letraCorrecta) {{
-                    break;
-                }}
-            }}
-            if (destinoF === f && destinoC === c) return;
-            const inputDestino = getInput(destinoF, destinoC);
+            const siguienteIdx = idxInicial + 1;
+            if (siguienteIdx >= palabra.palabra.length) return;
+            const nf = palabra.fila_inicio + siguienteIdx * df;
+            const nc = palabra.columna_inicio + siguienteIdx * dc;
+            const inputDestino = getInput(nf, nc);
             if (inputDestino) {{
                 inputDestino.focus();
-                seleccionarCelda(destinoF, destinoC);
+                seleccionarCelda(nf, nc);
             }}
         }}
 
