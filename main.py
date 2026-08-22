@@ -1,6 +1,8 @@
 import sys
 import os
 import json
+import glob
+from datetime import datetime
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
@@ -12,21 +14,42 @@ from gac.boletin_exporter import BoletinExporter
 # ============================================================
 # CONFIGURACION: ruta al archivo JSON de la guia
 # ============================================================
-GUIA_JSON = os.path.join(os.path.dirname(__file__), "data", "semana_03.json")
+def detectar_json_mas_reciente():
+    """Busca en data/ el archivo semana_*.json modificado mas recientemente."""
+    carpeta_data = os.path.join(os.path.dirname(__file__), "data")
+    candidatos = glob.glob(os.path.join(carpeta_data, "semana_*.json"))
+    if not candidatos:
+        print("\nERROR: no se encontro ningun archivo semana_*.json en data/")
+        print("Coloca un JSON en data/ o especifica la ruta como argumento:")
+        print("  python main.py .\\data\\semana_04.json")
+        sys.exit(1)
+    return max(candidatos, key=os.path.getmtime)
+
+
+def resolver_guia_json():
+    """Decide que JSON usar: argumento explicito, o el mas reciente en data/."""
+    if argumentos_json:
+        ruta = os.path.abspath(argumentos_json[0])
+        print(f"JSON especificado por argumento: {ruta}")
+        return ruta
+    ruta = detectar_json_mas_reciente()
+    fecha_mod = datetime.fromtimestamp(os.path.getmtime(ruta)).strftime("%d/%m/%Y %H:%M")
+    print(f"JSON detectado automaticamente: {ruta} (modificado {fecha_mod})")
+    return ruta
+
 
 FORZAR = "--forzar" in sys.argv
 argumentos_json = [a for a in sys.argv[1:] if not a.startswith("--")]
-if argumentos_json:
-    GUIA_JSON = os.path.abspath(argumentos_json[0])
+GUIA_JSON = resolver_guia_json()
 
 TIPOS_CRUCIGRAMA = {"sermon", "personaje_biblico", "libro_biblico", "vocabulario"}
 
 
 def load_guia(path):
     """Carga la guia desde un archivo JSON."""
-    with open(path, "r", encoding="utf-8") as f2:
+    with open(path, "r", encoding="utf-8-sig") as f2:
         return json.load(f2)
-
+    
 
 def generar_bloque_crucigrama(idx, bloque, output_dir):
     """Genera un crucigrama a partir de un bloque (sermon/personaje/libro/vocabulario)."""
