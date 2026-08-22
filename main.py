@@ -14,6 +14,11 @@ from gac.boletin_exporter import BoletinExporter
 # ============================================================
 GUIA_JSON = os.path.join(os.path.dirname(__file__), "data", "semana_03.json")
 
+FORZAR = "--forzar" in sys.argv
+argumentos_json = [a for a in sys.argv[1:] if not a.startswith("--")]
+if argumentos_json:
+    GUIA_JSON = os.path.abspath(argumentos_json[0])
+
 TIPOS_CRUCIGRAMA = {"sermon", "personaje_biblico", "libro_biblico", "vocabulario"}
 
 
@@ -295,6 +300,12 @@ if __name__ == "__main__":
     print(f"GAC - Guia {guia_numero} - Iglesia {iglesia}")
     print(f"Carpeta de salida: {output_dir}")
     print("=" * 60)
+
+    if os.path.isdir(output_dir) and not FORZAR:
+        print(f"\nERROR: {output_dir} ya existe.")
+        print("No se sobrescribira para proteger contenido ya generado/publicado.")
+        print(f"Si de verdad quieres regenerarlo, corre de nuevo agregando --forzar")
+        sys.exit(1)
 
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs("data", exist_ok=True)
