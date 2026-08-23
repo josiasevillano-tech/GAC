@@ -29,7 +29,7 @@
             min-height: 100vh;
         }
         .contenedor { max-width: 800px; margin: 0 auto; }
-                header { text-align: center; margin-bottom: 20px; }
+        header { text-align: center; margin-bottom: 20px; }
         header .sello { font-size: 0.75rem; letter-spacing: 1.5px; color: #718096; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
         header h1 { font-size: 1.5rem; color: var(--color-primario); margin-bottom: 4px; }
         header .tema { font-size: 0.9rem; color: #718096; font-weight: 500; }
@@ -111,7 +111,7 @@
         }
         .pista-item {
             background: white; padding: 10px 12px; margin-bottom: 8px;
-            border-radius: 6px; box-shadow: var(--sombra); font-size: 0.9rem;
+            border-radius: 6px; box-shadow: var(--sombra); font-size: 1.25rem;
             cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent;
         }
         .pista-item:hover { background: #f7fafc; }
@@ -296,9 +296,9 @@
         
 
     <script>
-        const PALABRAS = [{"palabra": "IGLESIAS", "pista": "Comunidades de creyentes que Pablo procuraba establecer, enseñar y fortalecer.", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 6, "numero": 1}, {"palabra": "ANTIOQUIA", "pista": "Lugar desde donde Pablo comenzó una importante etapa de su labor misionera.", "direccion": "horizontal", "fila_inicio": 2, "columna_inicio": 0, "numero": 5}, {"palabra": "MISIONERO", "pista": "Persona que anuncia el evangelio y lo lleva a nuevos lugares; así puede describirse la labor de Pablo.", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 8, "numero": 6}, {"palabra": "COLABORADORES", "pista": "Personas que acompañaron y ayudaron a Pablo en diferentes etapas de su ministerio.", "direccion": "horizontal", "fila_inicio": 10, "columna_inicio": 3, "numero": 13}, {"palabra": "JERUSALEN", "pista": "Ciudad donde Pablo recibió su formación religiosa.", "direccion": "horizontal", "fila_inicio": 13, "columna_inicio": 9, "numero": 15}, {"palabra": "CARTAS", "pista": "Escritos mediante los cuales Pablo continuó enseñando a las iglesias y colaboradores.", "direccion": "horizontal", "fila_inicio": 15, "columna_inicio": 13, "numero": 17}, {"palabra": "ROMA", "pista": "Ciudad a la que finalmente llegó Pablo después de años de ministerio y viajes.", "direccion": "horizontal", "fila_inicio": 16, "columna_inicio": 6, "numero": 18}, {"palabra": "LEGADO", "pista": "Lo que Pablo dejó a la Iglesia mediante su obra misionera y sus escritos.", "direccion": "horizontal", "fila_inicio": 18, "columna_inicio": 9, "numero": 19}, {"palabra": "EVANGELIO", "pista": "Mensaje que Pablo pasó de perseguir a proclamar entre las naciones.", "direccion": "horizontal", "fila_inicio": 19, "columna_inicio": 1, "numero": 20}, {"palabra": "LLAMAMIENTO", "pista": "Encargo recibido por Pablo para llevar el nombre de Jesús a gentiles, reyes e israelitas.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 8, "numero": 2}, {"palabra": "SALVACION", "pista": "Uno de los temas fundamentales que Pablo explicó en sus escritos al enseñar el evangelio.", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 0, "numero": 3}, {"palabra": "TARSO", "pista": "Ciudad de Cilicia donde nació Pablo.", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 15, "numero": 4}, {"palabra": "PERSECUCION", "pista": "Una de las dificultades que Pablo enfrentó por causa del evangelio.", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 3, "numero": 7}, {"palabra": "GENTILES", "pista": "Pueblos a los que Pablo fue llamado especialmente a anunciar el evangelio.", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 5, "numero": 8}, {"palabra": "CRISTO", "pista": "Aquel a quien Pablo perseguía antes de encontrarse con Él en el camino a Damasco.", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 12, "numero": 9}, {"palabra": "GAMALIEL", "pista": "Maestro a cuyos pies fue educado Pablo en Jerusalén.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 10, "numero": 10}, {"palabra": "ENSENANZA", "pista": "Parte fundamental del ministerio de Pablo para formar y fortalecer a las iglesias.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 17, "numero": 11}, {"palabra": "FE", "pista": "Elemento fundamental de la vida cristiana que Pablo desarrolla ampliamente en sus cartas.", "direccion": "vertical", "fila_inicio": 9, "columna_inicio": 14, "numero": 12}, {"palabra": "DAMASCO", "pista": "Ciudad hacia la que se dirigía Pablo cuando tuvo su encuentro con Cristo.", "direccion": "vertical", "fila_inicio": 12, "columna_inicio": 14, "numero": 14}, {"palabra": "PABLO", "pista": "Apóstol que llevó el evangelio a numerosas regiones del mundo conocido de su tiempo.", "direccion": "vertical", "fila_inicio": 15, "columna_inicio": 9, "numero": 16}];
+        const PALABRAS = [{"palabra": "EVANGELIO", "pista": "Mensaje que Pablo pasó de perseguir a proclamar entre las naciones.", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 3, "numero": 1}, {"palabra": "CARTAS", "pista": "Escritos mediante los cuales Pablo continuó enseñando a las iglesias y colaboradores.", "direccion": "horizontal", "fila_inicio": 2, "columna_inicio": 5, "numero": 6}, {"palabra": "DAMASCO", "pista": "Ciudad hacia la que se dirigía Pablo cuando tuvo su encuentro con Cristo.", "direccion": "horizontal", "fila_inicio": 4, "columna_inicio": 8, "numero": 7}, {"palabra": "MISIONERO", "pista": "Persona que anuncia el evangelio y lo lleva a nuevos lugares; así puede describirse la labor de Pablo.", "direccion": "horizontal", "fila_inicio": 6, "columna_inicio": 8, "numero": 11}, {"palabra": "COLABORADORES", "pista": "Personas que acompañaron y ayudaron a Pablo en diferentes etapas de su ministerio.", "direccion": "horizontal", "fila_inicio": 10, "columna_inicio": 0, "numero": 15}, {"palabra": "ENSENANZA", "pista": "Parte fundamental del ministerio de Pablo para formar y fortalecer a las iglesias.", "direccion": "horizontal", "fila_inicio": 13, "columna_inicio": 7, "numero": 16}, {"palabra": "ROMA", "pista": "Ciudad a la que finalmente llegó Pablo después de años de ministerio y viajes.", "direccion": "horizontal", "fila_inicio": 14, "columna_inicio": 2, "numero": 17}, {"palabra": "SALVACION", "pista": "Uno de los temas fundamentales que Pablo explicó en sus escritos al enseñar el evangelio.", "direccion": "horizontal", "fila_inicio": 16, "columna_inicio": 7, "numero": 19}, {"palabra": "IGLESIAS", "pista": "Comunidades de creyentes que Pablo procuraba establecer, enseñar y fortalecer.", "direccion": "horizontal", "fila_inicio": 18, "columna_inicio": 9, "numero": 20}, {"palabra": "LLAMAMIENTO", "pista": "Encargo recibido por Pablo para llevar el nombre de Jesús a gentiles, reyes e israelitas.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 9, "numero": 2}, {"palabra": "TARSO", "pista": "Ciudad de Cilicia donde nació Pablo.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 14, "numero": 3}, {"palabra": "CRISTO", "pista": "Aquel a quien Pablo perseguía antes de encontrarse con Él en el camino a Damasco.", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 12, "numero": 4}, {"palabra": "LEGADO", "pista": "Lo que Pablo dejó a la Iglesia mediante su obra misionera y sus escritos.", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 16, "numero": 5}, {"palabra": "PERSECUCION", "pista": "Una de las dificultades que Pablo enfrentó por causa del evangelio.", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 0, "numero": 8}, {"palabra": "GENTILES", "pista": "Pueblos a los que Pablo fue llamado especialmente a anunciar el evangelio.", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 2, "numero": 9}, {"palabra": "ANTIOQUIA", "pista": "Lugar desde donde Pablo comenzó una importante etapa de su labor misionera.", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 5, "numero": 10}, {"palabra": "GAMALIEL", "pista": "Maestro a cuyos pies fue educado Pablo en Jerusalén.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 7, "numero": 12}, {"palabra": "JERUSALEN", "pista": "Ciudad donde Pablo recibió su formación religiosa.", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 15, "numero": 13}, {"palabra": "FE", "pista": "Elemento fundamental de la vida cristiana que Pablo desarrolla ampliamente en sus cartas.", "direccion": "vertical", "fila_inicio": 9, "columna_inicio": 11, "numero": 14}, {"palabra": "PABLO", "pista": "Apóstol que llevó el evangelio a numerosas regiones del mundo conocido de su tiempo.", "direccion": "vertical", "fila_inicio": 15, "columna_inicio": 11, "numero": 18}];
         const FILAS = 20;
-        const COLUMNAS = 19;
+        const COLUMNAS = 17;
         const TOTAL_PALABRAS = 20;
 
         let celdaActiva = null;
@@ -489,24 +489,14 @@
             const df = palabra.direccion === "horizontal" ? 0 : 1;
             const dc = palabra.direccion === "horizontal" ? 1 : 0;
             const idxInicial = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            let destinoF = f, destinoC = c;
-            for (let i = idxInicial + 1; i < palabra.palabra.length; i++) {
-                const nf = palabra.fila_inicio + i * df;
-                const nc = palabra.columna_inicio + i * dc;
-                const input = getInput(nf, nc);
-                if (!input) break;
-                const letraCorrecta = palabra.palabra[i].toUpperCase();
-                destinoF = nf;
-                destinoC = nc;
-                if (!input.value || input.value.toUpperCase() !== letraCorrecta) {
-                    break;
-                }
-            }
-            if (destinoF === f && destinoC === c) return;
-            const inputDestino = getInput(destinoF, destinoC);
+            const siguienteIdx = idxInicial + 1;
+            if (siguienteIdx >= palabra.palabra.length) return;
+            const nf = palabra.fila_inicio + siguienteIdx * df;
+            const nc = palabra.columna_inicio + siguienteIdx * dc;
+            const inputDestino = getInput(nf, nc);
             if (inputDestino) {
                 inputDestino.focus();
-                seleccionarCelda(destinoF, destinoC);
+                seleccionarCelda(nf, nc);
             }
         }
 

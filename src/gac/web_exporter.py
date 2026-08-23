@@ -279,7 +279,7 @@ class WebExporter:
         }
         .pista-item {
             background: white; padding: 10px 12px; margin-bottom: 8px;
-            border-radius: 6px; box-shadow: var(--sombra); font-size: 0.9rem;
+            border-radius: 6px; box-shadow: var(--sombra); font-size: 1.25rem;
             cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent;
         }
         .pista-item:hover { background: #f7fafc; }

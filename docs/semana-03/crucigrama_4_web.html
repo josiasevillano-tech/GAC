@@ -29,7 +29,7 @@
             min-height: 100vh;
         }
         .contenedor { max-width: 800px; margin: 0 auto; }
-                header { text-align: center; margin-bottom: 20px; }
+        header { text-align: center; margin-bottom: 20px; }
         header .sello { font-size: 0.75rem; letter-spacing: 1.5px; color: #718096; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
         header h1 { font-size: 1.5rem; color: var(--color-primario); margin-bottom: 4px; }
         header .tema { font-size: 0.9rem; color: #718096; font-weight: 500; }
@@ -111,7 +111,7 @@
         }
         .pista-item {
             background: white; padding: 10px 12px; margin-bottom: 8px;
-            border-radius: 6px; box-shadow: var(--sombra); font-size: 0.9rem;
+            border-radius: 6px; box-shadow: var(--sombra); font-size: 1.25rem;
             cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent;
         }
         .pista-item:hover { background: #f7fafc; }
@@ -296,9 +296,9 @@
         
 
     <script>
-        const PALABRAS = [{"palabra": "ESPERANZA", "pista": "Confianza o expectativa de que algo deseado llegue a suceder.", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 0, "numero": 1}, {"palabra": "CONFIANZA", "pista": "Seguridad que se tiene respecto de alguien o algo.", "direccion": "horizontal", "fila_inicio": 2, "columna_inicio": 10, "numero": 6}, {"palabra": "ILUSION", "pista": "Esperanza o deseo de conseguir algo que se considera posible.", "direccion": "horizontal", "fila_inicio": 4, "columna_inicio": 7, "numero": 7}, {"palabra": "PERSEVERANCIA", "pista": "Constancia para continuar con un propósito a pesar de las dificultades.", "direccion": "horizontal", "fila_inicio": 10, "columna_inicio": 3, "numero": 14}, {"palabra": "META", "pista": "Fin que una persona se propone alcanzar.", "direccion": "horizontal", "fila_inicio": 12, "columna_inicio": 6, "numero": 15}, {"palabra": "PROPOSITO", "pista": "Intención de realizar o conseguir algo.", "direccion": "horizontal", "fila_inicio": 13, "columna_inicio": 10, "numero": 16}, {"palabra": "ASPIRACION", "pista": "Deseo de alcanzar una meta o situación determinada.", "direccion": "horizontal", "fila_inicio": 15, "columna_inicio": 5, "numero": 18}, {"palabra": "PROBABILIDAD", "pista": "Mayor o menor posibilidad de que suceda un acontecimiento.", "direccion": "horizontal", "fila_inicio": 19, "columna_inicio": 3, "numero": 19}, {"palabra": "EXPECTATIVA", "pista": "Espera de que ocurra algo determinado.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 0, "numero": 1}, {"palabra": "ANIMO", "pista": "Disposición interior para afrontar una situación o realizar algo.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 5, "numero": 2}, {"palabra": "ANHELO", "pista": "Deseo intenso de conseguir algo.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 8, "numero": 3}, {"palabra": "CONVICCION", "pista": "Seguridad firme acerca de una idea o creencia.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 16, "numero": 4}, {"palabra": "POSIBILIDAD", "pista": "Circunstancia de que algo pueda ocurrir o existir.", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 11, "numero": 5}, {"palabra": "OPTIMISMO", "pista": "Tendencia a considerar favorablemente las posibilidades futuras.", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 14, "numero": 8}, {"palabra": "PROYECCION", "pista": "Consideración de una situación futura a partir de posibilidades presentes.", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 18, "numero": 9}, {"palabra": "FUTURO", "pista": "Tiempo que todavía está por llegar.", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 5, "numero": 10}, {"palabra": "CERTEZA", "pista": "Conocimiento seguro de que algo es verdadero o sucederá.", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 9, "numero": 11}, {"palabra": "ESPERAR", "pista": "Permanecer en expectativa de que algo ocurra.", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 3, "numero": 12}, {"palabra": "DESEO", "pista": "Impulso o inclinación hacia aquello que se quiere conseguir.", "direccion": "vertical", "fila_inicio": 9, "columna_inicio": 7, "numero": 13}, {"palabra": "PROMESA", "pista": "Compromiso de realizar o conceder algo en el futuro.", "direccion": "vertical", "fila_inicio": 13, "columna_inicio": 13, "numero": 17}];
-        const FILAS = 20;
-        const COLUMNAS = 19;
+        const PALABRAS = [{"palabra": "EXPECTATIVA", "pista": "Espera de que ocurra algo determinado.", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 9, "numero": 2}, {"palabra": "ESPERANZA", "pista": "Confianza o expectativa de que algo deseado llegue a suceder.", "direccion": "horizontal", "fila_inicio": 1, "columna_inicio": 0, "numero": 5}, {"palabra": "PROBABILIDAD", "pista": "Mayor o menor posibilidad de que suceda un acontecimiento.", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 3, "numero": 7}, {"palabra": "CONFIANZA", "pista": "Seguridad que se tiene respecto de alguien o algo.", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 7, "numero": 9}, {"palabra": "PERSEVERANCIA", "pista": "Constancia para continuar con un propósito a pesar de las dificultades.", "direccion": "horizontal", "fila_inicio": 9, "columna_inicio": 3, "numero": 15}, {"palabra": "PROMESA", "pista": "Compromiso de realizar o conceder algo en el futuro.", "direccion": "horizontal", "fila_inicio": 11, "columna_inicio": 12, "numero": 16}, {"palabra": "ANHELO", "pista": "Deseo intenso de conseguir algo.", "direccion": "horizontal", "fila_inicio": 13, "columna_inicio": 0, "numero": 17}, {"palabra": "CONVICCION", "pista": "Seguridad firme acerca de una idea o creencia.", "direccion": "horizontal", "fila_inicio": 15, "columna_inicio": 3, "numero": 18}, {"palabra": "PROPOSITO", "pista": "Intención de realizar o conseguir algo.", "direccion": "horizontal", "fila_inicio": 17, "columna_inicio": 1, "numero": 19}, {"palabra": "CERTEZA", "pista": "Conocimiento seguro de que algo es verdadero o sucederá.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 0, "numero": 1}, {"palabra": "POSIBILIDAD", "pista": "Circunstancia de que algo pueda ocurrir o existir.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 11, "numero": 3}, {"palabra": "ASPIRACION", "pista": "Deseo de alcanzar una meta o situación determinada.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 19, "numero": 4}, {"palabra": "ESPERAR", "pista": "Permanecer en expectativa de que algo ocurra.", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 3, "numero": 6}, {"palabra": "FUTURO", "pista": "Tiempo que todavía está por llegar.", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 5, "numero": 8}, {"palabra": "OPTIMISMO", "pista": "Tendencia a considerar favorablemente las posibilidades futuras.", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 17, "numero": 10}, {"palabra": "ILUSION", "pista": "Esperanza o deseo de conseguir algo que se considera posible.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 1, "numero": 11}, {"palabra": "ANIMO", "pista": "Disposición interior para afrontar una situación o realizar algo.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 14, "numero": 12}, {"palabra": "DESEO", "pista": "Impulso o inclinación hacia aquello que se quiere conseguir.", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 7, "numero": 13}, {"palabra": "META", "pista": "Fin que una persona se propone alcanzar.", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 9, "numero": 14}, {"palabra": "PROYECCION", "pista": "Consideración de una situación futura a partir de posibilidades presentes.", "direccion": "vertical", "fila_inicio": 9, "columna_inicio": 3, "numero": 15}];
+        const FILAS = 19;
+        const COLUMNAS = 20;
         const TOTAL_PALABRAS = 20;
 
         let celdaActiva = null;
@@ -489,24 +489,14 @@
             const df = palabra.direccion === "horizontal" ? 0 : 1;
             const dc = palabra.direccion === "horizontal" ? 1 : 0;
             const idxInicial = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            let destinoF = f, destinoC = c;
-            for (let i = idxInicial + 1; i < palabra.palabra.length; i++) {
-                const nf = palabra.fila_inicio + i * df;
-                const nc = palabra.columna_inicio + i * dc;
-                const input = getInput(nf, nc);
-                if (!input) break;
-                const letraCorrecta = palabra.palabra[i].toUpperCase();
-                destinoF = nf;
-                destinoC = nc;
-                if (!input.value || input.value.toUpperCase() !== letraCorrecta) {
-                    break;
-                }
-            }
-            if (destinoF === f && destinoC === c) return;
-            const inputDestino = getInput(destinoF, destinoC);
+            const siguienteIdx = idxInicial + 1;
+            if (siguienteIdx >= palabra.palabra.length) return;
+            const nf = palabra.fila_inicio + siguienteIdx * df;
+            const nc = palabra.columna_inicio + siguienteIdx * dc;
+            const inputDestino = getInput(nf, nc);
             if (inputDestino) {
                 inputDestino.focus();
-                seleccionarCelda(destinoF, destinoC);
+                seleccionarCelda(nf, nc);
             }
         }
 

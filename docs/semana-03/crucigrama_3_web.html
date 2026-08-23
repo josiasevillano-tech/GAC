@@ -29,7 +29,7 @@
             min-height: 100vh;
         }
         .contenedor { max-width: 800px; margin: 0 auto; }
-                header { text-align: center; margin-bottom: 20px; }
+        header { text-align: center; margin-bottom: 20px; }
         header .sello { font-size: 0.75rem; letter-spacing: 1.5px; color: #718096; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
         header h1 { font-size: 1.5rem; color: var(--color-primario); margin-bottom: 4px; }
         header .tema { font-size: 0.9rem; color: #718096; font-weight: 500; }
@@ -111,7 +111,7 @@
         }
         .pista-item {
             background: white; padding: 10px 12px; margin-bottom: 8px;
-            border-radius: 6px; box-shadow: var(--sombra); font-size: 0.9rem;
+            border-radius: 6px; box-shadow: var(--sombra); font-size: 1.25rem;
             cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent;
         }
         .pista-item:hover { background: #f7fafc; }
@@ -296,9 +296,9 @@
         
 
     <script>
-        const PALABRAS = [{"palabra": "DESCENDENCIA", "pista": "Conjunto de personas que proceden de un antepasado o familia.", "direccion": "horizontal", "fila_inicio": 1, "columna_inicio": 0, "numero": 2}, {"palabra": "PACTO", "pista": "Acuerdo solemne mediante el cual Dios establece una relación y compromisos con determinadas personas.", "direccion": "horizontal", "fila_inicio": 2, "columna_inicio": 14, "numero": 5}, {"palabra": "CAIDA", "pista": "Acontecimiento mediante el cual el pecado entró en la experiencia de la humanidad.", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 4, "numero": 6}, {"palabra": "JACOB", "pista": "Hijo de Isaac que recibió el nombre de Israel.", "direccion": "horizontal", "fila_inicio": 4, "columna_inicio": 12, "numero": 7}, {"palabra": "CAIN", "pista": "Primer hijo de Adán y Eva, conocido por haber dado muerte a su hermano Abel.", "direccion": "horizontal", "fila_inicio": 6, "columna_inicio": 5, "numero": 8}, {"palabra": "EGIPTO", "pista": "País donde José llegó a ser gobernador y donde posteriormente se estableció su familia.", "direccion": "horizontal", "fila_inicio": 7, "columna_inicio": 9, "numero": 9}, {"palabra": "ADAN", "pista": "Primer hombre presentado en el relato de Génesis.", "direccion": "horizontal", "fila_inicio": 8, "columna_inicio": 4, "numero": 10}, {"palabra": "CIRCUNCISION", "pista": "Señal establecida por Dios como parte del pacto con Abraham.", "direccion": "horizontal", "fila_inicio": 10, "columna_inicio": 4, "numero": 13}, {"palabra": "ISRAEL", "pista": "Nombre que recibió Jacob y que posteriormente identificaría a sus descendientes.", "direccion": "horizontal", "fila_inicio": 13, "columna_inicio": 3, "numero": 16}, {"palabra": "JOSE", "pista": "Hijo de Jacob que llegó a ocupar una posición de autoridad en Egipto.", "direccion": "horizontal", "fila_inicio": 13, "columna_inicio": 11, "numero": 17}, {"palabra": "PROMESA", "pista": "Compromiso de Dios con Abraham relacionado con su descendencia y la bendición de las naciones.", "direccion": "horizontal", "fila_inicio": 18, "columna_inicio": 1, "numero": 18}, {"palabra": "BENDICION", "pista": "Beneficio o favor concedido por Dios.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 7, "numero": 1}, {"palabra": "EVA", "pista": "Mujer creada para acompañar al primer hombre.", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 1, "numero": 3}, {"palabra": "ISAAC", "pista": "Hijo de Abraham y Sara, nacido como cumplimiento de una promesa.", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 10, "numero": 4}, {"palabra": "PECADO", "pista": "Desobediencia que introdujo una ruptura entre Dios y la humanidad.", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 14, "numero": 5}, {"palabra": "EDEN", "pista": "Lugar donde Dios colocó al ser humano después de crearlo.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 9, "numero": 9}, {"palabra": "ABRAHAM", "pista": "Hombre llamado por Dios para convertirse en padre de una gran nación.", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 6, "numero": 11}, {"palabra": "TORRE", "pista": "Construcción que los habitantes de Babel quisieron levantar hasta el cielo.", "direccion": "vertical", "fila_inicio": 9, "columna_inicio": 14, "numero": 12}, {"palabra": "DILUVIO", "pista": "Gran inundación mediante la cual Dios juzgó la corrupción de la humanidad.", "direccion": "vertical", "fila_inicio": 12, "columna_inicio": 3, "numero": 14}, {"palabra": "NOE", "pista": "Hombre que construyó el arca y encontró gracia ante Dios.", "direccion": "vertical", "fila_inicio": 12, "columna_inicio": 12, "numero": 15}];
-        const FILAS = 19;
-        const COLUMNAS = 19;
+        const PALABRAS = [{"palabra": "JACOB", "pista": "Hijo de Isaac que recibió el nombre de Israel.", "direccion": "horizontal", "fila_inicio": 2, "columna_inicio": 2, "numero": 3}, {"palabra": "PROMESA", "pista": "Compromiso de Dios con Abraham relacionado con su descendencia y la bendición de las naciones.", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 13, "numero": 6}, {"palabra": "PECADO", "pista": "Desobediencia que introdujo una ruptura entre Dios y la humanidad.", "direccion": "horizontal", "fila_inicio": 7, "columna_inicio": 0, "numero": 9}, {"palabra": "NOE", "pista": "Hombre que construyó el arca y encontró gracia ante Dios.", "direccion": "horizontal", "fila_inicio": 9, "columna_inicio": 16, "numero": 12}, {"palabra": "DESCENDENCIA", "pista": "Conjunto de personas que proceden de un antepasado o familia.", "direccion": "horizontal", "fila_inicio": 10, "columna_inicio": 4, "numero": 13}, {"palabra": "ADAN", "pista": "Primer hombre presentado en el relato de Génesis.", "direccion": "horizontal", "fila_inicio": 12, "columna_inicio": 9, "numero": 16}, {"palabra": "CAIDA", "pista": "Acontecimiento mediante el cual el pecado entró en la experiencia de la humanidad.", "direccion": "horizontal", "fila_inicio": 17, "columna_inicio": 8, "numero": 20}, {"palabra": "ISRAEL", "pista": "Nombre que recibió Jacob y que posteriormente identificaría a sus descendientes.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 19, "numero": 1}, {"palabra": "CIRCUNCISION", "pista": "Señal establecida por Dios como parte del pacto con Abraham.", "direccion": "vertical", "fila_inicio": 1, "columna_inicio": 14, "numero": 2}, {"palabra": "ABRAHAM", "pista": "Hombre llamado por Dios para convertirse en padre de una gran nación.", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 3, "numero": 4}, {"palabra": "BENDICION", "pista": "Beneficio o favor concedido por Dios.", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 17, "numero": 5}, {"palabra": "EGIPTO", "pista": "País donde José llegó a ser gobernador y donde posteriormente se estableció su familia.", "direccion": "vertical", "fila_inicio": 4, "columna_inicio": 0, "numero": 7}, {"palabra": "TORRE", "pista": "Construcción que los habitantes de Babel quisieron levantar hasta el cielo.", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 5, "numero": 8}, {"palabra": "JOSE", "pista": "Hijo de Jacob que llegó a ocupar una posición de autoridad en Egipto.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 8, "numero": 10}, {"palabra": "EDEN", "pista": "Lugar donde Dios colocó al ser humano después de crearlo.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 12, "numero": 11}, {"palabra": "CAIN", "pista": "Primer hijo de Adán y Eva, conocido por haber dado muerte a su hermano Abel.", "direccion": "vertical", "fila_inicio": 10, "columna_inicio": 7, "numero": 14}, {"palabra": "EVA", "pista": "Mujer creada para acompañar al primer hombre.", "direccion": "vertical", "fila_inicio": 10, "columna_inicio": 11, "numero": 15}, {"palabra": "DILUVIO", "pista": "Gran inundación mediante la cual Dios juzgó la corrupción de la humanidad.", "direccion": "vertical", "fila_inicio": 12, "columna_inicio": 10, "numero": 17}, {"palabra": "ISAAC", "pista": "Hijo de Abraham y Sara, nacido como cumplimiento de una promesa.", "direccion": "vertical", "fila_inicio": 14, "columna_inicio": 12, "numero": 18}, {"palabra": "PACTO", "pista": "Acuerdo solemne mediante el cual Dios establece una relación y compromisos con determinadas personas.", "direccion": "vertical", "fila_inicio": 15, "columna_inicio": 8, "numero": 19}];
+        const FILAS = 20;
+        const COLUMNAS = 20;
         const TOTAL_PALABRAS = 20;
 
         let celdaActiva = null;
@@ -489,24 +489,14 @@
             const df = palabra.direccion === "horizontal" ? 0 : 1;
             const dc = palabra.direccion === "horizontal" ? 1 : 0;
             const idxInicial = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            let destinoF = f, destinoC = c;
-            for (let i = idxInicial + 1; i < palabra.palabra.length; i++) {
-                const nf = palabra.fila_inicio + i * df;
-                const nc = palabra.columna_inicio + i * dc;
-                const input = getInput(nf, nc);
-                if (!input) break;
-                const letraCorrecta = palabra.palabra[i].toUpperCase();
-                destinoF = nf;
-                destinoC = nc;
-                if (!input.value || input.value.toUpperCase() !== letraCorrecta) {
-                    break;
-                }
-            }
-            if (destinoF === f && destinoC === c) return;
-            const inputDestino = getInput(destinoF, destinoC);
+            const siguienteIdx = idxInicial + 1;
+            if (siguienteIdx >= palabra.palabra.length) return;
+            const nf = palabra.fila_inicio + siguienteIdx * df;
+            const nc = palabra.columna_inicio + siguienteIdx * dc;
+            const inputDestino = getInput(nf, nc);
             if (inputDestino) {
                 inputDestino.focus();
-                seleccionarCelda(destinoF, destinoC);
+                seleccionarCelda(nf, nc);
             }
         }
 

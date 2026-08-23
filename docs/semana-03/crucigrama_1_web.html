@@ -29,7 +29,7 @@
             min-height: 100vh;
         }
         .contenedor { max-width: 800px; margin: 0 auto; }
-                header { text-align: center; margin-bottom: 20px; }
+        header { text-align: center; margin-bottom: 20px; }
         header .sello { font-size: 0.75rem; letter-spacing: 1.5px; color: #718096; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
         header h1 { font-size: 1.5rem; color: var(--color-primario); margin-bottom: 4px; }
         header .tema { font-size: 0.9rem; color: #718096; font-weight: 500; }
@@ -111,7 +111,7 @@
         }
         .pista-item {
             background: white; padding: 10px 12px; margin-bottom: 8px;
-            border-radius: 6px; box-shadow: var(--sombra); font-size: 0.9rem;
+            border-radius: 6px; box-shadow: var(--sombra); font-size: 1.25rem;
             cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent;
         }
         .pista-item:hover { background: #f7fafc; }
@@ -296,9 +296,9 @@
         
 
     <script>
-        const PALABRAS = [{"palabra": "AMIGOS", "pista": "Traición proveniente de las personas más cercanas a Jeremías que tramaban su caída.", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 6, "numero": 1}, {"palabra": "QUEJA", "pista": "Sensación de molestia o disconformidad que, repetida de forma continua, desgasta la salud mental de quien la escucha.", "direccion": "horizontal", "fila_inicio": 1, "columna_inicio": 12, "numero": 4}, {"palabra": "SETENTA", "pista": "Número de ancianos que Dios ordenó reunir para dividir la carga de trabajo y el peso espiritual que llevaba Moisés.", "direccion": "horizontal", "fila_inicio": 2, "columna_inicio": 3, "numero": 5}, {"palabra": "COMUNIDAD", "pista": "Recurso humano e institucional que Dios proveyó a Moisés para no llevar el peso de la multitud en soledad.", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 9, "numero": 6}, {"palabra": "DESCANSO", "pista": "Lugar o estado al que Jesús invita a ir a todos los que están trabajados y cargados.", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 5, "numero": 7}, {"palabra": "MURMULLO", "pista": "Acción que el pueblo realizó tras presenciar grandes prodigios, manifestando su insatisfacción.", "direccion": "horizontal", "fila_inicio": 8, "columna_inicio": 3, "numero": 10}, {"palabra": "DESCENTRALIZAR", "pista": "Acción estratégica dada por Dios para solucionar el desgaste de un líder, que consiste en dividir el trabajo entre varios.", "direccion": "horizontal", "fila_inicio": 10, "columna_inicio": 2, "numero": 12}, {"palabra": "HEROES", "pista": "Calificativo que aplica la sociedad a las personas de fe, olvidando que son seres humanos de carne y hueso.", "direccion": "horizontal", "fila_inicio": 13, "columna_inicio": 0, "numero": 15}, {"palabra": "ESCARNIO", "pista": "Expresión despectiva o de humillación constante que sufría Jeremías por predicar fielmente el mensaje de Dios.", "direccion": "horizontal", "fila_inicio": 13, "columna_inicio": 11, "numero": 16}, {"palabra": "GIGANTE", "pista": "Metáfora bíblica usada por el profeta Jeremías para describir la presencia protectora de Dios en medio de la conspiración.", "direccion": "horizontal", "fila_inicio": 15, "columna_inicio": 1, "numero": 18}, {"palabra": "JEREMIAS", "pista": "Nombre del profeta a quien la palabra de Dios le resultaba en sus huesos como un «fuego ardiente».", "direccion": "horizontal", "fila_inicio": 18, "columna_inicio": 0, "numero": 19}, {"palabra": "COMIDA", "pista": "Elemento que el pueblo de Israel demandaba entre lágrimas en el desierto, sofocando la paciencia de su líder.", "direccion": "horizontal", "fila_inicio": 19, "columna_inicio": 12, "numero": 20}, {"palabra": "GRACIA", "pista": "Regalo divino o favor inmerecido que, según el sermón, también alcanza al guerrero que se encuentra exhausto.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 9, "numero": 2}, {"palabra": "RELIGIOSIDAD", "pista": "Acto religioso formal y superficial que aparenta fuerza, en contraste con la vulnerabilidad sincera ante Dios.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 14, "numero": 3}, {"palabra": "GOTA", "pista": "Elemento natural con el que el autor compara el impacto continuo de la queja sobre el alma.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 10, "numero": 8}, {"palabra": "HONESTIDAD", "pista": "Actitud del corazón que Dios procesa con amor, en lugar de exigir oraciones bien elaboradas o religiosamente correctas.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 17, "numero": 9}, {"palabra": "MOISES", "pista": "Líder del pueblo de Israel que colapsó emocionalmente debido a la pesada atmósfera de reclamos de la multitud.", "direccion": "vertical", "fila_inicio": 8, "columna_inicio": 12, "numero": 11}, {"palabra": "SOLEDAD", "pista": "Sentimiento profundo e invisible que afectaba a Jeremías al servir fielmente sin ver aplausos ni resultados masivos.", "direccion": "vertical", "fila_inicio": 10, "columna_inicio": 4, "numero": 13}, {"palabra": "NUMEROS", "pista": "Lugar Bíblico (libro del Antiguo Testamento) donde se relata el llanto del pueblo por comida y la oración desesperada de Moisés.", "direccion": "vertical", "fila_inicio": 12, "columna_inicio": 7, "numero": 14}, {"palabra": "COLAPSO", "pista": "Estado de agotamiento extremo al que pueden llegar incluso los hombres de fe más fuertes al llevar cargas pesadas.", "direccion": "vertical", "fila_inicio": 13, "columna_inicio": 13, "numero": 17}];
-        const FILAS = 20;
-        const COLUMNAS = 19;
+        const PALABRAS = [{"palabra": "HEROES", "pista": "Calificativo que aplica la sociedad a las personas de fe, olvidando que son seres humanos de carne y hueso.", "direccion": "horizontal", "fila_inicio": 0, "columna_inicio": 4, "numero": 1}, {"palabra": "ESCARNIO", "pista": "Expresión despectiva o de humillación constante que sufría Jeremías por predicar fielmente el mensaje de Dios.", "direccion": "horizontal", "fila_inicio": 1, "columna_inicio": 9, "numero": 3}, {"palabra": "MOISES", "pista": "Líder del pueblo de Israel que colapsó emocionalmente debido a la pesada atmósfera de reclamos de la multitud.", "direccion": "horizontal", "fila_inicio": 3, "columna_inicio": 1, "numero": 5}, {"palabra": "GIGANTE", "pista": "Metáfora bíblica usada por el profeta Jeremías para describir la presencia protectora de Dios en medio de la conspiración.", "direccion": "horizontal", "fila_inicio": 5, "columna_inicio": 4, "numero": 7}, {"palabra": "COMUNIDAD", "pista": "Recurso humano e institucional que Dios proveyó a Moisés para no llevar el peso de la multitud en soledad.", "direccion": "horizontal", "fila_inicio": 7, "columna_inicio": 0, "numero": 10}, {"palabra": "DESCENTRALIZAR", "pista": "Acción estratégica dada por Dios para solucionar el desgaste de un líder, que consiste en dividir el trabajo entre varios.", "direccion": "horizontal", "fila_inicio": 9, "columna_inicio": 3, "numero": 12}, {"palabra": "QUEJA", "pista": "Sensación de molestia o disconformidad que, repetida de forma continua, desgasta la salud mental de quien la escucha.", "direccion": "horizontal", "fila_inicio": 12, "columna_inicio": 1, "numero": 15}, {"palabra": "NUMEROS", "pista": "Lugar Bíblico (libro del Antiguo Testamento) donde se relata el llanto del pueblo por comida y la oración desesperada de Moisés.", "direccion": "horizontal", "fila_inicio": 12, "columna_inicio": 7, "numero": 16}, {"palabra": "AMIGOS", "pista": "Traición proveniente de las personas más cercanas a Jeremías que tramaban su caída.", "direccion": "horizontal", "fila_inicio": 14, "columna_inicio": 12, "numero": 17}, {"palabra": "COMIDA", "pista": "Elemento que el pueblo de Israel demandaba entre lágrimas en el desierto, sofocando la paciencia de su líder.", "direccion": "horizontal", "fila_inicio": 16, "columna_inicio": 0, "numero": 18}, {"palabra": "HONESTIDAD", "pista": "Actitud del corazón que Dios procesa con amor, en lugar de exigir oraciones bien elaboradas o religiosamente correctas.", "direccion": "horizontal", "fila_inicio": 16, "columna_inicio": 8, "numero": 19}, {"palabra": "SOLEDAD", "pista": "Sentimiento profundo e invisible que afectaba a Jeremías al servir fielmente sin ver aplausos ni resultados masivos.", "direccion": "horizontal", "fila_inicio": 18, "columna_inicio": 3, "numero": 20}, {"palabra": "SETENTA", "pista": "Número de ancianos que Dios ordenó reunir para dividir la carga de trabajo y el peso espiritual que llevaba Moisés.", "direccion": "vertical", "fila_inicio": 0, "columna_inicio": 9, "numero": 2}, {"palabra": "RELIGIOSIDAD", "pista": "Acto religioso formal y superficial que aparenta fuerza, en contraste con la vulnerabilidad sincera ante Dios.", "direccion": "vertical", "fila_inicio": 2, "columna_inicio": 5, "numero": 4}, {"palabra": "DESCANSO", "pista": "Lugar o estado al que Jesús invita a ir a todos los que están trabajados y cargados.", "direccion": "vertical", "fila_inicio": 4, "columna_inicio": 0, "numero": 6}, {"palabra": "GRACIA", "pista": "Regalo divino o favor inmerecido que, según el sermón, también alcanza al guerrero que se encuentra exhausto.", "direccion": "vertical", "fila_inicio": 5, "columna_inicio": 13, "numero": 8}, {"palabra": "GOTA", "pista": "Elemento natural con el que el autor compara el impacto continuo de la queja sobre el alma.", "direccion": "vertical", "fila_inicio": 6, "columna_inicio": 11, "numero": 9}, {"palabra": "MURMULLO", "pista": "Acción que el pueblo realizó tras presenciar grandes prodigios, manifestando su insatisfacción.", "direccion": "vertical", "fila_inicio": 7, "columna_inicio": 16, "numero": 11}, {"palabra": "JEREMIAS", "pista": "Nombre del profeta a quien la palabra de Dios le resultaba en sus huesos como un «fuego ardiente».", "direccion": "vertical", "fila_inicio": 11, "columna_inicio": 3, "numero": 13}, {"palabra": "COLAPSO", "pista": "Estado de agotamiento extremo al que pueden llegar incluso los hombres de fe más fuertes al llevar cargas pesadas.", "direccion": "vertical", "fila_inicio": 11, "columna_inicio": 12, "numero": 14}];
+        const FILAS = 19;
+        const COLUMNAS = 18;
         const TOTAL_PALABRAS = 20;
 
         let celdaActiva = null;
@@ -489,24 +489,14 @@
             const df = palabra.direccion === "horizontal" ? 0 : 1;
             const dc = palabra.direccion === "horizontal" ? 1 : 0;
             const idxInicial = Math.abs((f - palabra.fila_inicio) + (c - palabra.columna_inicio));
-            let destinoF = f, destinoC = c;
-            for (let i = idxInicial + 1; i < palabra.palabra.length; i++) {
-                const nf = palabra.fila_inicio + i * df;
-                const nc = palabra.columna_inicio + i * dc;
-                const input = getInput(nf, nc);
-                if (!input) break;
-                const letraCorrecta = palabra.palabra[i].toUpperCase();
-                destinoF = nf;
-                destinoC = nc;
-                if (!input.value || input.value.toUpperCase() !== letraCorrecta) {
-                    break;
-                }
-            }
-            if (destinoF === f && destinoC === c) return;
-            const inputDestino = getInput(destinoF, destinoC);
+            const siguienteIdx = idxInicial + 1;
+            if (siguienteIdx >= palabra.palabra.length) return;
+            const nf = palabra.fila_inicio + siguienteIdx * df;
+            const nc = palabra.columna_inicio + siguienteIdx * dc;
+            const inputDestino = getInput(nf, nc);
             if (inputDestino) {
                 inputDestino.focus();
-                seleccionarCelda(destinoF, destinoC);
+                seleccionarCelda(nf, nc);
             }
         }
 
