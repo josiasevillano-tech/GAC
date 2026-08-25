@@ -1,0 +1,191 @@
+{
+  "iglesia": "Agua Viva",
+  "guia_numero": 4,
+  "titulo": "Atrapados y Libres: la gracia que libera",
+  "bloques": [
+    {
+      "orden": 1,
+      "tipo": "sermon",
+      "titulo": "Una Mujer Atrapada y un Hombre Libre",
+      "pastor": "Edwin Navarro",
+      "resena": [
+        "Sermón expositivo en el Evangelio según San Juan 8:1-11. Texto clave: «El que de vosotros esté sin pecado sea el primero en arrojar la piedra contra ella... Y dijo Jesús: Ni yo te condeno; vete, y no peques más» (Juan 8:6-11).",
+        "En las sombras del templo de Jerusalén, un grupo de líderes religiosos arrastra con violencia a una mujer avergonzada, usándola fríamente como un peón en un macabro juego político y teológico. Ella está profundamente atrapada: por la evidencia de su propio pecado, por la mirada implacable de una multitud hostil y por un sistema religioso severo e inflexible. Sin embargo, en medio del juicio humano, la mujer tiene un encuentro inesperado con el único Hombre verdaderamente libre en toda la historia: Jesucristo.",
+        "Los escribas y fariseos no buscaban justicia verdadera, sino una carnada teológica para destruir a Jesús. La trampa era evidente: la Ley exigía la comparecencia de ambos involucrados en el adulterio, pero solo trajeron a la mujer. Frente a este dilema calculado, Jesús se inclina y escribe en el polvo con el dedo, y luego pronuncia una frase que desmantela por completo el tribunal religioso: «El que de vosotros esté sin pecado sea el primero en arrojar la piedra contra ella». Uno a uno, comenzando por los más ancianos, los acusadores dejaron caer sus piedras y se retiraron en silencio.",
+        "Cuando la multitud se disipó, quedaron solo dos personas: la mujer atrapada y la Misericordia encarnada. El mensaje central es consolador y radical: tu pecado no invalida la gracia de Dios. Jesús no condena a la mujer, pero tampoco condona su falta; le otorga un perdón transformador con una orden de santidad: «Ni yo te condeno; vete, y no peques más». La gracia de Jesucristo no destruye la santidad de Dios, sino que condena el pecado para salvar al pecador.",
+        "Este pasaje nos confronta hoy: ¿estamos sosteniendo piedras para juzgar los fallos ajenos mientras ignoramos las grietas de nuestro propio corazón? La voz del acusador dirá que estamos destruidos y sin salida, pero la voz de Cristo ofrece libertad, absolución y un nuevo comienzo. La gracia no da licencia para pecar; da poder para vencerlo."
+      ],
+      "crucigrama": {
+        "tema": "Ley, gracia y perdón en Juan 8",
+        "rows": 26,
+        "cols": 26,
+        "max_attempts": 500,
+        "words": [
+          {"word": "ADULTERIO", "clue": "Infidelidad conyugal que transgrede el mandato divino del matrimonio según las Escrituras."},
+          {"word": "ACUSADORES", "clue": "Personas o entidades que señalan e imputan faltas o pecados a otros."},
+          {"word": "CONCIENCIA", "clue": "Facultad dada por Dios al ser humano para discernir internamente entre el bien y el mal."},
+          {"word": "CONDENA", "clue": "Sentencia justa sobre el pecador por transgredir la ley de Dios."},
+          {"word": "CULPA", "clue": "Estado de responsabilidad legal y moral ante Dios por haber cometido pecado."},
+          {"word": "GRACIA", "clue": "Favor inmerecido de Dios otorgado al pecador para salvación únicamente por medio de la fe en Jesucristo."},
+          {"word": "JUSTICIA", "clue": "Atributo divino de rectitud absoluta y acción por la cual Dios declara justo al creyente mediante la fe."},
+          {"word": "LEY", "clue": "Conjunto de preceptos y mandamientos divinos que revelan la santidad de Dios y la condición pecaminosa del hombre."},
+          {"word": "MISERICORDIA", "clue": "Compasión y bondad de Dios al no impartir al pecador el castigo que sus faltas merecen."},
+          {"word": "PECADO", "clue": "Transgresión voluntaria o por naturaleza de la ley y voluntad de Dios."},
+          {"word": "PERDÓN", "clue": "Absolución divina del castigo del pecado, concedida por la obra expiatoria de Cristo."},
+          {"word": "PIEDRA", "clue": "Objeto utilizado en la antigüedad para la ejecución por lapidación según la Ley mosaica."},
+          {"word": "REDENCIÓN", "clue": "Rescate y liberación del creyente del dominio del pecado mediante el pago del precio de la sangre de Cristo."},
+          {"word": "SANTIDAD", "clue": "Atributo de Dios que expresa su absoluta pureza y separación del mal, requerida también en sus hijos."},
+          {"word": "HIPOCRESÍA", "clue": "Actitud de simular piedad o virtud exterior mientras se mantiene la falsedad o el pecado en el corazón."},
+          {"word": "LIBERTAD", "clue": "Emancipación del poder y la esclavitud del pecado concedida al creyente en Cristo para servir a Dios."},
+          {"word": "TRANSFORMACIÓN", "clue": "Cambio espiritual y moral operado en el creyente por la obra regeneradora del Espíritu Santo."},
+          {"word": "ACUSACIÓN", "clue": "Cargo o imputación formal de una falta o pecado."},
+          {"word": "ARREPENTIMIENTO", "clue": "Cambio de mente y corazón que implica dolerse del pecado y volverse decididamente a Dios."},
+          {"word": "JESÚS", "clue": "Hijo de Dios, Señor y único Salvador personal, cuyo sacrificio sustitutivo en la cruz perdona al pecador."}
+        ]
+      }
+    },
+    {
+      "orden": 2,
+      "tipo": "personaje_biblico",
+      "titulo": "Moisés: el enviado de Dios para liberar a su pueblo",
+      "resena": [
+        "¿Cómo preparó Dios a un hombre para liberar a Israel y convertirlo en instrumento de una revelación que alcanzaría a generaciones futuras? La vida de Moisés ocupa un lugar fundamental en la historia bíblica: su ministerio está relacionado con la liberación de Israel de la esclavitud, la formación de la nación como pueblo de Dios, el establecimiento del pacto y la transmisión de una parte esencial de las Escrituras.",
+        "Moisés nació en Egipto cuando Faraón había ordenado la muerte de los niños varones hebreos. Sus padres lo preservaron y lo colocaron en una arquilla entre los juncos del Nilo, donde fue encontrado por la hija de Faraón, quien lo crió en la corte egipcia. Aun así, conservó conciencia de su origen israelita; al defender a un hebreo maltratado, tuvo que huir a Madián, donde vivió cuarenta años como pastor.",
+        "Fue en esa etapa cuando Dios lo llamó. En Horeb, Dios se manifestó a Moisés en la zarza que ardía sin consumirse y le declaró que había visto la aflicción de Israel y había determinado liberarlo. Moisés dudó de su capacidad, pero Dios respondió que la misión no dependería de su capacidad personal, sino de su presencia y poder: «Ve, porque yo estaré contigo».",
+        "Moisés regresó a Egipto, se presentó ante Faraón como enviado de Dios, e Israel salió de la esclavitud rumbo a la tierra prometida. En el monte Sinaí, Dios estableció su pacto con Israel y entregó sus mandamientos, colocando a Moisés como mediador entre Dios y la nación. Su ministerio estuvo marcado por una comunión única con Dios, que hablaba con él «cara a cara, como habla cualquiera a su compañero».",
+        "Antes de morir, Moisés contempló desde el monte Nebo la tierra prometida, sin entrar en ella, y dejó preparado a Josué para continuar la conducción del pueblo. Su legado fue mucho más allá de su liderazgo: se le atribuye la escritura del Pentateuco, los cinco primeros libros de la Biblia, una parte fundamental de la revelación de Dios a su pueblo."
+      ],
+      "crucigrama": {
+        "tema": "Moisés, libertador de Israel",
+        "rows": 24,
+        "cols": 24,
+        "max_attempts": 500,
+        "words": [
+          {"word": "EGIPTO", "clue": "País donde nació Moisés y de donde saldría el pueblo de Israel."},
+          {"word": "FARAÓN", "clue": "Gobernante que ordenó la muerte de los niños varones hebreos."},
+          {"word": "NILO", "clue": "Río en cuyas aguas fue colocada la arquilla con Moisés."},
+          {"word": "MADIÁN", "clue": "Tierra donde Moisés se refugió y trabajó como pastor durante cuarenta años."},
+          {"word": "HOREB", "clue": "Monte donde Dios se manifestó a Moisés en la zarza ardiente."},
+          {"word": "ZARZA", "clue": "Arbusto que ardía sin consumirse, donde Dios llamó a Moisés."},
+          {"word": "SINAÍ", "clue": "Monte donde Dios estableció su pacto con Israel y entregó los mandamientos."},
+          {"word": "PACTO", "clue": "Acuerdo solemne que Dios estableció con Israel en el desierto."},
+          {"word": "ÉXODO", "clue": "Salida de Israel de la esclavitud egipcia, y libro que la relata."},
+          {"word": "PASCUA", "clue": "Acontecimiento conmemorado por Israel como gran manifestación de la accion salvadora de Dios."},
+          {"word": "JOSUÉ", "clue": "Hombre que Moisés dejó preparado para continuar la conduccion del pueblo."},
+          {"word": "NEBO", "clue": "Monte desde donde Moisés contempló la tierra prometida antes de morir."},
+          {"word": "PENTATEUCO", "clue": "Conjunto de los cinco primeros libros de la Biblia, atribuidos a Moisés."},
+          {"word": "MEDIADOR", "clue": "Papel que ocupó Moisés entre Dios y la nación de Israel."},
+          {"word": "LIBERACIÓN", "clue": "Proposito central de la mision de Moises en Egipto."},
+          {"word": "ISRAEL", "clue": "Pueblo que Dios formó y liberó por medio de Moisés."}
+        ]
+      }
+    },
+    {
+      "orden": 3,
+      "tipo": "libro_biblico",
+      "titulo": "Reseña de Génesis",
+      "resena": [
+        "Autor: tradicionalmente atribuido a Moisés. Génesis es el primer libro del Pentateuco y constituye el punto de partida de la historia bíblica que conduce hacia la formación del pueblo de Israel. Génesis significa 'origen' o 'comienzo', y presenta los grandes comienzos de la historia bíblica: la creación, la humanidad, el pecado, el diluvio, las naciones y la historia de los patriarcas.",
+        "Uno de los aportes fundamentales de Génesis es presentar el punto de partida de la historia de la salvación. El libro comienza con la creación, pero muestra cómo el pecado introduce una ruptura profunda en la relación entre Dios y el ser humano. Con el llamamiento de Abraham comienza una nueva etapa: Dios establece una promesa, anuncia una descendencia y vincula esa promesa con un propósito que trasciende al propio Abraham.",
+        "La promesa hecha a Abraham pasa de Abraham a Isaac, de Isaac a Jacob y de Jacob a sus hijos. La historia de una familia se convierte así en el comienzo de la historia de un pueblo. Este aspecto revela una dimensión esencial de la misión: el propósito de Dios nunca queda limitado a la familia de Abraham ni al pueblo de Israel, sino que está vinculado desde el principio con la bendición de todas las familias de la tierra.",
+        "Al cerrar el libro todavía no encontramos el cumplimiento completo de la promesa: encontramos a Jacob y sus hijos establecidos en Egipto, y la historia queda preparada para continuar. Génesis es un libro de comienzos que prepara al lector para lo que vendrá después: creación, caída, promesa, Abraham, Isaac, Jacob y José forman parte de una misma línea que seguirá desarrollándose en los siguientes libros, hasta alcanzar su expresión plena en Cristo."
+      ],
+      "crucigrama": {
+        "tema": "Génesis: el libro de los comienzos",
+        "rows": 26,
+        "cols": 26,
+        "max_attempts": 500,
+        "words": [
+          {"word": "CAÍDA", "clue": "Acontecimiento mediante el cual el pecado entró en la experiencia de la humanidad."},
+          {"word": "EDÉN", "clue": "Lugar donde Dios colocó al ser humano después de crearlo."},
+          {"word": "ADÁN", "clue": "Primer hombre presentado en el relato de Génesis."},
+          {"word": "EVA", "clue": "Mujer creada para acompañar al primer hombre."},
+          {"word": "PECADO", "clue": "Desobediencia que introdujo una ruptura entre Dios y la humanidad."},
+          {"word": "DILUVIO", "clue": "Gran inundación mediante la cual Dios juzgó la corrupción de la humanidad."},
+          {"word": "CAÍN", "clue": "Primer hijo de Adán y Eva, conocido por haber dado muerte a su hermano Abel."},
+          {"word": "NOÉ", "clue": "Hombre que construyó el arca y encontró gracia ante Dios."},
+          {"word": "TORRE", "clue": "Construcción que los habitantes de Babel quisieron levantar hasta el cielo."},
+          {"word": "ABRAHAM", "clue": "Hombre llamado por Dios para convertirse en padre de una gran nación."},
+          {"word": "PROMESA", "clue": "Compromiso de Dios con Abraham relacionado con su descendencia y la bendición de las naciones."},
+          {"word": "ISAAC", "clue": "Hijo de Abraham y Sara, nacido como cumplimiento de una promesa."},
+          {"word": "JACOB", "clue": "Hijo de Isaac que recibió el nombre de Israel."},
+          {"word": "ISRAEL", "clue": "Nombre que recibió Jacob y que posteriormente identificaría a sus descendientes."},
+          {"word": "JOSÉ", "clue": "Hijo de Jacob que llegó a ocupar una posición de autoridad en Egipto."},
+          {"word": "EGIPTO", "clue": "País donde José llegó a ser gobernador y donde posteriormente se estableció su familia."},
+          {"word": "PACTO", "clue": "Acuerdo solemne mediante el cual Dios establece una relación y compromisos con determinadas personas."},
+          {"word": "CIRCUNCISIÓN", "clue": "Señal establecida por Dios como parte del pacto con Abraham."},
+          {"word": "BENDICIÓN", "clue": "Beneficio o favor concedido por Dios."},
+          {"word": "DESCENDENCIA", "clue": "Conjunto de personas que proceden de un antepasado o familia."}
+        ]
+      }
+    },
+    {
+      "orden": 4,
+      "tipo": "vocabulario",
+      "titulo": "Emancipación",
+      "resena": [
+        "A lo largo de la vida, todas las personas pasan por un proceso de crecimiento que las lleva de la dependencia hacia una mayor autonomía. Ese proceso se relaciona con la emancipación, una palabra que no se limita al ámbito legal o político, sino que también describe el desarrollo personal, la capacidad de pensar, decidir y actuar con criterio propio.",
+        "Emanciparse es dejar atrás aquello que impide el crecimiento, aprender a asumir responsabilidades, tomar decisiones con prudencia, reconocer las consecuencias de nuestros actos y procurar actuar de acuerdo con principios sólidos. En la vida cotidiana encontramos ejemplos de emancipación cuando una persona aprende a administrar sus propios recursos, cuando un estudiante desarrolla la capacidad de investigar y pensar por sí mismo, o cuando alguien logra superar hábitos y dependencias que limitan su desarrollo.",
+        "En la Biblia, la vida de Moisés ilustra este concepto de manera extraordinaria. Dios liberó al pueblo de Israel de la esclavitud en Egipto para conducirlo hacia una vida nueva. Sin embargo, la verdadera libertad no consistía únicamente en salir de Egipto, sino también en aprender a vivir bajo principios que les permitieran convertirse en un pueblo responsable y diferente. La libertad siempre va acompañada de responsabilidad: ser libre implica tener la capacidad de decidir, pero también asumir las consecuencias de nuestras decisiones.",
+        "Al estudiar esta familia semántica, descubriremos palabras relacionadas con la libertad, la autonomía, la responsabilidad, la dignidad, la independencia y la capacidad de decidir. Cada una de ellas contribuirá a enriquecer nuestro vocabulario y a comprender mejor el mundo que nos rodea."
+      ],
+      "crucigrama": {
+        "tema": "Libertad, autonomía y responsabilidad",
+        "rows": 26,
+        "cols": 26,
+        "max_attempts": 500,
+        "words": [
+          {"word": "LIBERTAD", "clue": "Capacidad de actuar y decidir sin estar sometido a una imposición."},
+          {"word": "AUTONOMÍA", "clue": "Capacidad de gobernarse o actuar por cuenta propia."},
+          {"word": "INDEPENDENCIA", "clue": "Situación de quien no depende de otra persona o autoridad."},
+          {"word": "LIBERACIÓN", "clue": "Acción de dejar a alguien libre de una obligación, dominio o limitación."},
+          {"word": "SOBERANÍA", "clue": "Poder de decidir y gobernarse por sí mismo."},
+          {"word": "AUTODETERMINACIÓN", "clue": "Capacidad de decidir libremente el propio rumbo."},
+          {"word": "ELECCIÓN", "clue": "Acción de escoger entre distintas posibilidades."},
+          {"word": "DECISIÓN", "clue": "Determinación que una persona toma después de considerar opciones."},
+          {"word": "VOLUNTAD", "clue": "Facultad de decidir y dirigir las propias acciones."},
+          {"word": "DIGNIDAD", "clue": "Valor que merece una persona por el hecho de serlo."},
+          {"word": "IGUALDAD", "clue": "Principio según el cual las personas tienen los mismos derechos y oportunidades."},
+          {"word": "DERECHO", "clue": "Facultad que una persona puede ejercer legítimamente."},
+          {"word": "PRIVILEGIO", "clue": "Ventaja especial de la que disfruta una persona o grupo."},
+          {"word": "DOMINIO", "clue": "Poder que alguien ejerce sobre otra persona, cosa o situación."},
+          {"word": "DEPENDENCIA", "clue": "Situación de quien necesita de otra persona o entidad para actuar o subsistir."},
+          {"word": "AUTOCONTROL", "clue": "Capacidad de gobernar las propias acciones, emociones o impulsos."},
+          {"word": "RESPONSABILIDAD", "clue": "Capacidad de asumir las consecuencias de las propias decisiones y actos."},
+          {"word": "RESISTENCIA", "clue": "Capacidad de oponerse a una fuerza, presión o imposición."},
+          {"word": "REBELIÓN", "clue": "Oposición activa contra una autoridad o situación considerada injusta."}
+        ]
+      }
+    },
+    {
+      "orden": 5,
+      "tipo": "boletin",
+      "titulo": "Escuela Bíblica Vacacional 2026 — Estación Iluminación",
+      "introduccion": "La Iglesia Evangélica 'Agua Viva' te invita a su Escuela Bíblica Vacacional 2026: Estación Iluminación, iluminando quién es realmente Jesús (Juan 8:12). Disfruta de unos días llenos de diversión y aprendizaje de Jesús, la Luz del mundo.",
+      "actividades": [
+        {
+          "titulo": "Fechas",
+          "fecha": "Miércoles 26 al sábado 29 de agosto",
+          "descripcion": ""
+        },
+        {
+          "titulo": "Horario",
+          "hora": "3:00 p.m. a 6:00 p.m.",
+          "descripcion": ""
+        },
+        {
+          "titulo": "Edades",
+          "descripcion": "Para niños de 4 a 12 años."
+        },
+        {
+          "titulo": "Lugar",
+          "descripcion": "Barrio El Callao."
+        },
+        {
+          "titulo": "Costo",
+          "descripcion": "Totalmente gratis. ¡Te esperamos!"
+        }
+      ]
+    }
+  ]
+}
