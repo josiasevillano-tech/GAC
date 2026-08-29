@@ -92,3 +92,15 @@ class Board:
     def word_count(self):
         """Devuelve la cantidad de palabras colocadas."""
         return len(self.placements)
+
+    def imprimir(self):
+        """
+        Imprime el tablero como texto en la consola,
+        para verificacion visual rapida.
+        """
+        for row in range(self.rows):
+            fila = []
+            for col in range(self.cols):
+                letra = self.get_cell(row, col)
+                fila.append(letra if letra else ".")
+            print(" ".join(fila))
