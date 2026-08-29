@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Entornos virtuales
+venv/
+.venv/
+
+# Archivos de respaldo sueltos
+*.backup
+*.backup2
+*_backup*.py
+diff_*.txt
+
+# Archivos temporales del sistema/editor
+*.swp
+.DS_Store
