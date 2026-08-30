@@ -43,6 +43,10 @@ class Generator:
     # una palabra accidental duplicada.
     MAX_INTENTOS_RELLENO = 30
 
+    # Intentos maximos de regenerar el TABLERO COMPLETO desde cero
+    # si no se lograron colocar todas las palabras.
+    MAX_INTENTOS_TABLERO = 20
+
     def __init__(self, rows=15, cols=15, max_attempts=200, dificultad="dificil"):
         self.board = Board(rows, cols)
         self.words = []
@@ -89,13 +93,46 @@ class Generator:
 
     def generate(self):
         """
-        Genera la sopa de letras completa: coloca todas las
-        palabras posibles y rellena el resto del tablero,
-        verificando que el relleno no cree copias accidentales
-        de las palabras buscadas.
+        Genera la sopa de letras completa, reintentando el
+        tablero desde cero (con nuevas posiciones aleatorias)
+        hasta lograr colocar el 100% de las palabras, o hasta
+        agotar MAX_INTENTOS_TABLERO.
 
-        Devuelve True si se colocaron todas las palabras Y
-        el relleno quedo libre de duplicados accidentales.
+        Si ningun intento logra el 100%, se conserva el mejor
+        resultado obtenido (el que coloco mas palabras).
+
+        Devuelve True si se colocaron todas las palabras,
+        False si el mejor intento quedo incompleto (en ese
+        caso, usar words_not_placed() para ver cuales faltaron).
+        """
+
+        mejor_board = None
+        mejor_cantidad = -1
+
+        for _ in range(self.MAX_INTENTOS_TABLERO):
+
+            if self._generar_un_intento():
+                # Se colocaron todas las palabras: listo.
+                self._rellenar_sin_duplicados()
+                return True
+
+            # Este intento quedo incompleto; nos quedamos con
+            # el mejor hasta ahora por si hace falta usarlo.
+            if self.board.word_count() > mejor_cantidad:
+                mejor_cantidad = self.board.word_count()
+                mejor_board = self.board
+
+        # Ningun intento logro el 100%: usamos el mejor obtenido.
+        self.board = mejor_board
+        self._rellenar_sin_duplicados()
+
+        return False
+
+    def _generar_un_intento(self):
+        """
+        Hace UN intento de colocar todas las palabras en un
+        tablero nuevo y vacio. Devuelve True si se lograron
+        colocar todas.
         """
 
         self.board = Board(self.board.rows, self.board.cols)
@@ -105,8 +142,6 @@ class Generator:
         for word in self.words:
             if not self._colocar_palabra(word):
                 todas_colocadas = False
-
-        self._rellenar_sin_duplicados()
 
         return todas_colocadas
 
@@ -152,6 +187,8 @@ class Generator:
             if not self._hay_palabras_duplicadas():
                 return True
 
+        # Si tras varios intentos sigue habiendo duplicados,
+        # se deja el ultimo relleno generado (caso muy raro).
         return False
 
     def _hay_palabras_duplicadas(self):
@@ -230,3 +267,61 @@ class Generator:
         colocadas = [p["word"] for p in self.board.placements]
 
         return [w for w in self.words if w not in colocadas]
+
+    # =====================================================
+    # DATOS PARA EXPORTAR (uso futuro del armador de PDF)
+    # =====================================================
+
+    def to_grid(self):
+        """
+        Devuelve la cuadricula completa como una matriz 2D de
+        letras (lista de listas), lista para dibujarse en una
+        pagina del libro.
+        """
+
+        grid = []
+
+        for row in range(self.board.rows):
+            fila = []
+            for col in range(self.board.cols):
+                fila.append(self.board.get_cell(row, col))
+            grid.append(fila)
+
+        return grid
+
+    def get_word_paths(self):
+        """
+        Devuelve, para cada palabra colocada, la lista exacta
+        de coordenadas (fila, columna) que ocupa en el tablero.
+
+        Util para dibujar la pagina de soluciones, marcando
+        o resaltando cada palabra encontrada.
+
+        Formato:
+        [
+            {"word": "MOISES", "coords": [(fila, col), (fila, col), ...]},
+            ...
+        ]
+        """
+
+        rutas = []
+
+        for placement in self.board.placements:
+
+            dr, dc = placement["direction"].value
+            row, col = placement["row"], placement["col"]
+
+            coords = []
+            current_row, current_col = row, col
+
+            for _ in placement["word"]:
+                coords.append((current_row, current_col))
+                current_row += dr
+                current_col += dc
+
+            rutas.append({
+                "word": placement["word"],
+                "coords": coords,
+            })
+
+        return rutas
