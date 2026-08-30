@@ -11,21 +11,62 @@ class Generator:
 
     A diferencia del crucigrama, las palabras no necesitan
     cruzarse entre si: cada una se coloca en linea recta,
-    en cualquiera de las 8 direcciones, y el resto del
-    tablero se rellena con letras aleatorias.
+    en una direccion permitida segun la dificultad elegida,
+    y el resto del tablero se rellena con letras aleatorias.
     """
 
     # Letras usadas para el relleno (sin acentos ni Ñ).
     LETRAS_RELLENO = string.ascii_uppercase
 
-    def __init__(self, rows=15, cols=15, max_attempts=200):
+    # Direcciones permitidas segun el nivel de dificultad.
+    # FACIL: solo hacia adelante, mas facil de detectar a simple vista.
+    # MEDIO: suma un par de direcciones invertidas.
+    # DIFICIL: las 8 direcciones completas.
+    DIRECCIONES_POR_DIFICULTAD = {
+        "facil": [
+            Direction.HORIZONTAL,
+            Direction.VERTICAL,
+            Direction.DIAGONAL_ABAJO_DERECHA,
+        ],
+        "medio": [
+            Direction.HORIZONTAL,
+            Direction.HORIZONTAL_INVERSA,
+            Direction.VERTICAL,
+            Direction.VERTICAL_INVERSA,
+            Direction.DIAGONAL_ABAJO_DERECHA,
+            Direction.DIAGONAL_ABAJO_IZQUIERDA,
+        ],
+        "dificil": list(Direction),
+    }
+
+    # Intentos maximos para regenerar SOLO el relleno si se detecta
+    # una palabra accidental duplicada.
+    MAX_INTENTOS_RELLENO = 30
+
+    def __init__(self, rows=15, cols=15, max_attempts=200, dificultad="dificil"):
         self.board = Board(rows, cols)
         self.words = []
         self.max_attempts = max_attempts
+        self.set_dificultad(dificultad)
 
     # =====================================================
     # CONFIGURACION
     # =====================================================
+
+    def set_dificultad(self, dificultad):
+        """
+        Establece el nivel de dificultad, que determina que
+        direcciones estan permitidas para colocar palabras.
+        """
+
+        if dificultad not in self.DIRECCIONES_POR_DIFICULTAD:
+            raise ValueError(
+                f"Dificultad '{dificultad}' invalida. "
+                f"Usar: {list(self.DIRECCIONES_POR_DIFICULTAD.keys())}"
+            )
+
+        self.dificultad = dificultad
+        self.direcciones_permitidas = self.DIRECCIONES_POR_DIFICULTAD[dificultad]
 
     def set_words(self, words):
         """
@@ -49,10 +90,12 @@ class Generator:
     def generate(self):
         """
         Genera la sopa de letras completa: coloca todas las
-        palabras posibles y rellena el resto del tablero.
+        palabras posibles y rellena el resto del tablero,
+        verificando que el relleno no cree copias accidentales
+        de las palabras buscadas.
 
-        Devuelve True si se colocaron todas las palabras,
-        False si alguna no pudo ubicarse.
+        Devuelve True si se colocaron todas las palabras Y
+        el relleno quedo libre de duplicados accidentales.
         """
 
         self.board = Board(self.board.rows, self.board.cols)
@@ -63,21 +106,19 @@ class Generator:
             if not self._colocar_palabra(word):
                 todas_colocadas = False
 
-        self._rellenar_espacios_vacios()
+        self._rellenar_sin_duplicados()
 
         return todas_colocadas
 
     def _colocar_palabra(self, word):
         """
-        Intenta colocar una palabra en una posicion y
-        direccion aleatoria, probando hasta max_attempts veces.
+        Intenta colocar una palabra en una posicion aleatoria,
+        usando solo direcciones permitidas por la dificultad.
         """
-
-        direcciones = list(Direction)
 
         for _ in range(self.max_attempts):
 
-            direction = random.choice(direcciones)
+            direction = random.choice(self.direcciones_permitidas)
             row = random.randint(0, self.board.rows - 1)
             col = random.randint(0, self.board.cols - 1)
 
@@ -87,18 +128,88 @@ class Generator:
 
         return False
 
-    def _rellenar_espacios_vacios(self):
+    def _rellenar_sin_duplicados(self):
         """
-        Rellena todas las celdas vacias del tablero con
-        letras aleatorias (A-Z, sin acentos ni Ñ).
+        Rellena las celdas vacias con letras aleatorias,
+        verificando que no se forme una copia adicional de
+        alguna de las palabras buscadas. Si se detecta una
+        copia accidental, se regenera solo el relleno.
         """
+
+        celdas_vacias = [
+            (row, col)
+            for row in range(self.board.rows)
+            for col in range(self.board.cols)
+            if self.board.is_empty(row, col)
+        ]
+
+        for _ in range(self.MAX_INTENTOS_RELLENO):
+
+            for row, col in celdas_vacias:
+                letra = random.choice(self.LETRAS_RELLENO)
+                self.board.set_cell(row, col, letra)
+
+            if not self._hay_palabras_duplicadas():
+                return True
+
+        return False
+
+    def _hay_palabras_duplicadas(self):
+        """
+        Revisa si alguna palabra de la lista aparece mas veces
+        de las que fue colocada intencionalmente (es decir, si
+        el relleno aleatorio formo una copia accidental).
+        """
+
+        for word in self.words:
+            apariciones_esperadas = sum(
+                1 for p in self.board.placements if p["word"] == word
+            )
+
+            if self._contar_apariciones(word) > apariciones_esperadas:
+                return True
+
+        return False
+
+    def _contar_apariciones(self, word):
+        """
+        Cuenta cuantas veces aparece una palabra en el tablero
+        completo, en cualquiera de las 8 direcciones posibles
+        (independientemente de la dificultad configurada).
+        """
+
+        total = 0
 
         for row in range(self.board.rows):
             for col in range(self.board.cols):
+                for direction in Direction:
+                    if self._coincide_en(row, col, word, direction):
+                        total += 1
 
-                if self.board.is_empty(row, col):
-                    letra = random.choice(self.LETRAS_RELLENO)
-                    self.board.set_cell(row, col, letra)
+        return total
+
+    def _coincide_en(self, row, col, word, direction):
+        """
+        Verifica si la palabra aparece exactamente en esa
+        posicion y direccion (sin usar can_place_word, ya que
+        aqui solo queremos LEER, no validar para colocar).
+        """
+
+        dr, dc = direction.value
+        current_row, current_col = row, col
+
+        for letter in word:
+
+            if not self.board.is_inside(current_row, current_col):
+                return False
+
+            if self.board.get_cell(current_row, current_col) != letter:
+                return False
+
+            current_row += dr
+            current_col += dc
+
+        return True
 
     # =====================================================
     # METRICAS
