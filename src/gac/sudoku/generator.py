@@ -1,6 +1,6 @@
 import random
 
-from .solver import es_valido, resolver, contar_soluciones
+from .solver import es_valido, resolver, contar_soluciones, requiere_tecnicas_avanzadas
 
 
 class Generator:
@@ -12,6 +12,13 @@ class Generator:
     pistas visibles correspondiente al nivel de dificultad,
     garantizando en todo momento que el puzzle resultante
     tenga una unica solucion posible.
+
+    Para el nivel "experto", ademas se verifica que el puzzle
+    NO se pueda resolver usando solo tecnicas basicas de
+    escaneo (naked/hidden singles) - si el primer intento
+    resulta ser mecanicamente facil pese a tener pocas pistas,
+    se regenera desde cero hasta lograr uno que exija tecnicas
+    mas avanzadas.
     """
 
     # Cantidad aproximada de pistas (celdas visibles) segun
@@ -23,7 +30,13 @@ class Generator:
         "facil": 40,
         "medio": 32,
         "dificil": 26,
+        "experto": 24,
     }
+
+    # Intentos maximos de generar un tablero completo nuevo
+    # para el nivel "experto", buscando uno que realmente
+    # exija tecnicas avanzadas (no solo pocas pistas).
+    MAX_INTENTOS_EXPERTO = 25
 
     def __init__(self, dificultad="medio"):
         self.set_dificultad(dificultad)
@@ -59,10 +72,48 @@ class Generator:
         (con celdas vacias) listo para jugarse.
         """
 
+        if self.dificultad == "experto":
+            return self._generar_experto()
+
         self.solution = self._generar_grid_completo()
         self.puzzle = self._perforar_celdas(self.solution)
 
         return True
+
+    def _generar_experto(self):
+        """
+        Genera puzzles de nivel experto, verificando que de
+        verdad exijan tecnicas avanzadas (no solo que tengan
+        pocas pistas). Si el primer intento resulta demasiado
+        facil de resolver con tecnicas basicas, se regenera
+        el tablero completo desde cero.
+        """
+
+        mejor_solution = None
+        mejor_puzzle = None
+
+        for _ in range(self.MAX_INTENTOS_EXPERTO):
+
+            solution = self._generar_grid_completo()
+            puzzle = self._perforar_celdas(solution)
+
+            if requiere_tecnicas_avanzadas(puzzle):
+                self.solution = solution
+                self.puzzle = puzzle
+                return True
+
+            # Guardamos este intento por si ninguno logra ser
+            # "genuinamente dificil" dentro del limite de intentos.
+            mejor_solution = solution
+            mejor_puzzle = puzzle
+
+        # Ningun intento exigio tecnicas avanzadas: usamos el
+        # ultimo generado de todas formas (con pocas pistas,
+        # aunque no se pudo garantizar la dificultad logica).
+        self.solution = mejor_solution
+        self.puzzle = mejor_puzzle
+
+        return False
 
     def _generar_grid_completo(self):
         """
@@ -169,6 +220,16 @@ class Generator:
         """
 
         return sum(1 for fila in self.puzzle for celda in fila if celda != 0)
+
+    def es_genuinamente_dificil(self):
+        """
+        Indica si el puzzle actual exige tecnicas avanzadas
+        (no se resuelve solo con naked/hidden singles). Util
+        para confirmar la calidad real de un puzzle "experto".
+        """
+
+        from .solver import requiere_tecnicas_avanzadas
+        return requiere_tecnicas_avanzadas(self.puzzle)
 
     def imprimir(self):
         """
